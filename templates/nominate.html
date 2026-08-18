@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Athlete Nomination Form | Telangana State Inter-District Yogasana Sports Championship</title>
+  <meta name="description" content="Official Athlete Nomination and Registration Form for District Secretaries." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tg-green': {
+              DEFAULT: '#0D5C3A',
+              600: '#0f5132',
+              700: '#0D5C3A',
+              800: '#0a4229',
+              900: '#062919'
+            },
+            'tg-gold': {
+              DEFAULT: '#C5A059',
+              light: '#f5e6c8',
+              hover: '#b8893d'
+            },
+            'tg-crimson': '#8B0000'
+          },
+          fontFamily: {
+            sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link rel="stylesheet" href="css/custom.css" />
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+  <!-- A11y Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to nomination form</a>
+
+  <!-- Top Gov & Portal Header -->
+  <header class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between">
+      
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="flex items-center gap-2 text-decoration-none">
+          <div class="w-9 h-9 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059]">
+            <i class="fa-solid fa-om text-[#0D5C3A] text-base"></i>
+          </div>
+          <div class="hidden sm:block">
+            <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Telangana Yoga Association</div>
+            <div class="text-sm font-bold text-white font-display">State Inter-District Championship</div>
+          </div>
+        </a>
+        <span class="text-emerald-500 hidden md:inline">|</span>
+        <span class="bg-emerald-900/80 text-amber-300 text-xs px-2.5 py-1 rounded font-semibold border border-amber-300/30">
+          <i class="fa-solid fa-user-plus mr-1"></i> Athlete Nomination Form
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="dashboard.html" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Dashboard</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content" class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-8">
+    
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 flex items-center gap-2 mb-4" aria-label="Breadcrumb">
+      <a href="index.html" class="hover:text-emerald-800 font-medium">Public Home</a>
+      <span>/</span>
+      <a href="dashboard.html" class="hover:text-emerald-800 font-medium">Dashboard</a>
+      <span>/</span>
+      <span class="text-slate-800 font-semibold">New Athlete Nomination</span>
+    </nav>
+
+    <!-- Page Title & Guidance Card -->
+    <div class="bg-white rounded-2xl p-6 mb-6 border border-slate-200 shadow-sm border-t-4 border-t-[#0D5C3A]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="section-badge mb-1">State Selection Trials Entry</span>
+          <h1 class="text-2xl sm:text-3xl font-bold font-display text-slate-900">
+            Athlete Nomination &amp; Verification Form
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1">
+            District: <strong id="form-district-name" class="text-[#0D5C3A]">Hyderabad District Association</strong> &bull; Complete all mandatory fields marked with <span class="text-red-500">*</span>
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-2 rounded-xl text-xs text-emerald-900">
+          <i class="fa-solid fa-id-card text-lg text-emerald-700"></i>
+          <div>
+            <div class="font-bold">Form Code: NOM-2025</div>
+            <div class="text-[10px] text-emerald-700">Multi-part Upload Enabled</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official Athlete Nomination Form -->
+    <!-- Form Technical Constraints: enctype="multipart/form-data" and {% csrf_token %} -->
+    <form 
+      id="nomination-form" 
+      action="/portal/athletes/add/" 
+      method="POST" 
+      enctype="multipart/form-data" 
+      class="space-y-6"
+    >
+      <!-- Django CSRF Token Placeholder -->
+      {% csrf_token %}
+
+      <!-- SECTION A: ATHLETE PERSONAL INFORMATION -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        
+        <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+            1
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 font-display">Personal &amp; Demographic Information</h2>
+            <p class="text-xs text-slate-500">Provide official details as per Aadhaar Card and School Records.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          
+          <!-- First Name -->
+          <div>
+            <label for="first_name" class="form-label">
+              First Name <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-user input-icon"></i>
+              <input 
+                type="text" 
+                id="first_name" 
+                name="first_name" 
+                required 
+                placeholder="e.g. Ananya" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label for="last_name" class="form-label">
+              Last Name / Surname <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-user-tag input-icon"></i>
+              <input 
+                type="text" 
+                id="last_name" 
+                name="last_name" 
+                required 
+                placeholder="e.g. Kulkarni" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Date of Birth & Dynamic Category Preview (CRITICAL REQUIREMENT) -->
+          <div class="sm:col-span-2 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              
+              <div>
+                <label for="dob-input" class="form-label">
+                  Date of Birth (as per Aadhaar / Birth Cert) <span class="text-red-500">*</span>
+                </label>
+                <div class="input-icon-wrapper">
+                  <i class="fa-solid fa-calendar-day input-icon"></i>
+                  <input 
+                    type="date" 
+                    id="dob-input" 
+                    name="dob" 
+                    required 
+                    min="1995-01-01" 
+                    max="2016-12-31" 
+                    class="form-input text-sm bg-white font-medium"
+                  />
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">Eligible birth range: 10 to &lt;28 years.</p>
+              </div>
+
+              <!-- DYNAMIC COMPUTED AGE CATEGORY BADGE (NO MANUAL DROPDOWN) -->
+              <div class="p-3.5 bg-white rounded-xl border border-slate-200 flex flex-col justify-center">
+                <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                  Computed Age Category (Auto-Calculated)
+                </div>
+                <div class="flex items-center gap-2">
+                  <span id="age-category-badge" class="badge badge-pending">
+                    <i class="fa-solid fa-circle-notch fa-spin text-xs mr-1"></i> Select Date of Birth Above
+                  </span>
+                </div>
+                <div id="age-display" class="text-[11px] text-slate-600 font-semibold mt-1"></div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Gender Radio -->
+          <div>
+            <span class="form-label">Gender <span class="text-red-500">*</span></span>
+            <div class="flex items-center gap-6 mt-2 pt-1">
+              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
+                <input type="radio" name="gender" value="Female" required checked class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
+                <span>Female</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
+                <input type="radio" name="gender" value="Male" required class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
+                <span>Male</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Aadhaar Last 4 Digits -->
+          <div>
+            <label for="aadhaar-input" class="form-label">
+              Last 4 Digits of Aadhaar <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-fingerprint input-icon"></i>
+              <input 
+                type="text" 
+                id="aadhaar-input" 
+                name="aadhaar_last_4" 
+                required 
+                maxlength="4" 
+                pattern="\d{4}" 
+                placeholder="XXXX" 
+                class="form-input text-sm font-mono tracking-widest"
+              />
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Only last 4 digits for privacy &amp; scrutiny compliance.</p>
+          </div>
+
+          <!-- Father / Guardian Name -->
+          <div>
+            <label for="guardian_name" class="form-label">
+              Father / Mother / Guardian Name <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-people-roof input-icon"></i>
+              <input 
+                type="text" 
+                id="guardian_name" 
+                name="guardian_name" 
+                required 
+                placeholder="Guardian Full Name" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- School / College / Club Name -->
+          <div>
+            <label for="institution_name" class="form-label">
+              School / College / Yoga Institution <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-school input-icon"></i>
+              <input 
+                type="text" 
+                id="institution_name" 
+                name="institution_name" 
+                required 
+                placeholder="Name of Educational Institute / Club" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Contact Mobile Number -->
+          <div>
+            <label for="mobile_number" class="form-label">
+              Parent / Athlete Contact Mobile <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-phone input-icon"></i>
+              <input 
+                type="tel" 
+                id="mobile_number" 
+                name="mobile_number" 
+                required 
+                pattern="[6-9][0-9]{9}" 
+                placeholder="10-digit mobile number" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Residential Address -->
+          <div>
+            <label for="residential_address" class="form-label">
+              Residential Address in Nominated District <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-house-chimney input-icon"></i>
+              <input 
+                type="text" 
+                id="residential_address" 
+                name="residential_address" 
+                required 
+                placeholder="House No, Street, Locality" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SECTION B: EVENT & DISCIPLINE SELECTION -->
+      <div id="events-section" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        
+        <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+            2
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 font-display">Competition Event Registration</h2>
+            <p class="text-xs text-slate-500">Select all disciplines the athlete is competing in (at least 1 required).</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- Event 1: Traditional -->
+          <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+            <input type="checkbox" name="events[]" value="Traditional Yogasana" checked class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+               <div class="ml-3">
+                <div class="font-bold text-sm text-slate-900">
+                  Free Flow Yogasana
+                </div>
+                <div class="text-xs text-slate-500 leading-relaxed">
+                  Smooth, continuous yoga movements with breath .
+                </div>
+              </div>
+            </label>
+
+          </label>
+
+          <!-- Event 2: Artistic Solo -->
+          <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+            <input type="checkbox" name="events[]" value="Artistic Yogasana Solo" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <div class="ml-3">
+              <div class="font-bold text-sm text-slate-900">Artistic Yogasana (Solo)</div>
+              <div class="text-xs text-slate-500 leading-relaxed">Choreography with music, flexibility &amp; artistic expression.</div>
+            </div>
+          </label>
+
+          <!-- Event 3: Artistic Pair -->
+          <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+            <input type="checkbox" name="events[]" value="Artistic Yogasana Pair" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <div class="ml-3">
+              <div class="font-bold text-sm text-slate-900">Artistic Yogasana (Pair)</div>
+              <div class="text-xs text-slate-500 leading-relaxed">Partner synchronized asanas, symmetric partner lifts.</div>
+            </div>
+          </label>
+
+          <!-- Event 4: Rhythmic Pair -->
+          <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+            <input type="checkbox" name="events[]" value="Rhythmic Yogasana Pair" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <div class="ml-3">
+              <div class="font-bold text-sm text-slate-900">Rhythmic Yogasana (Pair)</div>
+              <div class="text-xs text-slate-500 leading-relaxed">Dynamic flow matching continuous musical rhythm and tempo.</div>
+            </div>
+          </label>
+
+          <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
+            <input type="checkbox" name="events[]" value="Traditional Yogasana" checked class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <div class="ml-3">
+              <div class="font-bold text-sm text-slate-900">Traditional Yogasana</div>
+              <div class="text-xs text-slate-500 leading-relaxed">Holding posture, breathing stability, syllabus asanas.</div>
+            </div>
+          </label>
+          
+        </div>
+
+
+      </div>
+
+      <!-- SECTION C: DOCUMENT UPLOADS WITH IMAGE PREVIEW -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        
+        <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+            3
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 font-display">Document Uploads &amp; Photo Verification</h2>
+            <p class="text-xs text-slate-500">Upload passport size photo and verified Date of Birth certificate proof.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Passport Photo Upload with Live Preview -->
+          <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center">
+            <span class="form-label mb-2 text-center">
+              Passport Size Photo (JPG/PNG) <span class="text-red-500">*</span>
+            </span>
+            <p class="text-[11px] text-slate-500 mb-3">Front-facing white background photo (Max 2MB)</p>
+            
+            <div class="upload-zone bg-white py-6">
+              <input 
+                type="file" 
+                id="photo-upload" 
+                name="passport_photo" 
+                accept="image/*" 
+                required 
+                data-photo-preview="passport-preview"
+              />
+              <div class="space-y-1">
+                <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]"></i>
+                <div class="text-xs font-semibold text-slate-700">Click or drag &amp; drop photo here</div>
+                <div class="text-[10px] text-slate-400">PNG, JPG or WEBP up to 2MB</div>
+              </div>
+            </div>
+
+            <!-- Photo Preview Tag -->
+            <div class="mt-3 flex flex-col items-center justify-center">
+              <img id="passport-preview" class="photo-preview" alt="Athlete Passport Preview" />
+            </div>
+          </div>
+
+          <!-- DOB Proof / Certificate Upload -->
+          <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center">
+            <span class="form-label mb-2 text-center">
+              DOB Proof Certificate (PDF/Image) <span class="text-red-500">*</span>
+            </span>
+            <p class="text-[11px] text-slate-500 mb-3">Birth Certificate / SSC Bonafide / School Record</p>
+            
+            <div class="upload-zone bg-white py-6">
+              <input 
+                type="file" 
+                id="dob-cert-upload" 
+                name="dob_certificate" 
+                accept=".pdf,image/*" 
+                required 
+                data-doc-upload="dob-file-name"
+              />
+              <div class="space-y-1">
+                <i class="fa-solid fa-file-shield text-2xl text-amber-600"></i>
+                <div class="text-xs font-semibold text-slate-700">Click or drag &amp; drop certificate</div>
+                <div class="text-[10px] text-slate-400">PDF, JPG, PNG up to 5MB</div>
+              </div>
+            </div>
+
+            <!-- Uploaded file name indicator -->
+            <div class="mt-3 text-xs font-medium text-slate-600" id="dob-file-name">
+              No document chosen yet
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SECTION D: DISTRICT SECRETARY DECLARATION -->
+      <div class="bg-amber-50/70 rounded-2xl p-6 border border-amber-200">
+        <label class="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" name="declaration" required class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+          <div class="text-xs text-slate-700 leading-relaxed">
+            <strong class="text-slate-900">Official Secretary Declaration:</strong>
+            I hereby certify that I am the authorized District Secretary of this District Yoga Association. I have personally scrutinized and verified the athlete's original Date of Birth certificate and Aadhaar details. All particulars entered are true and correct to the best of my official knowledge.
+          </div>
+        </label>
+      </div>
+
+      <!-- Submit & Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
+        <a href="dashboard.html" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm text-center">
+          Cancel &amp; Return
+        </a>
+        
+        <button type="submit" class="w-full sm:w-auto bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane text-amber-300"></i>
+          <span>Submit Athlete Nomination</span>
+        </button>
+      </div>
+
+    </form>
+
+  </main>
+
+  <!-- Form Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>Telangana Yoga Association &bull; Sports Authority of Telangana State (SATS)</div>
+      <div class="flex space-x-4">
+        <a href="dashboard.html" class="hover:text-amber-300">Dashboard</a>
+        <a href="index.html" class="hover:text-amber-300">Championship Portal</a>
+        <a href="index.html#rules" class="hover:text-amber-300">Guidelines</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Set active district name from session storage
+    const activeDist = sessionStorage.getItem('current_district');
+    if (activeDist) {
+      const el = document.getElementById('form-district-name');
+      if (el) el.textContent = activeDist + ' Association';
+    }
+
+    // Default sample date to show instant dynamic age calculation demo
+    window.addEventListener('DOMContentLoaded', () => {
+      const dobEl = document.getElementById('dob-input');
+      if (dobEl && !dobEl.value) {
+        dobEl.value = '2012-04-18';
+        dobEl.dispatchEvent(new Event('change'));
+      }
+    });
+  </script>
+</body>
+</html>
