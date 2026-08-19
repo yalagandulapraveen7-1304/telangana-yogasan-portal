@@ -43,8 +43,13 @@
       }
     }
   </script>
-  
-  <link rel="stylesheet" href="css/custom.css" />
+  <!-- CHANGE THIS: -->
+<!-- <link rel="stylesheet" href="/css/output.css" /> -->
+<!-- <link rel="stylesheet" href="/css/custom.css" /> -->
+
+<!-- TO THIS: -->
+<link rel="stylesheet" href="/static/css/output.css" />
+<link rel="stylesheet" href="/static/css/custom.css" />
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
@@ -125,9 +130,7 @@
       enctype="multipart/form-data" 
       class="space-y-6"
     >
-      <!-- Django CSRF Token Placeholder -->
-      {% csrf_token %}
-
+    
       <!-- SECTION A: ATHLETE PERSONAL INFORMATION -->
       <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         

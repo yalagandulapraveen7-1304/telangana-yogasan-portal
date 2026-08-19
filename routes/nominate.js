@@ -93,15 +93,18 @@ router.post(
   }
 );
 // GET: Fetch all athletes for the dashboard
+
+module.exports = router;
+// GET: Fetch list for dashboard (case-insensitive search)
 router.get('/list', async (req, res) => {
   try {
-    // In production, this will filter by req.user.district from the JWT
-    // For now, we fetch the default Hyderabad entries we are testing with
-    const athletes = await Athlete.find({ district: 'Hyderabad' }).sort({ createdAt: -1 });
+    const athletes = await Athlete.find({
+      district: { $regex: new RegExp('^hyderabad$', 'i') }
+    }).sort({ createdAt: -1 });
+    
     res.json(athletes);
   } catch (err) {
     console.error('Fetch Error:', err);
     res.status(500).json({ error: 'Failed to fetch athletes' });
   }
 });
-module.exports = router;
