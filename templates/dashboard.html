@@ -464,210 +464,189 @@
         </div>
       </div>
     </footer>
-
-    <script src="js/main.js"></script>
+    <script src="/static/js/main.js"></script>
     <script>
-            // Retrieve stored district if available
-            const savedDistrict = sessionStorage.getItem("current_district");
-            if (savedDistrict) {
-              const headerEl = document.getElementById("district-header-name");
-              const pageEl = document.getElementById("page-district-title");
-              const bannerEl = document.getElementById("district-banner-title");
-              if (headerEl) headerEl.textContent = savedDistrict;
-              if (pageEl) pageEl.textContent = savedDistrict + " Dashboard";
-              if (bannerEl)
-                bannerEl.textContent = savedDistrict + " Yoga Association";
-            }
+      // Retrieve stored district if available
+      const savedDistrict = sessionStorage.getItem("current_district");
+      if (savedDistrict) {
+        const headerEl = document.getElementById("district-header-name");
+        const pageEl = document.getElementById("page-district-title");
+        const bannerEl = document.getElementById("district-banner-title");
+        if (headerEl) headerEl.textContent = savedDistrict;
+        if (pageEl) pageEl.textContent = savedDistrict + " Dashboard";
+        if (bannerEl)
+          bannerEl.textContent = savedDistrict + " Yoga Association";
+      }
 
-            // Filter controls handler
-            const filterCat = document.getElementById("filter-category");
-            const filterStat = document.getElementById("filter-status");
-            const searchInp = document.getElementById("table-search");
-            const rows = document.querySelectorAll("#nomination-table tbody tr");
-            const emptyState = document.getElementById("table-empty-state");
-
-            function applyFilters() {
-              const cat = filterCat ? filterCat.value : "all";
-              const stat = filterStat ? filterStat.value : "all";
-              const query = searchInp ? searchInp.value.toLowerCase().trim() : "";
-
-              let visibleCount = 0;
-              rows.forEach((row) => {
-                const rowCat = row.getAttribute("data-category");
-                const rowStat = row.getAttribute("data-status");
-                const rowText = row.textContent.toLowerCase();
-
-                const matchCat = cat === "all" || rowCat === cat;
-                const matchStat = stat === "all" || rowStat === stat;
-                const matchSearch = query === "" || rowText.includes(query);
-
-                if (matchCat && matchStat && matchSearch) {
-                  row.style.display = "";
-                  visibleCount++;
-                } else {
-                  row.style.display = "none";
-                }
-              });
-
-              if (emptyState) {
-                emptyState.style.display = visibleCount === 0 ? "block" : "none";
-              }
-            }
-
-            filterCat?.addEventListener("change", applyFilters);
-            filterStat?.addEventListener("change", applyFilters);
-            searchInp?.addEventListener("input", applyFilters);
-
-            // Fetch and render live MongoDB data
-      async function loadAthletes() {
+      // Fetch and render dynamic MongoDB data
+      async function loadLiveAthletes() {
         try {
-          const response = await fetch('/portal/athletes/list');
+          const response = await fetch("/portal/athletes/list");
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+          }
           const athletes = await response.json();
 
-          const tbody = document.getElementById('athlete-table-body');
-          const emptyState = document.getElementById('table-empty-state');
-          const totalMetric = document.getElementById('metric-total');
+          const tbody = document.getElementById("athlete-table-body");
+          const emptyState = document.getElementById("table-empty-state");
+          const metricTotal = document.getElementById("metric-total");
 
-          // Update top metric
-          if(totalMetric) totalMetric.textContent = athletes.length;
+          if (metricTotal) metricTotal.textContent = athletes.length;
+          tbody.innerHTML = "";
 
-          if (athletes.length === 0) {
-            emptyState.style.display = 'block';
-            tbody.innerHTML = '';
+          if (!athletes || athletes.length === 0) {
+            if (emptyState) emptyState.style.display = "block";
             return;
           }
 
-          emptyState.style.display = 'none';
-          tbody.innerHTML = ''; // Clear out loading state
+          if (emptyState) emptyState.style.display = "none";
 
-          athletes.forEach(athlete => {
-            // Create Initials for Avatar
-            const initials = athlete.firstName.charAt(0) + athlete.lastName.charAt(0);
+          athletes.forEach((athlete) => {
+            const initials =
+              (
+                (athlete.firstName?.[0] || "") + (athlete.lastName?.[0] || "")
+              ).toUpperCase() || "NA";
+            const age = athlete.dob
+              ? new Date().getFullYear() - new Date(athlete.dob).getFullYear()
+              : "-";
+            const chest = athlete.chestNumber || "PENDING";
 
-            // Calculate age text
-            const age = new Date().getFullYear() - new Date(athlete.dob).getFullYear();
-
-            // Format Event Badges
-            const eventsHtml = athlete.events.map(ev =>
-              `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${ev}</span>`
-            ).join('');
-
-            // Status Badge logic
-            let statusHtml = '';
-            if (athlete.status === 'Verified') {
-              statusHtml = `<span class="badge badge-verified"><i class="fa-solid fa-check text-[10px] mr-1"></i> Verified</span>`;
-            } else if (athlete.status === 'Clarification') {
-              statusHtml = `<span class="badge badge-rejected"><i class="fa-solid fa-xmark text-[10px] mr-1"></i> Clarification</span>`;
+            let statusBadge = "";
+            if (athlete.status === "Verified") {
+              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]"></i> Verified</span>`;
+            } else if (athlete.status === "Clarification") {
+              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Clarification</span>`;
             } else {
-              statusHtml = `<span class="badge badge-submitted"><i class="fa-solid fa-clock text-[10px] mr-1"></i> Submitted</span>`;
+              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]"></i> Submitted</span>`;
             }
 
-            const row = document.createElement('tr');
-            row.setAttribute('data-category', athlete.category);
-            row.setAttribute('data-status', athlete.status);
+            const catColor =
+              athlete.category === "Sub-Junior"
+                ? "bg-purple-50 text-purple-700 border-purple-200"
+                : athlete.category === "Junior"
+                  ? "bg-blue-50 text-blue-700 border-blue-200"
+                  : "bg-teal-50 text-teal-700 border-teal-200";
+
+            const eventTags = (athlete.events || [])
+              .map(
+                (ev) =>
+                  `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${ev}</span>`,
+              )
+              .join(" ");
+
+            const row = document.createElement("tr");
+            row.className = "hover:bg-slate-50 transition-colors text-sm";
+            row.setAttribute("data-category", athlete.category || "");
+            row.setAttribute("data-status", athlete.status || "Submitted");
 
             row.innerHTML = `
-              <td class="font-mono font-bold text-xs text-[#0D5C3A]">${athlete.chestNumber}</td>
-              <td>
+              <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
+              <td class="py-3.5 px-4">
                 <div class="flex items-center gap-2.5">
                   <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
-                    ${initials.toUpperCase()}
+                    ${initials}
                   </div>
                   <div>
-                    <div class="font-semibold text-slate-900">${athlete.firstName} ${athlete.lastName}</div>
-                    <div class="text-[11px] text-slate-500">Aadhaar: **** ${athlete.aadhaarLast4}</div>
+                    <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
+                    <div class="text-[11px] text-slate-500">ID: **** ${athlete.aadhaarLast4 || "----"}</div>
                   </div>
                 </div>
               </td>
-              <td>
-                <span class="text-xs font-medium text-slate-700">${athlete.gender} &bull; ${age} Yrs</span>
-                <div class="text-[10px] text-slate-500">DOB: ${new Date(athlete.dob).toLocaleDateString()}</div>
+              <td class="py-3.5 px-4">
+                <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
+                <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
               </td>
-              <td>
-                <span class="badge badge-${athlete.category.toLowerCase().replace('-', '')}">${athlete.category}</span>
+              <td class="py-3.5 px-4">
+                <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
+                  ${athlete.category || "-"}
+                </span>
               </td>
-              <td>
-                <div class="flex flex-wrap gap-1">${eventsHtml}</div>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-wrap gap-1">${eventTags}</div>
               </td>
-              <td>
-                <a href="javascript:void(0)" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
-                  <i class="fa-solid fa-file-pdf text-red-500"></i> View Proof
-                </a>
+              <td class="py-3.5 px-4">
+                <span class="text-xs font-semibold text-slate-600 flex items-center gap-1">
+                  <i class="fa-solid fa-file-shield text-emerald-600"></i> Uploaded
+                </span>
               </td>
-              <td>${statusHtml}</td>
-              <td class="text-right">
-                <div class="flex items-center justify-end gap-1.5">
-                  <button class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A]">
-                    <i class="fa-solid fa-id-card"></i>
-                  </button>
-                </div>
+              <td class="py-3.5 px-4">${statusBadge}</td>
+              <td class="py-3.5 px-4 text-right">
+                <button title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
+                  <i class="fa-solid fa-id-card"></i>
+                </button>
               </td>
             `;
             tbody.appendChild(row);
           });
-
-        } catch (error) {
-          console.error("Failed to load athletes", error);
+        } catch (err) {
+          console.error("Error fetching live athletes:", err);
         }
       }
 
-      // Fire the function when the page loads
-      window.addEventListener('DOMContentLoaded', loadAthletes);
+      document.addEventListener("DOMContentLoaded", loadLiveAthletes);
+    </script>
+    <script>
+      async function loadLiveAthletes() {
+        try {
+          const response = await fetch("/portal/athletes/list");
+          const athletes = await response.json();
 
-      <script>
-        async function loadLiveAthletes() {
-          try {
-            const response = await fetch('/portal/athletes/list');
-            const athletes = await response.json();
+          const tbody = document.getElementById("athlete-table-body");
+          tbody.innerHTML = "";
 
-            const tbody = document.getElementById('athlete-table-body');
-            tbody.innerHTML = '';
-
-            if (!athletes || athletes.length === 0) {
-              tbody.innerHTML = `
+          if (!athletes || athletes.length === 0) {
+            tbody.innerHTML = `
                 <tr>
                   <td colspan="8" class="text-center py-6 text-slate-500 font-medium">
                     No athletes registered yet. Click "+ Register Athlete" to begin.
                   </td>
                 </tr>
               `;
-              return;
+            return;
+          }
+
+          // Update total nominated counter metric if present
+          const metricTotal = document.querySelector(".metric-total");
+          if (metricTotal) metricTotal.textContent = athletes.length;
+
+          athletes.forEach((athlete) => {
+            const initials =
+              (
+                (athlete.firstName?.[0] || "") + (athlete.lastName?.[0] || "")
+              ).toUpperCase() || "NA";
+            const age =
+              new Date().getFullYear() - new Date(athlete.dob).getFullYear();
+            const chest = athlete.chestNumber || "PENDING";
+
+            // Badge styling for status
+            let statusBadge = "";
+            if (athlete.status === "Verified") {
+              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]"></i> Verified</span>`;
+            } else if (athlete.status === "Clarification") {
+              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Clarification</span>`;
+            } else {
+              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]"></i> Submitted</span>`;
             }
 
-            // Update total nominated counter metric if present
-            const metricTotal = document.querySelector('.metric-total');
-            if (metricTotal) metricTotal.textContent = athletes.length;
+            // Category pill colors
+            const catColor =
+              athlete.category === "Sub-Junior"
+                ? "bg-purple-50 text-purple-700 border-purple-200"
+                : athlete.category === "Junior"
+                  ? "bg-blue-50 text-blue-700 border-blue-200"
+                  : "bg-teal-50 text-teal-700 border-teal-200";
 
-            athletes.forEach((athlete) => {
-              const initials = ((athlete.firstName?.[0] || '') + (athlete.lastName?.[0] || '')).toUpperCase() || 'NA';
-              const age = new Date().getFullYear() - new Date(athlete.dob).getFullYear();
-              const chest = athlete.chestNumber || 'PENDING';
+            // Event tags
+            const eventTags = (athlete.events || [])
+              .map(
+                (ev) =>
+                  `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${ev}</span>`,
+              )
+              .join(" ");
 
-              // Badge styling for status
-              let statusBadge = '';
-              if (athlete.status === 'Verified') {
-                statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]"></i> Verified</span>`;
-              } else if (athlete.status === 'Clarification') {
-                statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Clarification</span>`;
-              } else {
-                statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]"></i> Submitted</span>`;
-              }
-
-              // Category pill colors
-              const catColor = athlete.category === 'Sub-Junior'
-                ? 'bg-purple-50 text-purple-700 border-purple-200'
-                : athlete.category === 'Junior'
-                ? 'bg-blue-50 text-blue-700 border-blue-200'
-                : 'bg-teal-50 text-teal-700 border-teal-200';
-
-              // Event tags
-              const eventTags = (athlete.events || []).map(ev =>
-                `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${ev}</span>`
-              ).join(' ');
-
-              const row = document.createElement('tr');
-              row.className = 'hover:bg-slate-50 transition-colors text-sm';
-              row.innerHTML = `
+            const row = document.createElement("tr");
+            row.className = "hover:bg-slate-50 transition-colors text-sm";
+            row.innerHTML = `
                 <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
                 <td class="py-3.5 px-4">
                   <div class="flex items-center gap-2.5">
@@ -676,13 +655,13 @@
                     </div>
                     <div>
                       <div class="font-semibold text-slate-900">${athlete.firstName} ${athlete.lastName}</div>
-                      <div class="text-[11px] text-slate-500">Aadhaar: **** ${athlete.aadhaarLast4 || '----'}</div>
+                      <div class="text-[11px] text-slate-500">Aadhaar: **** ${athlete.aadhaarLast4 || "----"}</div>
                     </div>
                   </div>
                 </td>
                 <td class="py-3.5 px-4">
                   <span class="font-medium text-slate-700">${athlete.gender} &bull; ${age} Yrs</span>
-                  <div class="text-[10px] text-slate-500">DOB: ${new Date(athlete.dob).toLocaleDateString('en-GB')}</div>
+                  <div class="text-[10px] text-slate-500">DOB: ${new Date(athlete.dob).toLocaleDateString("en-GB")}</div>
                 </td>
                 <td class="py-3.5 px-4">
                   <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
@@ -704,14 +683,39 @@
                   </button>
                 </td>
               `;
-              tbody.appendChild(row);
-            });
-          } catch (err) {
-            console.error('Error fetching live athletes:', err);
-          }
+            tbody.appendChild(row);
+          });
+        } catch (err) {
+          console.error("Error fetching live athletes:", err);
         }
+      }
 
-        document.addEventListener('DOMContentLoaded', loadLiveAthletes);
+      document.addEventListener("DOMContentLoaded", loadLiveAthletes);
+    </script>
+    <script>
+      const form = document.querySelector("#nomination-form"); // Adjust to your form ID
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        // If sending JSON:
+        const payload = Object.fromEntries(formData.entries());
+        // Handle events array if multiselect/checkboxes
+        payload.events = formData.getAll("events");
+
+        const res = await fetch("/portal/athletes/nominate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          window.location.href = "/dashboard.html"; // Redirect to dashboard
+        } else {
+          alert("Failed to register athlete");
+        }
+      });
     </script>
   </body>
 </html>

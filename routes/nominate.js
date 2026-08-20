@@ -108,3 +108,11 @@ router.get('/list', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch athletes' });
   }
 });
+router.get('/portal/athletes/list', async (req, res) => {
+  try {
+    const athletes = await Athlete.find().sort({ createdAt: -1 });
+    res.json(athletes);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve athletes' });
+  }
+});
