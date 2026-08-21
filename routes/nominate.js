@@ -45,7 +45,6 @@ router.get('/list', async (req, res) => {
   }
 });
 
-// 4. POST /nominate (This accepts the form data)
 router.post(
   '/nominate',
   upload.fields([
@@ -54,27 +53,56 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      const athleteData = req.body;
+      const b = req.body;
 
+      // Clean and flatten the events array
+      let selectedEvents = [];
+      const rawEvents = b['events[]'] || b.events;
+      if (Array.isArray(rawEvents)) {
+        selectedEvents = rawEvents.flat();
+      } else if (typeof rawEvents === 'string' && rawEvents.trim()) {
+        selectedEvents = [rawEvents.trim()];
+      } else {
+        selectedEvents = ['Traditional Yogasana'];
+      }
+
+      // Map incoming fields to Mongoose schema attributes
+      const athletePayload = {
+        firstName: b.firstName || b.first_name,
+        lastName: b.lastName || b.last_name,
+        dob: b.dob,
+        gender: b.gender,
+        aadhaarLast4: b.aadhaarLast4 || b.aadhaar_last_4,
+        guardianName: b.guardianName || b.guardian_name,
+        institutionName: b.institutionName || b.institution_name,
+        mobileNumber: b.mobileNumber || b.mobile_number,
+        residentialAddress: b.residentialAddress || b.residential_address,
+        district: b.district || 'Hyderabad',
+        events: selectedEvents,
+        category: b.category || 'Junior',
+        status: 'Submitted'
+      };
+
+      // Extract uploaded file paths
       if (req.files) {
         if (req.files.passport_photo && req.files.passport_photo[0]) {
-          athleteData.photoPath = `/uploads/${req.files.passport_photo[0].filename}`;
+          athletePayload.photoPath = `/uploads/${req.files.passport_photo[0].filename}`;
         }
         if (req.files.dob_certificate && req.files.dob_certificate[0]) {
-          athleteData.dobProofPath = `/uploads/${req.files.dob_certificate[0].filename}`;
+          athletePayload.dobProofPath = `/uploads/${req.files.dob_certificate[0].filename}`;
         }
       }
 
-      const newAthlete = new Athlete(athleteData);
+      const newAthlete = new Athlete(athletePayload);
       await newAthlete.save();
 
       res.redirect('/dashboard.html');
     } catch (err) {
-      console.error('Nomination Error:', err);
-      res.status(500).json({ error: 'Failed to nominate athlete' });
+      console.error('Detailed Nomination Error:', err);
+      res.status(500).json({ error: 'Failed to nominate athlete', details: err.message });
     }
   }
-);
+);;
 
 // 5. PATCH /status (This handles the Verify/Clarification modal)
 router.patch('/:id/status', async (req, res) => {

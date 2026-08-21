@@ -45,3 +45,14 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 👉 ADD THIS EXACT LINE HERE:
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Your other static routes
+app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use(express.static(path.join(__dirname, 'templates'), { index: 'index.html' }));
+// In server.js (near top with other middleware)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
