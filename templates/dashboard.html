@@ -304,7 +304,113 @@
           </div>
         </div>
       </div>
+      <!-- Document Verification Modal -->
+      <div
+        id="verification-modal"
+        class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
+        >
+          <!-- Modal Header -->
+          <div
+            class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50"
+          >
+            <div>
+              <h3
+                class="text-base font-bold text-slate-900 font-display"
+                id="modal-athlete-name"
+              >
+                Verify Athlete
+              </h3>
+              <p class="text-xs text-slate-500" id="modal-athlete-meta">
+                Chest No: --- | Category: ---
+              </p>
+            </div>
+            <button
+              onclick="closeModal()"
+              class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg"
+            >
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
 
+          <!-- Modal Body: Split Layout -->
+          <div
+            class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 p-6 overflow-y-auto"
+          >
+            <!-- Left: Athlete Details -->
+            <div class="space-y-3 text-xs">
+              <div
+                class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5"
+              >
+                <p>
+                  <span class="text-slate-500">Gender:</span>
+                  <strong id="modal-gender" class="text-slate-800">-</strong>
+                </p>
+                <p>
+                  <span class="text-slate-500">Date of Birth:</span>
+                  <strong id="modal-dob" class="text-slate-800">-</strong>
+                </p>
+                <p>
+                  <span class="text-slate-500">Events:</span>
+                  <span id="modal-events" class="text-slate-800">-</span>
+                </p>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1"
+                  >Scrutiny Remarks (Optional)</label
+                >
+                <textarea
+                  id="scrutiny-remarks"
+                  rows="3"
+                  placeholder="Enter reason if requesting clarification..."
+                  class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#0D5C3A]"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Right: Document Viewer -->
+            <div
+              class="flex flex-col items-center justify-center bg-slate-100 rounded-xl border border-dashed border-slate-300 p-3 min-h-[300px]"
+            >
+              <img
+                id="modal-proof-img"
+                src=""
+                alt="Proof Preview"
+                class="max-h-[350px] w-auto object-contain rounded hidden"
+              />
+              <iframe
+                id="modal-proof-pdf"
+                src=""
+                class="w-full h-[350px] rounded hidden"
+              ></iframe>
+              <div id="modal-proof-fallback" class="text-xs text-slate-400">
+                No document preview available
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer: Action Buttons -->
+          <div
+            class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2"
+          >
+            <button
+              onclick="updateAthleteStatus('Clarification')"
+              class="px-4 py-2 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition"
+            >
+              Request Clarification
+            </button>
+            <button
+              onclick="updateAthleteStatus('Verified')"
+              class="px-4 py-2 text-xs font-bold text-white bg-[#0D5C3A] hover:bg-[#0a4229] rounded-lg transition"
+            >
+              Verify & Approve
+            </button>
+          </div>
+        </div>
+      </div>
       <!-- Nomination Roster Table Section -->
       <div
         class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8"
@@ -334,10 +440,10 @@
                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
               ></i>
               <input
-                type="text"
-                id="table-search"
-                placeholder="Search athlete or chest no..."
-                class="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-[#0D5C3A]"
+                type="hidden"
+                name="district"
+                id="hidden-district"
+                value=""
               />
             </div>
 
@@ -464,9 +570,142 @@
         </div>
       </div>
     </footer>
+    <div
+      id="verification-modal"
+      class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-150"
+      >
+        <!-- Modal Header -->
+        <div
+          class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50"
+        >
+          <div>
+            <h3
+              class="text-base font-bold text-slate-900 font-display"
+              id="modal-athlete-name"
+            >
+              Verify Athlete
+            </h3>
+            <p class="text-xs text-slate-500" id="modal-athlete-meta">
+              Chest No: --- | Category: ---
+            </p>
+          </div>
+          <button
+            onclick="closeModal()"
+            type="button"
+            class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg transition-colors"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body: Split Layout -->
+        <div
+          class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 p-6 overflow-y-auto"
+        >
+          <!-- Left Column: Athlete Details & Remarks -->
+          <div class="space-y-4 text-xs">
+            <div
+              class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2"
+            >
+              <p
+                class="flex justify-between border-b border-slate-200/60 pb-1.5"
+              >
+                <span class="text-slate-500">Gender:</span>
+                <strong id="modal-gender" class="text-slate-800">-</strong>
+              </p>
+              <p
+                class="flex justify-between border-b border-slate-200/60 pb-1.5"
+              >
+                <span class="text-slate-500">Date of Birth:</span>
+                <strong id="modal-dob" class="text-slate-800">-</strong>
+              </p>
+              <p class="flex justify-between pb-0.5">
+                <span class="text-slate-500">Registered Events:</span>
+                <strong id="modal-events" class="text-slate-800 text-right"
+                  >-</strong
+                >
+              </p>
+            </div>
+
+            <div>
+              <label
+                for="scrutiny-remarks"
+                class="block font-semibold text-slate-700 mb-1.5"
+                >Scrutiny Remarks (Optional)</label
+              >
+              <textarea
+                id="scrutiny-remarks"
+                rows="4"
+                placeholder="Mention missing details or reason for clarification..."
+                class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D5C3A] bg-white transition"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Right Column: Document Viewer -->
+          <div
+            class="flex flex-col items-center justify-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-3 min-h-[300px]"
+          >
+            <img
+              id="modal-proof-img"
+              src=""
+              alt="Proof Document"
+              class="max-h-[340px] w-auto object-contain rounded-lg shadow-sm hidden"
+            />
+            <iframe
+              id="modal-proof-pdf"
+              src=""
+              class="w-full h-[340px] rounded-lg border-0 hidden"
+            ></iframe>
+            <div
+              id="modal-proof-fallback"
+              class="text-xs text-slate-400 flex flex-col items-center gap-2 py-8"
+            >
+              <i class="fa-regular fa-file-image text-3xl text-slate-300"></i>
+              <span>No document uploaded</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer: Action Buttons -->
+        <div
+          class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2.5"
+        >
+          <button
+            type="button"
+            onclick="closeModal()"
+            class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onclick="updateAthleteStatus('Clarification')"
+            class="px-4 py-2 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition"
+          >
+            Request Clarification
+          </button>
+          <button
+            type="button"
+            onclick="updateAthleteStatus('Verified')"
+            class="px-4 py-2 text-xs font-bold text-white bg-[#0D5C3A] hover:bg-[#0a4229] rounded-lg shadow-sm transition"
+          >
+            Verify &amp; Approve
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- ========================================== -->
     <script src="/static/js/main.js"></script>
     <script>
-      // Retrieve stored district if available
+      // Global state
+      let liveAthletesList = [];
+      let currentAthleteId = null;
+
+      // 1. Session District Header Initialization
       const savedDistrict = sessionStorage.getItem("current_district");
       if (savedDistrict) {
         const headerEl = document.getElementById("district-header-name");
@@ -478,7 +717,7 @@
           bannerEl.textContent = savedDistrict + " Yoga Association";
       }
 
-      // Fetch and render dynamic MongoDB data
+      // 2. Fetch and Render Live MongoDB Data + Compute Dynamic Metrics
       async function loadLiveAthletes() {
         try {
           const response = await fetch("/portal/athletes/list");
@@ -486,12 +725,39 @@
             throw new Error(`Server returned ${response.status}`);
           }
           const athletes = await response.json();
+          liveAthletesList = athletes; // Cache globally for modal lookup
 
           const tbody = document.getElementById("athlete-table-body");
           const emptyState = document.getElementById("table-empty-state");
-          const metricTotal = document.getElementById("metric-total");
 
-          if (metricTotal) metricTotal.textContent = athletes.length;
+          // Metric elements
+          const metricTotal = document.getElementById("metric-total");
+          const metricVerified = document.getElementById("metric-verified");
+          const metricPending = document.getElementById("metric-pending");
+          const metricClarification = document.getElementById(
+            "metric-clarification",
+          );
+
+          // Calculate dynamic counts
+          const totalCount = athletes.length;
+          const verifiedCount = athletes.filter(
+            (a) => a.status === "Verified",
+          ).length;
+          const clarificationCount = athletes.filter(
+            (a) => a.status === "Clarification",
+          ).length;
+          const pendingCount = athletes.filter(
+            (a) =>
+              !a.status || a.status === "Submitted" || a.status === "Pending",
+          ).length;
+
+          // Update metric indicators
+          if (metricTotal) metricTotal.textContent = totalCount;
+          if (metricVerified) metricVerified.textContent = verifiedCount;
+          if (metricPending) metricPending.textContent = pendingCount;
+          if (metricClarification)
+            metricClarification.textContent = clarificationCount;
+
           tbody.innerHTML = "";
 
           if (!athletes || athletes.length === 0) {
@@ -506,11 +772,13 @@
               (
                 (athlete.firstName?.[0] || "") + (athlete.lastName?.[0] || "")
               ).toUpperCase() || "NA";
+
             const age = athlete.dob
               ? new Date().getFullYear() - new Date(athlete.dob).getFullYear()
               : "-";
             const chest = athlete.chestNumber || "PENDING";
 
+            // Status Badge UI
             let statusBadge = "";
             if (athlete.status === "Verified") {
               statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]"></i> Verified</span>`;
@@ -520,6 +788,7 @@
               statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]"></i> Submitted</span>`;
             }
 
+            // Category UI
             const catColor =
               athlete.category === "Sub-Junior"
                 ? "bg-purple-50 text-purple-700 border-purple-200"
@@ -527,6 +796,7 @@
                   ? "bg-blue-50 text-blue-700 border-blue-200"
                   : "bg-teal-50 text-teal-700 border-teal-200";
 
+            // Event Tags
             const eventTags = (athlete.events || [])
               .map(
                 (ev) =>
@@ -540,42 +810,42 @@
             row.setAttribute("data-status", athlete.status || "Submitted");
 
             row.innerHTML = `
-              <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
-              <td class="py-3.5 px-4">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
-                    ${initials}
-                  </div>
-                  <div>
-                    <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
-                    <div class="text-[11px] text-slate-500">ID: **** ${athlete.aadhaarLast4 || "----"}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="py-3.5 px-4">
-                <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
-                <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
-              </td>
-              <td class="py-3.5 px-4">
-                <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
-                  ${athlete.category || "-"}
-                </span>
-              </td>
-              <td class="py-3.5 px-4">
-                <div class="flex flex-wrap gap-1">${eventTags}</div>
-              </td>
-              <td class="py-3.5 px-4">
-                <span class="text-xs font-semibold text-slate-600 flex items-center gap-1">
-                  <i class="fa-solid fa-file-shield text-emerald-600"></i> Uploaded
-                </span>
-              </td>
-              <td class="py-3.5 px-4">${statusBadge}</td>
-              <td class="py-3.5 px-4 text-right">
-                <button title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
-                  <i class="fa-solid fa-id-card"></i>
-                </button>
-              </td>
-            `;
+          <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
+                ${initials}
+              </div>
+              <div>
+                <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
+                <div class="text-[11px] text-slate-500">ID: [Redacted]</div>
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
+            <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
+              ${athlete.category || "-"}
+            </span>
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="flex flex-wrap gap-1">${eventTags}</div>
+          </td>
+          <td class="py-3.5 px-4">
+            <button type="button" onclick="openVerificationModal('${athlete._id}')" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-file-shield text-emerald-600"></i> View Proof
+            </button>
+          </td>
+          <td class="py-3.5 px-4">${statusBadge}</td>
+          <td class="py-3.5 px-4 text-right">
+            <button type="button" onclick="openVerificationModal('${athlete._id}')" title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
+              <i class="fa-solid fa-id-card"></i>
+            </button>
+          </td>
+        `;
             tbody.appendChild(row);
           });
         } catch (err) {
@@ -583,139 +853,97 @@
         }
       }
 
-      document.addEventListener("DOMContentLoaded", loadLiveAthletes);
-    </script>
-    <script>
-      async function loadLiveAthletes() {
-        try {
-          const response = await fetch("/portal/athletes/list");
-          const athletes = await response.json();
+      // 3. Modal Controls
+      function openVerificationModal(athleteId) {
+        const athlete = liveAthletesList.find((a) => a._id === athleteId);
+        if (!athlete) return;
 
-          const tbody = document.getElementById("athlete-table-body");
-          tbody.innerHTML = "";
+        currentAthleteId = athlete._id;
 
-          if (!athletes || athletes.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                  <td colspan="8" class="text-center py-6 text-slate-500 font-medium">
-                    No athletes registered yet. Click "+ Register Athlete" to begin.
-                  </td>
-                </tr>
-              `;
-            return;
+        document.getElementById("modal-athlete-name").textContent =
+          `${athlete.firstName || ""} ${athlete.lastName || ""}`;
+        document.getElementById("modal-athlete-meta").textContent =
+          `Chest No: ${athlete.chestNumber || "PENDING"} | Category: ${athlete.category || "N/A"}`;
+        document.getElementById("modal-gender").textContent =
+          athlete.gender || "-";
+        document.getElementById("modal-dob").textContent = athlete.dob
+          ? new Date(athlete.dob).toLocaleDateString("en-GB")
+          : "-";
+        document.getElementById("modal-events").textContent =
+          (athlete.events || []).join(", ") || "None";
+        document.getElementById("scrutiny-remarks").value =
+          athlete.remarks || "";
+
+        // 1. Grab the raw path from your specific database fields
+        let rawPath = athlete.dobProofPath || athlete.photoPath || "";
+        let formattedUrl = "";
+
+        if (rawPath) {
+          // 2. Extract ONLY the filename by splitting at slashes or backslashes
+          const filename = rawPath.split(/[\\/]/).pop();
+
+          // 3. Reconstruct as a clean web path
+          formattedUrl = `/uploads/${filename}`;
+        }
+
+        const imgEl = document.getElementById("modal-proof-img");
+        const pdfEl = document.getElementById("modal-proof-pdf");
+        const fallbackEl = document.getElementById("modal-proof-fallback");
+
+        imgEl.classList.add("hidden");
+        pdfEl.classList.add("hidden");
+        fallbackEl.classList.add("hidden");
+
+        // 4. Apply the formatted URL to the viewer
+        if (formattedUrl) {
+          if (formattedUrl.toLowerCase().endsWith(".pdf")) {
+            pdfEl.src = formattedUrl;
+            pdfEl.classList.remove("hidden");
+          } else {
+            imgEl.src = formattedUrl;
+            imgEl.classList.remove("hidden");
           }
+        } else {
+          fallbackEl.classList.remove("hidden");
+        }
 
-          // Update total nominated counter metric if present
-          const metricTotal = document.querySelector(".metric-total");
-          if (metricTotal) metricTotal.textContent = athletes.length;
+        document
+          .getElementById("verification-modal")
+          .classList.remove("hidden");
+      }
+      function closeModal() {
+        document.getElementById("verification-modal").classList.add("hidden");
+      }
 
-          athletes.forEach((athlete) => {
-            const initials =
-              (
-                (athlete.firstName?.[0] || "") + (athlete.lastName?.[0] || "")
-              ).toUpperCase() || "NA";
-            const age =
-              new Date().getFullYear() - new Date(athlete.dob).getFullYear();
-            const chest = athlete.chestNumber || "PENDING";
+      // 4. Update Status (Approve / Clarification)
+      async function updateAthleteStatus(newStatus) {
+        if (!currentAthleteId) return;
 
-            // Badge styling for status
-            let statusBadge = "";
-            if (athlete.status === "Verified") {
-              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]"></i> Verified</span>`;
-            } else if (athlete.status === "Clarification") {
-              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Clarification</span>`;
-            } else {
-              statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]"></i> Submitted</span>`;
-            }
+        const remarks = document.getElementById("scrutiny-remarks").value;
 
-            // Category pill colors
-            const catColor =
-              athlete.category === "Sub-Junior"
-                ? "bg-purple-50 text-purple-700 border-purple-200"
-                : athlete.category === "Junior"
-                  ? "bg-blue-50 text-blue-700 border-blue-200"
-                  : "bg-teal-50 text-teal-700 border-teal-200";
+        try {
+          const res = await fetch(
+            `/portal/athletes/${currentAthleteId}/status`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status: newStatus, remarks }),
+            },
+          );
 
-            // Event tags
-            const eventTags = (athlete.events || [])
-              .map(
-                (ev) =>
-                  `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${ev}</span>`,
-              )
-              .join(" ");
-
-            const row = document.createElement("tr");
-            row.className = "hover:bg-slate-50 transition-colors text-sm";
-            row.innerHTML = `
-                <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
-                <td class="py-3.5 px-4">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
-                      ${initials}
-                    </div>
-                    <div>
-                      <div class="font-semibold text-slate-900">${athlete.firstName} ${athlete.lastName}</div>
-                      <div class="text-[11px] text-slate-500">Aadhaar: **** ${athlete.aadhaarLast4 || "----"}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-3.5 px-4">
-                  <span class="font-medium text-slate-700">${athlete.gender} &bull; ${age} Yrs</span>
-                  <div class="text-[10px] text-slate-500">DOB: ${new Date(athlete.dob).toLocaleDateString("en-GB")}</div>
-                </td>
-                <td class="py-3.5 px-4">
-                  <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
-                    ${athlete.category}
-                  </span>
-                </td>
-                <td class="py-3.5 px-4">
-                  <div class="flex flex-wrap gap-1">${eventTags}</div>
-                </td>
-                <td class="py-3.5 px-4">
-                  <span class="text-xs font-semibold text-slate-600 flex items-center gap-1">
-                    <i class="fa-solid fa-file-shield text-emerald-600"></i> Uploaded
-                  </span>
-                </td>
-                <td class="py-3.5 px-4">${statusBadge}</td>
-                <td class="py-3.5 px-4 text-right">
-                  <button title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
-                    <i class="fa-solid fa-id-card"></i>
-                  </button>
-                </td>
-              `;
-            tbody.appendChild(row);
-          });
+          if (res.ok) {
+            closeModal();
+            loadLiveAthletes(); // Dynamically updates counts and table rows
+          } else {
+            alert("Failed to update status.");
+          }
         } catch (err) {
-          console.error("Error fetching live athletes:", err);
+          console.error("Status update failed:", err);
         }
       }
 
+      // Initialize data fetch on DOM Ready
       document.addEventListener("DOMContentLoaded", loadLiveAthletes);
-    </script>
-    <script>
-      const form = document.querySelector("#nomination-form"); // Adjust to your form ID
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(form);
-
-        // If sending JSON:
-        const payload = Object.fromEntries(formData.entries());
-        // Handle events array if multiselect/checkboxes
-        payload.events = formData.getAll("events");
-
-        const res = await fetch("/portal/athletes/nominate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        if (res.ok) {
-          window.location.href = "/dashboard.html"; // Redirect to dashboard
-        } else {
-          alert("Failed to register athlete");
-        }
-      });
     </script>
   </body>
 </html>

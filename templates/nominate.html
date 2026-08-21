@@ -123,14 +123,16 @@
 
     <!-- Official Athlete Nomination Form -->
     <!-- Form Technical Constraints: enctype="multipart/form-data" and {% csrf_token %} -->
+    <!-- CHANGE THIS BLOCK IN NOMINATE.HTML -->
     <form 
       id="nomination-form" 
-      action="/portal/athletes/add/" 
+      action="/portal/athletes/nominate" 
       method="POST" 
       enctype="multipart/form-data" 
       class="space-y-6"
     >
-    
+      <!-- MUST ADD THIS HIDDEN INPUT SO MONGODB DOESN'T REJECT THE SAVE -->
+      <input type="hidden" name="district" id="hidden-district" value="">
       <!-- SECTION A: ATHLETE PERSONAL INFORMATION -->
       <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         
@@ -427,14 +429,7 @@
             <p class="text-[11px] text-slate-500 mb-3">Front-facing white background photo (Max 2MB)</p>
             
             <div class="upload-zone bg-white py-6">
-              <input 
-                type="file" 
-                id="photo-upload" 
-                name="passport_photo" 
-                accept="image/*" 
-                required 
-                data-photo-preview="passport-preview"
-              />
+              <input type="file" name="passport_photo" accept="image/*" />
               <div class="space-y-1">
                 <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]"></i>
                 <div class="text-xs font-semibold text-slate-700">Click or drag &amp; drop photo here</div>
@@ -456,14 +451,7 @@
             <p class="text-[11px] text-slate-500 mb-3">Birth Certificate / SSC Bonafide / School Record</p>
             
             <div class="upload-zone bg-white py-6">
-              <input 
-                type="file" 
-                id="dob-cert-upload" 
-                name="dob_certificate" 
-                accept=".pdf,image/*" 
-                required 
-                data-doc-upload="dob-file-name"
-              />
+             <input type="file" name="dob_certificate" accept="image/*,.pdf" />
               <div class="space-y-1">
                 <i class="fa-solid fa-file-shield text-2xl text-amber-600"></i>
                 <div class="text-xs font-semibold text-slate-700">Click or drag &amp; drop certificate</div>
@@ -537,6 +525,35 @@
         dobEl.dispatchEvent(new Event('change'));
       }
     });
+  </script>
+  
+    <script>
+    // Set active district name from session storage
+    const activeDist = sessionStorage.getItem('current_district');
+    
+    // Update Header
+    if (activeDist) {
+      const el = document.getElementById('form-district-name');
+      if (el) el.textContent = activeDist + ' Association';
+      
+      // AUTO-FILL THE HIDDEN INPUT FOR MONGODB
+      const hiddenInput = document.getElementById('hidden-district');
+      if (hiddenInput) hiddenInput.value = activeDist;
+    } else {
+      // Fallback if session is empty during testing
+      const hiddenInput = document.getElementById('hidden-district');
+      if (hiddenInput) hiddenInput.value = "Hyderabad"; 
+    }
+
+    // Default sample date
+    window.addEventListener('DOMContentLoaded', () => {
+      const dobEl = document.getElementById('dob-input');
+      if (dobEl && !dobEl.value) {
+        dobEl.value = '2012-04-18';
+        dobEl.dispatchEvent(new Event('change'));
+      }
+    });
+
   </script>
 </body>
 </html>

@@ -2,117 +2,95 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const Athlete = require('../models/Athlete');
 
-// Ensure upload directories exist
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
+// 1. Storage Configuration
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
   }
 });
 
+// 2. Multer Instance
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB limit
   fileFilter: (req, file, cb) => {
     if (file.fieldname === 'passport_photo' && !file.mimetype.startsWith('image/')) {
       return cb(new Error('Passport photo must be an image file.'));
     }
-    if (file.fieldname === 'dob_certificate' && !['image/jpeg', 'image/png', 'application/pdf'].includes(file.mimetype)) {
-      return cb(new Error('DOB certificate must be a PDF or image.'));
+    if (
+      file.fieldname === 'dob_certificate' &&
+      !['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'].includes(file.mimetype)
+    ) {
+      return cb(new Error('DOB certificate must be a PDF or image file.'));
     }
     cb(null, true);
   }
 });
 
+// 3. GET /list (This populates your Dashboard!)
+router.get('/list', async (req, res) => {
+  try {
+    const athletes = await Athlete.find().sort({ createdAt: -1 });
+    res.json(athletes);
+  } catch (err) {
+    console.error('Fetch Error:', err);
+    res.status(500).json({ error: 'Failed to retrieve athletes' });
+  }
+});
+
+// 4. POST /nominate (This accepts the form data)
 router.post(
-  '/add',
+  '/nominate',
   upload.fields([
     { name: 'passport_photo', maxCount: 1 },
     { name: 'dob_certificate', maxCount: 1 }
   ]),
   async (req, res) => {
     try {
-      const {
-        first_name,
-        last_name,
-        dob,
-        gender,
-        aadhaar_last_4,
-        guardian_name,
-        institution_name,
-        mobile_number,
-        residential_address,
-        events
-      } = req.body;
+      const athleteData = req.body;
 
-      // Server-side age calculation (Dec 31 cutoff)
-      const birthDate = new Date(dob);
-      const cutoffDate = new Date('2025-12-31');
-      let age = cutoffDate.getFullYear() - birthDate.getFullYear();
-      const m = cutoffDate.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && cutoffDate.getDate() < birthDate.getDate())) age--;
-
-      let computedCategory = '';
-      if (age >= 10 && age < 14) computedCategory = 'Sub-Junior';
-      else if (age >= 14 && age < 18) computedCategory = 'Junior';
-      else if (age >= 18 && age < 28) computedCategory = 'Senior';
-      else {
-        return res.status(400).send('Athlete age is ineligible (must be 10 to <28 years).');
+      if (req.files) {
+        if (req.files.passport_photo && req.files.passport_photo[0]) {
+          athleteData.photoPath = `/uploads/${req.files.passport_photo[0].filename}`;
+        }
+        if (req.files.dob_certificate && req.files.dob_certificate[0]) {
+          athleteData.dobProofPath = `/uploads/${req.files.dob_certificate[0].filename}`;
+        }
       }
 
-      const athlete = new Athlete({
-        district: 'Hyderabad', // Defaults to current district session
-        firstName: first_name,
-        lastName: last_name,
-        dob: birthDate,
-        category: computedCategory,
-        gender,
-        aadhaarLast4: aadhaar_last_4,
-        guardianName: guardian_name,
-        institutionName: institution_name,
-        mobileNumber: mobile_number,
-        residentialAddress: residential_address,
-        events: Array.isArray(events) ? events : [events],
-        photoPath: req.files['passport_photo'][0].path,
-        dobProofPath: req.files['dob_certificate'][0].path
-      });
+      const newAthlete = new Athlete(athleteData);
+      await newAthlete.save();
 
-      await athlete.save();
-      res.redirect('/dashboard.html?registered=true');
+      res.redirect('/dashboard.html');
     } catch (err) {
-      console.error('Submission Error:', err);
-      res.status(500).send('Error registering athlete: ' + err.message);
+      console.error('Nomination Error:', err);
+      res.status(500).json({ error: 'Failed to nominate athlete' });
     }
   }
 );
-// GET: Fetch all athletes for the dashboard
+
+// 5. PATCH /status (This handles the Verify/Clarification modal)
+router.patch('/:id/status', async (req, res) => {
+  try {
+    const { status, remarks } = req.body;
+    const updated = await Athlete.findByIdAndUpdate(
+      req.params.id,
+      { status, remarks },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ error: 'Athlete not found' });
+    res.json(updated);
+  } catch (err) {
+    console.error('Status Update Error:', err);
+    res.status(500).json({ error: 'Failed to update status' });
+  }
+});
 
 module.exports = router;
-// GET: Fetch list for dashboard (case-insensitive search)
-router.get('/list', async (req, res) => {
-  try {
-    const athletes = await Athlete.find({
-      district: { $regex: new RegExp('^hyderabad$', 'i') }
-    }).sort({ createdAt: -1 });
-    
-    res.json(athletes);
-  } catch (err) {
-    console.error('Fetch Error:', err);
-    res.status(500).json({ error: 'Failed to fetch athletes' });
-  }
-});
-router.get('/portal/athletes/list', async (req, res) => {
-  try {
-    const athletes = await Athlete.find().sort({ createdAt: -1 });
-    res.json(athletes);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve athletes' });
-  }
-});

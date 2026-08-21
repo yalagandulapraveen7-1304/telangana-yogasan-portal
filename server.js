@@ -12,29 +12,30 @@ app.use(
     contentSecurityPolicy: false,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tya_yogasana')
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
-
-// 1. Serve static assets (CSS, JS)
+// Serve static assets and uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/static', express.static(path.join(__dirname, 'static')));
-
-// 2. Serve HTML templates directory directly
 app.use(express.static(path.join(__dirname, 'templates'), { index: 'index.html' }));
 
-// 3. Fallback explicit route for root
+// Database connection
+mongoose
+  .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tya_yogasana')
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
+
+// Fallback explicit route for root
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: path.join(__dirname, 'templates') });
 });
-// Static files
-app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use(express.static(path.join(__dirname, 'templates')));
-// Fallback error logger
+
+// Mount Athlete Portal Routes
 app.use('/portal/athletes', require('./routes/nominate'));
+
+// Fallback error logger
 app.use((err, req, res, next) => {
   console.error('SERVER ERROR LOG:', err.stack);
   res.status(500).send('Internal Server Error: ' + err.message);
