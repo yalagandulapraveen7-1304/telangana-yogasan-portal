@@ -88,7 +88,7 @@ router.post(
         if (req.files.passport_photo && req.files.passport_photo[0]) {
           athletePayload.photoPath = `/uploads/${req.files.passport_photo[0].filename}`;
         }
-        if (req.files.dob_certificate && req.files.dob_certificate[0]) {
+        if (req.files.dob_certificate && req.files.dob_certificatrte[0]) {
           athletePayload.dobProofPath = `/uploads/${req.files.dob_certificate[0].filename}`;
         }
       }

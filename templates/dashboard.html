@@ -7,10 +7,6 @@
       District Secretary Dashboard | Telangana State Inter-District Yogasana
       Sports Championship
     </title>
-    <meta
-      name="description"
-      content="District Secretary Dashboard for Managing Athlete Nominations and Documentation."
-    />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,20 +51,12 @@
         },
       };
     </script>
-    <!-- CHANGE THIS: -->
-    <!-- <link rel="stylesheet" href="/css/output.css" /> -->
-    <!-- <link rel="stylesheet" href="/css/custom.css" /> -->
-
-    <!-- TO THIS: -->
     <link rel="stylesheet" href="/static/css/output.css" />
     <link rel="stylesheet" href="/static/css/custom.css" />
   </head>
   <body
     class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col"
   >
-    <!-- A11y Skip Link -->
-    <a href="#main-content" class="skip-link">Skip to dashboard content</a>
-
     <!-- Top Gov & Secretary Header -->
     <header
       class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md"
@@ -76,7 +64,6 @@
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between"
       >
-        <!-- Brand & District Title -->
         <div class="flex items-center gap-3">
           <a
             href="index.html"
@@ -106,7 +93,6 @@
           </span>
         </div>
 
-        <!-- User Profile & Action Menu -->
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block">
             <div id="district-header-name" class="text-xs font-bold text-white">
@@ -116,13 +102,11 @@
               Affiliation ID: TYA-HYD-2025-01
             </div>
           </div>
-
           <div
             class="w-8 h-8 rounded-full bg-amber-400 text-emerald-950 flex items-center justify-center font-bold text-xs shadow"
           >
             HYD
           </div>
-
           <a
             href="login.html"
             title="Sign out"
@@ -135,9 +119,9 @@
       </div>
     </header>
 
-    <!-- Main Layout Container -->
+    <!-- Main Container -->
     <div class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-      <!-- Breadcrumb & Top Bar -->
+      <!-- Breadcrumb & Top Action -->
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6"
       >
@@ -162,7 +146,6 @@
           </h1>
         </div>
 
-        <!-- Action Button -->
         <div>
           <a
             href="nominate.html"
@@ -174,7 +157,7 @@
         </div>
       </div>
 
-      <!-- District Info Strip -->
+      <!-- District Association Strip -->
       <div
         class="bg-white rounded-xl p-4 mb-6 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
@@ -221,11 +204,15 @@
         </div>
       </div>
 
-      <!-- Metrics Cards (Page 3 Requirement) -->
+      <!-- 4-Card Metrics Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <!-- Total Nominated -->
-        <div class="metric-card">
-          <div class="metric-icon bg-emerald-100 text-[#0D5C3A]">
+        <!-- 1. Total Nominated -->
+        <div
+          class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4"
+        >
+          <div
+            class="w-12 h-12 rounded-xl bg-emerald-100 text-[#0D5C3A] flex items-center justify-center text-xl"
+          >
             <i class="fa-solid fa-users"></i>
           </div>
           <div>
@@ -235,7 +222,7 @@
               Total Nominated
             </div>
             <div class="text-2xl font-black text-slate-900" id="metric-total">
-              28
+              0
             </div>
             <div class="text-[11px] text-emerald-700 font-medium mt-0.5">
               Sub-Junior, Junior &amp; Senior
@@ -243,9 +230,13 @@
           </div>
         </div>
 
-        <!-- Verified Entries -->
-        <div class="metric-card">
-          <div class="metric-icon bg-green-100 text-green-700">
+        <!-- 2. Verified Entries -->
+        <div
+          class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4"
+        >
+          <div
+            class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-xl"
+          >
             <i class="fa-solid fa-circle-check"></i>
           </div>
           <div>
@@ -258,7 +249,7 @@
               class="text-2xl font-black text-green-700"
               id="metric-verified"
             >
-              21
+              0
             </div>
             <div class="text-[11px] text-slate-500 font-medium mt-0.5">
               Documents Scrutinized
@@ -266,9 +257,13 @@
           </div>
         </div>
 
-        <!-- Pending Submissions -->
-        <div class="metric-card">
-          <div class="metric-icon bg-amber-100 text-amber-700">
+        <!-- 3. Pending Review -->
+        <div
+          class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4"
+        >
+          <div
+            class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl"
+          >
             <i class="fa-solid fa-hourglass-half"></i>
           </div>
           <div>
@@ -278,7 +273,7 @@
               Pending Review
             </div>
             <div class="text-2xl font-black text-amber-600" id="metric-pending">
-              5
+              0
             </div>
             <div class="text-[11px] text-amber-700 font-medium mt-0.5">
               Awaiting State Scrutiny
@@ -286,9 +281,13 @@
           </div>
         </div>
 
-        <!-- Ineligible / Clarifications -->
-        <div class="metric-card">
-          <div class="metric-icon bg-red-100 text-red-700">
+        <!-- 4. Clarification Required -->
+        <div
+          class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4"
+        >
+          <div
+            class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center text-xl"
+          >
             <i class="fa-solid fa-circle-exclamation"></i>
           </div>
           <div>
@@ -297,125 +296,23 @@
             >
               Clarification Req.
             </div>
-            <div class="text-2xl font-black text-red-700">2</div>
+            <div
+              class="text-2xl font-black text-red-700"
+              id="metric-clarification"
+            >
+              0
+            </div>
             <div class="text-[11px] text-red-600 font-medium mt-0.5">
               DOB Proof Re-upload
             </div>
           </div>
         </div>
       </div>
-      <!-- Document Verification Modal -->
-      <div
-        id="verification-modal"
-        class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
-      >
-        <div
-          class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
-        >
-          <!-- Modal Header -->
-          <div
-            class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50"
-          >
-            <div>
-              <h3
-                class="text-base font-bold text-slate-900 font-display"
-                id="modal-athlete-name"
-              >
-                Verify Athlete
-              </h3>
-              <p class="text-xs text-slate-500" id="modal-athlete-meta">
-                Chest No: --- | Category: ---
-              </p>
-            </div>
-            <button
-              onclick="closeModal()"
-              class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg"
-            >
-              <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-          </div>
 
-          <!-- Modal Body: Split Layout -->
-          <div
-            class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 p-6 overflow-y-auto"
-          >
-            <!-- Left: Athlete Details -->
-            <div class="space-y-3 text-xs">
-              <div
-                class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1.5"
-              >
-                <p>
-                  <span class="text-slate-500">Gender:</span>
-                  <strong id="modal-gender" class="text-slate-800">-</strong>
-                </p>
-                <p>
-                  <span class="text-slate-500">Date of Birth:</span>
-                  <strong id="modal-dob" class="text-slate-800">-</strong>
-                </p>
-                <p>
-                  <span class="text-slate-500">Events:</span>
-                  <span id="modal-events" class="text-slate-800">-</span>
-                </p>
-              </div>
-
-              <div>
-                <label class="block font-semibold text-slate-700 mb-1"
-                  >Scrutiny Remarks (Optional)</label
-                >
-                <textarea
-                  id="scrutiny-remarks"
-                  rows="3"
-                  placeholder="Enter reason if requesting clarification..."
-                  class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#0D5C3A]"
-                ></textarea>
-              </div>
-            </div>
-
-            <!-- Right: Document Viewer -->
-            <div
-              class="flex flex-col items-center justify-center bg-slate-100 rounded-xl border border-dashed border-slate-300 p-3 min-h-[300px]"
-            >
-              <img
-                id="modal-proof-img"
-                src=""
-                alt="Proof Preview"
-                class="max-h-[350px] w-auto object-contain rounded hidden"
-              />
-              <iframe
-                id="modal-proof-pdf"
-                src=""
-                class="w-full h-[350px] rounded hidden"
-              ></iframe>
-              <div id="modal-proof-fallback" class="text-xs text-slate-400">
-                No document preview available
-              </div>
-            </div>
-          </div>
-
-          <!-- Modal Footer: Action Buttons -->
-          <div
-            class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2"
-          >
-            <button
-              onclick="updateAthleteStatus('Clarification')"
-              class="px-4 py-2 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition"
-            >
-              Request Clarification
-            </button>
-            <button
-              onclick="updateAthleteStatus('Verified')"
-              class="px-4 py-2 text-xs font-bold text-white bg-[#0D5C3A] hover:bg-[#0a4229] rounded-lg transition"
-            >
-              Verify & Approve
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- Nomination Roster Table Section -->
+      <!-- Nomination Roster Table Container -->
       <div
         class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8"
       >
-        <!-- Table Header & Controls -->
         <div
           class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/70"
         >
@@ -431,69 +328,32 @@
               Trials.
             </p>
           </div>
-
-          <!-- Filter & Search Controls -->
-          <div class="flex flex-wrap items-center gap-2">
-            <!-- Search box -->
-            <div class="relative min-w-[200px]">
-              <i
-                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"
-              ></i>
-              <input
-                type="hidden"
-                name="district"
-                id="hidden-district"
-                value=""
-              />
-            </div>
-
-            <!-- Category filter -->
-            <select
-              id="filter-category"
-              class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#0D5C3A]"
-            >
-              <option value="all">All Categories</option>
-              <option value="Sub-Junior">Sub-Junior (10-&lt;14)</option>
-              <option value="Junior">Junior (14-&lt;18)</option>
-              <option value="Senior">Senior (18-&lt;28)</option>
-            </select>
-
-            <!-- Status filter -->
-            <select
-              id="filter-status"
-              class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-[#0D5C3A]"
-            >
-              <option value="all">All Statuses</option>
-              <option value="Verified">Verified</option>
-              <option value="Submitted">Submitted</option>
-              <option value="Clarification">Clarification</option>
-            </select>
-          </div>
         </div>
 
-        <!-- Responsive Table (Page 3 Requirement) -->
+        <!-- Responsive Table -->
         <div class="overflow-x-auto">
-          <table id="nomination-table" class="data-table">
-            <thead>
+          <table class="w-full text-left border-collapse">
+            <thead
+              class="bg-slate-100/70 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200"
+            >
               <tr>
-                <th>Chest No</th>
-                <th>Athlete Name</th>
-                <th>Gender &amp; Age</th>
-                <th>Category</th>
-                <th>Registered Events</th>
-                <th>DOB Proof</th>
-                <th>Status</th>
-                <th class="text-right">Actions</th>
+                <th class="py-3.5 px-4">Chest No</th>
+                <th class="py-3.5 px-4">Athlete Name</th>
+                <th class="py-3.5 px-4">Gender &amp; Age</th>
+                <th class="py-3.5 px-4">Category</th>
+                <th class="py-3.5 px-4">Registered Events</th>
+                <th class="py-3.5 px-4">DOB Proof</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <!-- Locate the table body and leave it empty with an id -->
             <tbody id="athlete-table-body" class="divide-y divide-slate-200">
-              <!-- Dynamic data will be injected here -->
+              <!-- Live data injects here -->
             </tbody>
           </table>
         </div>
 
-        <!-- Empty State handling -->
+        <!-- Empty State -->
         <div id="table-empty-state" class="hidden p-12 text-center">
           <div
             class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl mx-auto mb-3"
@@ -504,80 +364,20 @@
             No Nominations Found
           </h3>
           <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            No athlete matches the selected filters or search keyword.
+            No athletes registered yet.
           </p>
-        </div>
-
-        <!-- Table Footer / Pagination -->
-        <div
-          class="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 bg-slate-50/70"
-        >
-          <div>
-            Showing <span class="font-bold text-slate-800">4</span> of
-            <span class="font-bold text-slate-800">28</span> Nominated Athletes
-          </div>
-          <div class="flex items-center gap-1">
-            <button
-              class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 font-medium disabled:opacity-50"
-              disabled
-            >
-              Previous
-            </button>
-            <button
-              class="px-2.5 py-1 rounded border border-[#0D5C3A] bg-[#0D5C3A] text-white font-bold"
-            >
-              1
-            </button>
-            <button
-              class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 font-medium"
-            >
-              2
-            </button>
-            <button
-              class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 font-medium"
-            >
-              3
-            </button>
-            <button
-              class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-50 font-medium"
-            >
-              Next
-            </button>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- Dashboard Footer -->
-    <footer
-      class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-auto"
-    >
-      <div
-        class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2"
-      >
-        <div>
-          Telangana Yoga Association &bull; Sports Authority of Telangana State
-          (SATS)
-        </div>
-        <div class="flex space-x-4">
-          <a href="index.html" class="hover:text-amber-300">Public Home</a>
-          <a href="nominate.html" class="hover:text-amber-300"
-            >+ Register Athlete</a
-          >
-          <a href="index.html#rules" class="hover:text-amber-300"
-            >Rulebook (PDF)</a
-          >
-        </div>
-      </div>
-    </footer>
+    <!-- Verification Modal -->
     <div
       id="verification-modal"
       class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
     >
       <div
-        class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-150"
+        class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden"
       >
-        <!-- Modal Header -->
         <div
           class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50"
         >
@@ -595,17 +395,16 @@
           <button
             onclick="closeModal()"
             type="button"
-            class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg transition-colors"
+            class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg"
           >
             <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
 
-        <!-- Modal Body: Split Layout -->
         <div
           class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 p-6 overflow-y-auto"
         >
-          <!-- Left Column: Athlete Details & Remarks -->
+          <!-- Left Details -->
           <div class="space-y-4 text-xs">
             <div
               class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2"
@@ -639,20 +438,20 @@
               <textarea
                 id="scrutiny-remarks"
                 rows="4"
-                placeholder="Mention missing details or reason for clarification..."
-                class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D5C3A] bg-white transition"
+                placeholder="Mention reasons for clarification..."
+                class="w-full text-xs p-3 border border-slate-300 rounded-xl focus:outline-none focus:border-[#0D5C3A] bg-white"
               ></textarea>
             </div>
           </div>
 
-          <!-- Right Column: Document Viewer -->
+          <!-- Right Proof Document Preview -->
           <div
             class="flex flex-col items-center justify-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-3 min-h-[300px]"
           >
             <img
               id="modal-proof-img"
               src=""
-              alt="Proof Document"
+              alt="Proof Preview"
               class="max-h-[340px] w-auto object-contain rounded-lg shadow-sm hidden"
             />
             <iframe
@@ -665,12 +464,11 @@
               class="text-xs text-slate-400 flex flex-col items-center gap-2 py-8"
             >
               <i class="fa-regular fa-file-image text-3xl text-slate-300"></i>
-              <span>No document uploaded</span>
+              <span>No document available</span>
             </div>
           </div>
         </div>
 
-        <!-- Modal Footer: Action Buttons -->
         <div
           class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-2.5"
         >
@@ -698,14 +496,34 @@
         </div>
       </div>
     </div>
-    <!-- ========================================== -->
+
+    <!-- Footer -->
+    <footer
+      class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2"
+      >
+        <div>
+          Telangana Yoga Association &bull; Sports Authority of Telangana State
+          (SATS)
+        </div>
+        <div class="flex space-x-4">
+          <a href="index.html" class="hover:text-amber-300">Public Home</a>
+          <a href="nominate.html" class="hover:text-amber-300"
+            >+ Register Athlete</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- Core Scripts -->
     <script src="/static/js/main.js"></script>
     <script>
-      // Global state
       let liveAthletesList = [];
       let currentAthleteId = null;
 
-      // 1. Session District Header Initialization
+      // Session Header Init
       const savedDistrict = sessionStorage.getItem("current_district");
       if (savedDistrict) {
         const headerEl = document.getElementById("district-header-name");
@@ -717,28 +535,24 @@
           bannerEl.textContent = savedDistrict + " Yoga Association";
       }
 
-      // 2. Fetch and Render Live MongoDB Data + Compute Dynamic Metrics
       async function loadLiveAthletes() {
         try {
           const response = await fetch("/portal/athletes/list");
-          if (!response.ok) {
+          if (!response.ok)
             throw new Error(`Server returned ${response.status}`);
-          }
           const athletes = await response.json();
-          liveAthletesList = athletes; // Cache globally for modal lookup
+          liveAthletesList = athletes;
 
           const tbody = document.getElementById("athlete-table-body");
           const emptyState = document.getElementById("table-empty-state");
 
-          // Metric elements
-          const metricTotal = document.getElementById("metric-total");
-          const metricVerified = document.getElementById("metric-verified");
-          const metricPending = document.getElementById("metric-pending");
-          const metricClarification = document.getElementById(
+          const elTotal = document.getElementById("metric-total");
+          const elVerified = document.getElementById("metric-verified");
+          const elPending = document.getElementById("metric-pending");
+          const elClarification = document.getElementById(
             "metric-clarification",
           );
 
-          // Calculate dynamic counts
           const totalCount = athletes.length;
           const verifiedCount = athletes.filter(
             (a) => a.status === "Verified",
@@ -746,26 +560,21 @@
           const clarificationCount = athletes.filter(
             (a) => a.status === "Clarification",
           ).length;
-          const pendingCount = athletes.filter(
-            (a) =>
-              !a.status || a.status === "Submitted" || a.status === "Pending",
-          ).length;
+          const pendingCount = totalCount - verifiedCount - clarificationCount;
 
-          // Update metric indicators
-          if (metricTotal) metricTotal.textContent = totalCount;
-          if (metricVerified) metricVerified.textContent = verifiedCount;
-          if (metricPending) metricPending.textContent = pendingCount;
-          if (metricClarification)
-            metricClarification.textContent = clarificationCount;
+          if (elTotal) elTotal.textContent = totalCount;
+          if (elVerified) elVerified.textContent = verifiedCount;
+          if (elPending) elPending.textContent = pendingCount;
+          if (elClarification) elClarification.textContent = clarificationCount;
 
           tbody.innerHTML = "";
 
           if (!athletes || athletes.length === 0) {
-            if (emptyState) emptyState.style.display = "block";
+            if (emptyState) emptyState.classList.remove("hidden");
             return;
           }
 
-          if (emptyState) emptyState.style.display = "none";
+          if (emptyState) emptyState.classList.add("hidden");
 
           athletes.forEach((athlete) => {
             const initials =
@@ -778,7 +587,6 @@
               : "-";
             const chest = athlete.chestNumber || "PENDING";
 
-            // Status Badge UI
             let statusBadge = "";
             if (athlete.status === "Verified") {
               statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]"></i> Verified</span>`;
@@ -788,7 +596,6 @@
               statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]"></i> Submitted</span>`;
             }
 
-            // Category UI
             const catColor =
               athlete.category === "Sub-Junior"
                 ? "bg-purple-50 text-purple-700 border-purple-200"
@@ -796,7 +603,6 @@
                   ? "bg-blue-50 text-blue-700 border-blue-200"
                   : "bg-teal-50 text-teal-700 border-teal-200";
 
-            // Event Tags
             const eventTags = (athlete.events || [])
               .map(
                 (ev) =>
@@ -806,46 +612,43 @@
 
             const row = document.createElement("tr");
             row.className = "hover:bg-slate-50 transition-colors text-sm";
-            row.setAttribute("data-category", athlete.category || "");
-            row.setAttribute("data-status", athlete.status || "Submitted");
-
             row.innerHTML = `
-          <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
-          <td class="py-3.5 px-4">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
-                ${initials}
-              </div>
-              <div>
-                <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
-                <div class="text-[11px] text-slate-500">ID: [Redacted]</div>
-              </div>
-            </div>
-          </td>
-          <td class="py-3.5 px-4">
-            <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
-            <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
-          </td>
-          <td class="py-3.5 px-4">
-            <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
-              ${athlete.category || "-"}
-            </span>
-          </td>
-          <td class="py-3.5 px-4">
-            <div class="flex flex-wrap gap-1">${eventTags}</div>
-          </td>
-          <td class="py-3.5 px-4">
-            <button type="button" onclick="openVerificationModal('${athlete._id}')" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
-              <i class="fa-solid fa-file-shield text-emerald-600"></i> View Proof
-            </button>
-          </td>
-          <td class="py-3.5 px-4">${statusBadge}</td>
-          <td class="py-3.5 px-4 text-right">
-            <button type="button" onclick="openVerificationModal('${athlete._id}')" title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
-              <i class="fa-solid fa-id-card"></i>
-            </button>
-          </td>
-        `;
+              <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
+                    ${initials}
+                  </div>
+                  <div>
+                    <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
+                    <div class="text-[11px] text-slate-500">ID: [Aadhaar Redacted]</div>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
+                <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">
+                  ${athlete.category || "-"}
+                </span>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex flex-wrap gap-1">${eventTags}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <button type="button" onclick="openVerificationModal('${athlete._id}')" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
+                  <i class="fa-solid fa-file-shield text-emerald-600"></i> View Proof
+                </button>
+              </td>
+              <td class="py-3.5 px-4">${statusBadge}</td>
+              <td class="py-3.5 px-4 text-right">
+                <button type="button" onclick="openVerificationModal('${athlete._id}')" title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
+                  <i class="fa-solid fa-id-card"></i>
+                </button>
+              </td>
+            `;
             tbody.appendChild(row);
           });
         } catch (err) {
@@ -853,7 +656,6 @@
         }
       }
 
-      // 3. Modal Controls
       function openVerificationModal(athleteId) {
         const athlete = liveAthletesList.find((a) => a._id === athleteId);
         if (!athlete) return;
@@ -874,16 +676,11 @@
         document.getElementById("scrutiny-remarks").value =
           athlete.remarks || "";
 
-        // 1. Grab the raw path from your specific database fields
         let rawPath = athlete.dobProofPath || athlete.photoPath || "";
         let formattedUrl = "";
-
         if (rawPath) {
-          // 2. Extract ONLY the filename by splitting at slashes or backslashes
           const filename = rawPath.split(/[\\/]/).pop();
-
-          // 3. Reconstruct as a clean web path
-          formattedUrl = `/uploads/${filename}`;
+          formattedUrl = `/uploads/${encodeURIComponent(filename)}`;
         }
 
         const imgEl = document.getElementById("modal-proof-img");
@@ -894,7 +691,6 @@
         pdfEl.classList.add("hidden");
         fallbackEl.classList.add("hidden");
 
-        // 4. Apply the formatted URL to the viewer
         if (formattedUrl) {
           if (formattedUrl.toLowerCase().endsWith(".pdf")) {
             pdfEl.src = formattedUrl;
@@ -911,14 +707,13 @@
           .getElementById("verification-modal")
           .classList.remove("hidden");
       }
+
       function closeModal() {
         document.getElementById("verification-modal").classList.add("hidden");
       }
 
-      // 4. Update Status (Approve / Clarification)
       async function updateAthleteStatus(newStatus) {
         if (!currentAthleteId) return;
-
         const remarks = document.getElementById("scrutiny-remarks").value;
 
         try {
@@ -933,7 +728,7 @@
 
           if (res.ok) {
             closeModal();
-            loadLiveAthletes(); // Dynamically updates counts and table rows
+            loadLiveAthletes();
           } else {
             alert("Failed to update status.");
           }
@@ -942,7 +737,6 @@
         }
       }
 
-      // Initialize data fetch on DOM Ready
       document.addEventListener("DOMContentLoaded", loadLiveAthletes);
     </script>
   </body>
