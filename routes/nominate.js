@@ -56,7 +56,6 @@ router.post(
     try {
       const b = req.body || {};
 
-      // Normalize events safely
       let selectedEvents = [];
       const rawEvents = b['events[]'] || b.events;
       if (Array.isArray(rawEvents)) {
@@ -67,7 +66,6 @@ router.post(
         selectedEvents = ['Traditional Yogasana'];
       }
 
-      // Safe mapping with fallbacks to avoid undefined indexing
       const athletePayload = {
         firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
         lastName: (b.lastName || b.last_name || '').trim(),
@@ -84,7 +82,6 @@ router.post(
         status: 'Submitted'
       };
 
-      // Extract file paths using optional chaining
       if (req.files) {
         if (req.files.passport_photo?.[0]?.filename) {
           athletePayload.photoPath = `/uploads/${req.files.passport_photo[0].filename}`;
@@ -94,17 +91,33 @@ router.post(
         }
       }
 
+      // Generate chest number directly
+      const distStr = athletePayload.district.toUpperCase();
+      const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
+      
+      let catCode = 'JR';
+      const cat = athletePayload.category.toLowerCase();
+      if (cat.includes('sub')) catCode = 'SJ';
+      else if (cat.includes('sen')) catCode = 'SR';
+
+      const count = await Athlete.countDocuments({ 
+        district: athletePayload.district, 
+        category: athletePayload.category 
+      });
+      
+      const serial = String(count + 1).padStart(2, '0');
+      athletePayload.chestNumber = `${distCode}-${catCode}-${serial}`;
+
       const newAthlete = new Athlete(athletePayload);
       await newAthlete.save();
 
       res.redirect('/dashboard.html');
     } catch (err) {
-      console.error('Detailed Nomination Error:', err);
+      console.error('Nomination Error:', err);
       res.status(500).json({ error: 'Failed to nominate athlete', details: err.message });
     }
   }
 );
-
 // 5. PATCH /portal/athletes/:id/status (Verify / Clarify Status)
 router.patch('/:id/status', async (req, res) => {
   try {

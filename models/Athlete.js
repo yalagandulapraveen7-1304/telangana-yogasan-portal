@@ -27,37 +27,4 @@ const AthleteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Safe Auto-generation of Chest Number before saving
-AthleteSchema.pre('save', async function (next) {
-  if (!this.chestNumber) {
-    try {
-      // 1. Safe District Code (3 letters)
-      const distStr = (this.district || 'HYD').trim().toUpperCase();
-      const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
-
-      // 2. Safe Category Code
-      let catCode = 'JR';
-      const cat = (this.category || '').toLowerCase();
-      if (cat.includes('sub')) {
-        catCode = 'SJ';
-      } else if (cat.includes('sen')) {
-        catCode = 'SR';
-      }
-
-      // 3. Count existing athletes in category to determine serial number
-      const count = await mongoose.model('Athlete', AthleteSchema).countDocuments({
-        district: this.district,
-        category: this.category
-      });
-
-      const serial = String(count + 1).padStart(2, '0');
-      this.chestNumber = `${distCode}-${catCode}-${serial}`;
-    } catch (err) {
-      // Fallback in case counting fails
-      this.chestNumber = `HYD-JR-${Math.floor(10 + Math.random() * 90)}`;
-    }
-  }
-  next();
-});
-
 module.exports = mongoose.models.Athlete || mongoose.model('Athlete', AthleteSchema);

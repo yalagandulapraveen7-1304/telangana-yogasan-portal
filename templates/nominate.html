@@ -497,32 +497,62 @@
   </main>
 
   <!-- Form Footer -->
+ <!-- Form Footer -->
   <footer class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-12">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div>Telangana Yoga Association &bull; Sports Authority of Telangana State (SATS)</div>
       <div class="flex space-x-4">
         <a href="dashboard.html" class="hover:text-amber-300">Dashboard</a>
         <a href="index.html" class="hover:text-amber-300">Championship Portal</a>
-        <a href="index.html#rules" class="hover:text-amber-300">Guidelines</a>
       </div>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="/static/js/main.js"></script>
   <script>
-    // Set active district name from session storage
-    const activeDist = sessionStorage.getItem('current_district');
-    if (activeDist) {
-      const el = document.getElementById('form-district-name');
-      if (el) el.textContent = activeDist + ' Association';
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('nomination-form');
+      const districtHiddenInput = document.getElementById('hidden-district');
+      const activeDist = sessionStorage.getItem('current_district') || 'Hyderabad';
 
-    // Default sample date to show instant dynamic age calculation demo
-    window.addEventListener('DOMContentLoaded', () => {
-      const dobEl = document.getElementById('dob-input');
-      if (dobEl && !dobEl.value) {
-        dobEl.value = '2012-04-18';
-        dobEl.dispatchEvent(new Event('change'));
+      if (districtHiddenInput) districtHiddenInput.value = activeDist;
+
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const submitBtn = form.querySelector('button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...`;
+          }
+
+          try {
+            const formData = new FormData(form);
+            const response = await fetch('/portal/athletes/nominate', {
+              method: 'POST',
+              body: formData
+            });
+
+            if (response.ok) {
+              window.location.href = '/dashboard.html';
+            } else {
+              const errData = await response.json().catch(() => ({}));
+              alert('Failed to save athlete: ' + (errData.details || errData.error || 'Unknown error'));
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Submit Athlete Nomination`;
+              }
+            }
+          } catch (err) {
+            console.error('Network submission error:', err);
+            alert('Network error while saving nomination.');
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Submit Athlete Nomination`;
+            }
+          }
+        });
       }
     });
   </script>
