@@ -16,10 +16,10 @@ const storage = multer.diskStorage({
   }
 });
 
-// 2. Multer Instance
+// 2. Multer Configuration with 25MB Limit
 const upload = multer({
   storage,
-  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB limit
+  limits: { fileSize: 25 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (file.fieldname === 'passport_photo' && !file.mimetype.startsWith('image/')) {
       return cb(new Error('Passport photo must be an image file.'));
@@ -34,7 +34,7 @@ const upload = multer({
   }
 });
 
-// 3. GET /list (This populates your Dashboard!)
+// 3. GET /portal/athletes/list (Fetch Athletes)
 router.get('/list', async (req, res) => {
   try {
     const athletes = await Athlete.find().sort({ createdAt: -1 });
@@ -45,6 +45,7 @@ router.get('/list', async (req, res) => {
   }
 });
 
+// 4. POST /portal/athletes/nominate (Register Athlete)
 router.post(
   '/nominate',
   upload.fields([
@@ -53,42 +54,42 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      const b = req.body;
+      const b = req.body || {};
 
-      // Clean and flatten the events array
+      // Normalize events safely
       let selectedEvents = [];
       const rawEvents = b['events[]'] || b.events;
       if (Array.isArray(rawEvents)) {
-        selectedEvents = rawEvents.flat();
+        selectedEvents = rawEvents.flat().filter(Boolean);
       } else if (typeof rawEvents === 'string' && rawEvents.trim()) {
         selectedEvents = [rawEvents.trim()];
       } else {
         selectedEvents = ['Traditional Yogasana'];
       }
 
-      // Map incoming fields to Mongoose schema attributes
+      // Safe mapping with fallbacks to avoid undefined indexing
       const athletePayload = {
-        firstName: b.firstName || b.first_name,
-        lastName: b.lastName || b.last_name,
-        dob: b.dob,
-        gender: b.gender,
-        aadhaarLast4: b.aadhaarLast4 || b.aadhaar_last_4,
-        guardianName: b.guardianName || b.guardian_name,
-        institutionName: b.institutionName || b.institution_name,
-        mobileNumber: b.mobileNumber || b.mobile_number,
-        residentialAddress: b.residentialAddress || b.residential_address,
-        district: b.district || 'Hyderabad',
+        firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
+        lastName: (b.lastName || b.last_name || '').trim(),
+        dob: b.dob || new Date(),
+        gender: b.gender || 'Female',
+        aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || '0000').toString().trim(),
+        guardianName: (b.guardianName || b.guardian_name || '').trim(),
+        institutionName: (b.institutionName || b.institution_name || '').trim(),
+        mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
+        residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
+        district: (b.district || 'Hyderabad').trim(),
         events: selectedEvents,
         category: b.category || 'Junior',
         status: 'Submitted'
       };
 
-      // Extract uploaded file paths
+      // Extract file paths using optional chaining
       if (req.files) {
-        if (req.files.passport_photo && req.files.passport_photo[0]) {
+        if (req.files.passport_photo?.[0]?.filename) {
           athletePayload.photoPath = `/uploads/${req.files.passport_photo[0].filename}`;
         }
-        if (req.files.dob_certificate && req.files.dob_certificatrte[0]) {
+        if (req.files.dob_certificate?.[0]?.filename) {
           athletePayload.dobProofPath = `/uploads/${req.files.dob_certificate[0].filename}`;
         }
       }
@@ -102,9 +103,9 @@ router.post(
       res.status(500).json({ error: 'Failed to nominate athlete', details: err.message });
     }
   }
-);;
+);
 
-// 5. PATCH /status (This handles the Verify/Clarification modal)
+// 5. PATCH /portal/athletes/:id/status (Verify / Clarify Status)
 router.patch('/:id/status', async (req, res) => {
   try {
     const { status, remarks } = req.body;

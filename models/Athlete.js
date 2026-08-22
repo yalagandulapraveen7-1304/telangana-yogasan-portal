@@ -2,47 +2,62 @@ const mongoose = require('mongoose');
 
 const AthleteSchema = new mongoose.Schema(
   {
-    district: { type: String, required: true, index: true },
-    chestNumber: { type: String, unique: true },
     firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
+    lastName: { type: String, default: '', trim: true },
     dob: { type: Date, required: true },
-    category: {
-      type: String,
-      enum: ['Sub-Junior', 'Junior', 'Senior'],
-      required: true
-    },
-    gender: { type: String, enum: ['Male', 'Female'], required: true },
-    aadhaarLast4: { type: String, required: true, maxlength: 4 },
-    guardianName: { type: String, required: true },
-    institutionName: { type: String, required: true },
-    mobileNumber: { type: String, required: true },
-    residentialAddress: { type: String, required: true },
-    events: [{ type: String, required: true }],
-    photoPath: { type: String, required: true },
-    dobProofPath: { type: String, required: true },
+    gender: { type: String, required: true, enum: ['Male', 'Female', 'Other'] },
+    aadhaarLast4: { type: String, default: '0000', trim: true },
+    guardianName: { type: String, default: '', trim: true },
+    institutionName: { type: String, default: '', trim: true },
+    mobileNumber: { type: String, default: '', trim: true },
+    residentialAddress: { type: String, default: '', trim: true },
+    district: { type: String, default: 'Hyderabad', trim: true },
+    events: { type: [String], default: ['Traditional Yogasana'] },
+    category: { type: String, default: 'Junior' },
     status: {
       type: String,
-      enum: ['Submitted', 'Verified', 'Clarification'],
+      enum: ['Submitted', 'Verified', 'Clarification', 'Pending'],
       default: 'Submitted'
-    }
+    },
+    remarks: { type: String, default: '' },
+    photoPath: { type: String, default: '' },
+    dobProofPath: { type: String, default: '' },
+    chestNumber: { type: String }
   },
   { timestamps: true }
 );
 
-// Modern async pre-save hook (no next parameter required)
-AthleteSchema.pre('save', async function () {
+// Safe Auto-generation of Chest Number before saving
+AthleteSchema.pre('save', async function (next) {
   if (!this.chestNumber) {
-    const count = await this.constructor.countDocuments({ district: this.district });
-    const distCode = this.district.substring(0, 3).toUpperCase();
-    const catCode =
-      this.category === 'Sub-Junior'
-        ? 'SJ'
-        : this.category === 'Junior'
-        ? 'JR'
-        : 'SR';
-    this.chestNumber = `${distCode}-${catCode}-${String(count + 1).padStart(2, '0')}`;
+    try {
+      // 1. Safe District Code (3 letters)
+      const distStr = (this.district || 'HYD').trim().toUpperCase();
+      const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
+
+      // 2. Safe Category Code
+      let catCode = 'JR';
+      const cat = (this.category || '').toLowerCase();
+      if (cat.includes('sub')) {
+        catCode = 'SJ';
+      } else if (cat.includes('sen')) {
+        catCode = 'SR';
+      }
+
+      // 3. Count existing athletes in category to determine serial number
+      const count = await mongoose.model('Athlete', AthleteSchema).countDocuments({
+        district: this.district,
+        category: this.category
+      });
+
+      const serial = String(count + 1).padStart(2, '0');
+      this.chestNumber = `${distCode}-${catCode}-${serial}`;
+    } catch (err) {
+      // Fallback in case counting fails
+      this.chestNumber = `HYD-JR-${Math.floor(10 + Math.random() * 90)}`;
+    }
   }
+  next();
 });
 
-module.exports = mongoose.model('Athlete', AthleteSchema);
+module.exports = mongoose.models.Athlete || mongoose.model('Athlete', AthleteSchema);
