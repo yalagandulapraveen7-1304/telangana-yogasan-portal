@@ -2,42 +2,33 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const Athlete = require('../models/Athlete');
+const { requireAuth } = require('./auth');
 
-// 1. Storage Configuration
+// Ensure uploads folder exists
+const uploadDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Multer storage setup
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
+  filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-// 2. Multer Configuration with 25MB Limit
-const upload = multer({
-  storage,
-  limits: { fileSize: 25 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (file.fieldname === 'passport_photo' && !file.mimetype.startsWith('image/')) {
-      return cb(new Error('Passport photo must be an image file.'));
-    }
-    if (
-      file.fieldname === 'dob_certificate' &&
-      !['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'].includes(file.mimetype)
-    ) {
-      return cb(new Error('DOB certificate must be a PDF or image file.'));
-    }
-    cb(null, true);
-  }
-});
+const upload = multer({ storage: storage });
 
-// 3. GET /portal/athletes/list (Fetch Athletes)
-router.get('/list', async (req, res) => {
+// 1. GET /portal/athletes/list (District scoped)
+router.get('/list', requireAuth, async (req, res) => {
   try {
-    const athletes = await Athlete.find().sort({ createdAt: -1 });
+    const athletes = await Athlete.find({ district: req.user.district }).sort({ createdAt: -1 });
     res.json(athletes);
   } catch (err) {
     console.error('Fetch Error:', err);
@@ -45,9 +36,10 @@ router.get('/list', async (req, res) => {
   }
 });
 
-// 4. POST /portal/athletes/nominate (Register Athlete)
+// 2. POST /portal/athletes/nominate (District scoped)
 router.post(
   '/nominate',
+  requireAuth,
   upload.fields([
     { name: 'passport_photo', maxCount: 1 },
     { name: 'dob_certificate', maxCount: 1 }
@@ -76,7 +68,7 @@ router.post(
         institutionName: (b.institutionName || b.institution_name || '').trim(),
         mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
         residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
-        district: (b.district || 'Hyderabad').trim(),
+        district: req.user.district, // Enforced via JWT
         events: selectedEvents,
         category: b.category || 'Junior',
         status: 'Submitted'
@@ -91,47 +83,72 @@ router.post(
         }
       }
 
-      // Generate chest number directly
+      // Generate Chest Number
       const distStr = athletePayload.district.toUpperCase();
       const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
-      
+
       let catCode = 'JR';
       const cat = athletePayload.category.toLowerCase();
       if (cat.includes('sub')) catCode = 'SJ';
       else if (cat.includes('sen')) catCode = 'SR';
 
-      const count = await Athlete.countDocuments({ 
-        district: athletePayload.district, 
-        category: athletePayload.category 
+      const count = await Athlete.countDocuments({
+        district: athletePayload.district,
+        category: athletePayload.category
       });
-      
+
       const serial = String(count + 1).padStart(2, '0');
       athletePayload.chestNumber = `${distCode}-${catCode}-${serial}`;
 
       const newAthlete = new Athlete(athletePayload);
       await newAthlete.save();
 
-      res.redirect('/dashboard.html');
+      res.status(201).json({ success: true, athlete: newAthlete });
     } catch (err) {
       console.error('Nomination Error:', err);
       res.status(500).json({ error: 'Failed to nominate athlete', details: err.message });
     }
   }
 );
-// 5. PATCH /portal/athletes/:id/status (Verify / Clarify Status)
-router.patch('/:id/status', async (req, res) => {
+
+// 3. PATCH /portal/athletes/:id/status
+router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
     const { status, remarks } = req.body;
-    const updated = await Athlete.findByIdAndUpdate(
-      req.params.id,
+    const updated = await Athlete.findOneAndUpdate(
+      { _id: req.params.id, district: req.user.district },
       { status, remarks },
       { new: true }
     );
-    if (!updated) return res.status(404).json({ error: 'Athlete not found' });
+
+    if (!updated) return res.status(404).json({ error: 'Athlete not found or unauthorized' });
     res.json(updated);
   } catch (err) {
     console.error('Status Update Error:', err);
     res.status(500).json({ error: 'Failed to update status' });
+  }
+});
+
+// 1. GET /portal/athletes/list
+router.get('/list', requireAuth, async (req, res) => {
+  try {
+    let filter = {};
+
+    if (req.user.role === 'SUPER_ADMIN') {
+      // Super admins view all districts, or optionally filter via ?district=Warangal
+      if (req.query.district && req.query.district !== 'ALL') {
+        filter.district = req.query.district;
+      }
+    } else {
+      // Standard secretaries are strictly scoped to their own district
+      filter.district = req.user.district;
+    }
+
+    const athletes = await Athlete.find(filter).sort({ createdAt: -1 });
+    res.json(athletes);
+  } catch (err) {
+    console.error('Fetch Error:', err);
+    res.status(500).json({ error: 'Failed to retrieve athletes' });
   }
 });
 

@@ -1,58 +1,63 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
-const helmet = require('helmet');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+
+const { router: authRoutes, requireAuth } = require('./routes/auth');
+const nominateRoutes = require('./routes/nominate');
 
 const app = express();
-
-// Disable CSP during development for CDNs
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-  })
-);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static assets and uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use(express.static(path.join(__dirname, 'templates'), { index: 'index.html' }));
-
-// Database connection
-mongoose
-  .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/tya_yogasana')
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
-
-// Fallback explicit route for root
-app.get('/', (req, res) => {
-  res.sendFile('index.html', { root: path.join(__dirname, 'templates') });
-});
-
-// Mount Athlete Portal Routes
-app.use('/portal/athletes', require('./routes/nominate'));
-
-// Fallback error logger
-app.use((err, req, res, next) => {
-  console.error('SERVER ERROR LOG:', err.stack);
-  res.status(500).send('Internal Server Error: ' + err.message);
-});
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/telangana_yoga';
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-// 👉 ADD THIS EXACT LINE HERE:
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use((req, res, next) => {
+  console.log(`➡️ [${req.method}] ${req.url}`);
+  next();
+});
 
-// Your other static routes
+// Static assets
 app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use(express.static(path.join(__dirname, 'templates'), { index: 'index.html' }));
-// In server.js (near top with other middleware)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Routes
+app.use('/auth', authRoutes);
+app.use('/portal/athletes', nominateRoutes);
+
+// THE FIX: Define the root directory for templates explicitly
+const templateDir = path.join(__dirname, 'templates');
+
+// Protected HTML pages
+app.get('/dashboard.html', requireAuth, (req, res) => {
+  res.sendFile('dashboard.html', { root: templateDir });
+});
+
+app.get('/nominate.html', requireAuth, (req, res) => {
+  res.sendFile('nominate.html', { root: templateDir });
+});
+
+// Public HTML pages
+app.get('/login.html', (req, res) => {
+  res.sendFile('login.html', { root: templateDir });
+});
+
+app.get(['/', '/index.html'], (req, res) => {
+  res.sendFile('index.html', { root: templateDir });
+});
+
+// Database & Server
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    console.log('✅ Connected to MongoDB Atlas');
+    app.listen(PORT, () => {
+      console.log(`🚀 Server listening on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Database connection error:', err);
+  });

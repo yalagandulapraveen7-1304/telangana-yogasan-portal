@@ -3,476 +3,212 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      District Secretary Login | Telangana State Inter-District Yogasana Sports
-      Championship
-    </title>
-    <meta
-      name="description"
-      content="District Secretary Authentication Portal for Telangana State Inter-District Yogasana Sports Championship."
-    />
+    <title>Secretary Portal Login | Telangana Yoga Association</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Font Awesome Icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
-
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              "tg-green": {
-                DEFAULT: "#0D5C3A",
-                600: "#0f5132",
-                700: "#0D5C3A",
-                800: "#0a4229",
-                900: "#062919",
-              },
-              "tg-gold": {
-                DEFAULT: "#C5A059",
-                light: "#f5e6c8",
-                hover: "#b8893d",
-              },
-              "tg-crimson": "#8B0000",
+              "tg-green": "#0D5C3A",
+              "tg-green-dark": "#083d26",
+              "tg-gold": "#C5A059",
             },
             fontFamily: {
-              sans: ["Inter", "Plus Jakarta Sans", "system-ui", "sans-serif"],
-              display: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+              sans: ["Inter", "sans-serif"],
+              display: ["Plus Jakarta Sans", "sans-serif"],
             },
           },
         },
       };
     </script>
-    <!-- CHANGE THIS: -->
-    <!-- <link rel="stylesheet" href="/css/output.css" /> -->
-    <!-- <link rel="stylesheet" href="/css/custom.css" /> -->
-
-    <!-- TO THIS: -->
-    <link rel="stylesheet" href="/static/css/output.css" />
-    <link rel="stylesheet" href="/static/css/custom.css" />
   </head>
   <body
-    class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between"
+    class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between text-slate-800"
   >
-    <!-- A11y Skip Link -->
-    <a href="#main-content" class="skip-link">Skip to login form</a>
-
-    <!-- Top Gov Banner -->
-    <div
-      class="gov-topbar py-1.5 px-4 bg-[#0a4229] text-slate-200 border-b border-[#C5A059]/40 text-xs"
+    <!-- Header -->
+    <header
+      class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] py-3 px-6 shadow-sm"
     >
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="font-medium tracking-wide"
-            >GOVERNMENT OF TELANGANA &bull; SATS</span
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3">
+          <div
+            class="w-9 h-9 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059]"
           >
-        </div>
-        <div>
-          <a
-            href="index.html"
-            class="text-amber-300 hover:underline flex items-center gap-1"
-          >
-            <i class="fa-solid fa-arrow-left text-[10px]"></i> Back to Public
-            Portal
-          </a>
-        </div>
+            <i class="fa-solid fa-om text-[#0D5C3A] text-lg"></i>
+          </div>
+          <div>
+            <div
+              class="text-[10px] text-amber-300 font-bold uppercase tracking-wider"
+            >
+              Telangana Yoga Association
+            </div>
+            <div class="text-sm font-bold text-white font-display">
+              State Inter-District Championship
+            </div>
+          </div>
+        </a>
+        <a
+          href="index.html"
+          class="text-xs text-emerald-200 hover:text-white flex items-center gap-1"
+        >
+          <i class="fa-solid fa-arrow-left"></i> Public Portal
+        </a>
       </div>
-    </div>
+    </header>
 
-    <main
-      id="main-content"
-      class="flex-grow flex items-center justify-center px-4 py-12 relative"
-    >
-      <!-- Background subtle decoration -->
+    <!-- Main Content Form -->
+    <main class="flex-grow flex items-center justify-center px-4 py-12">
       <div
-        class="absolute inset-0 bg-gradient-to-br from-emerald-900/10 via-slate-100 to-amber-500/10 pointer-events-none"
-      ></div>
-
-      <div class="max-w-md w-full relative z-10">
-        <!-- Back Link & Breadcrumb -->
-        <nav
-          class="mb-4 text-xs text-slate-500 flex items-center gap-2"
-          aria-label="Breadcrumb"
-        >
-          <a href="index.html" class="hover:text-emerald-800 font-medium"
-            >Home</a
+        class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 p-8"
+      >
+        <div class="text-center mb-6">
+          <div
+            class="w-12 h-12 bg-emerald-50 border border-emerald-200 text-[#0D5C3A] rounded-xl flex items-center justify-center text-xl mx-auto mb-3 shadow-inner"
           >
-          <span>/</span>
-          <span class="text-slate-800 font-semibold"
-            >District Secretary Login</span
-          >
-        </nav>
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h1 class="text-xl font-bold font-display text-slate-900">
+            District Secretary Portal
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">
+            Authenticate to manage athlete nominations
+          </p>
+        </div>
 
-        <!-- Auth Card -->
+        <!-- Dynamic Error Banner -->
         <div
-          class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden border-t-4 border-t-[#C5A059]"
+          id="login-error"
+          class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2"
         >
-          <!-- Header with Emblem -->
-          <div
-            class="bg-gradient-to-b from-emerald-900 to-emerald-950 p-6 text-center text-white relative"
-          >
-            <div
-              class="w-16 h-16 rounded-full bg-white p-1 mx-auto mb-3 shadow-lg border-2 border-[#C5A059] flex items-center justify-center"
+          <i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+          <span id="login-error-text">Invalid email or password.</span>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label
+              for="email"
+              class="block text-xs font-semibold text-slate-700 mb-1"
+              >Registered Secretary Email</label
             >
-              <div
-                class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center"
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"
               >
-                <i class="fa-solid fa-om text-amber-300 text-xl"></i>
-                <span class="text-[6px] tracking-tight font-bold text-amber-100"
-                  >TYA</span
-                >
-              </div>
-            </div>
-
-            <span
-              class="inline-block bg-amber-400/20 text-amber-300 border border-amber-300/30 text-[11px] font-semibold px-3 py-0.5 rounded-full mb-1"
-            >
-              Official Secretary Portal
-            </span>
-            <h1 class="text-lg sm:text-xl font-bold font-display text-white">
-              District Association Login
-            </h1>
-            <p class="text-xs text-emerald-100/80 mt-1">
-              Telangana State Inter-District Yogasana Sports Championship
-            </p>
-          </div>
-
-          <!-- Form Body -->
-          <div class="p-6 sm:p-8">
-            <form
-              id="secretary-login-form"
-              action="dashboard.html"
-              method="GET"
-              class="space-y-4"
-            >
-              <!-- District Quick Helper (Auto-fill username) -->
-              <div>
-                <label for="district-selector" class="form-label text-xs">
-                  Select Your District
-                  <span class="text-slate-400 font-normal"
-                    >(Auto-fills username)</span
-                  >
-                </label>
-                <div class="input-icon-wrapper">
-                  <i class="fa-solid fa-map-location-dot input-icon"></i>
-                  <select
-                    id="district-selector"
-                    class="form-input text-xs bg-slate-50 cursor-pointer"
-                  >
-                    <option value="hyderabad" selected>
-                      Hyderabad District (sec_hyderabad)
-                    </option>
-                    <option value="adilabad">
-                      Adilabad District (sec_adilabad)
-                    </option>
-                    <option value="bhadradri_kothagudem">
-                      Bhadradri Kothagudem (sec_bhadradri)
-                    </option>
-                    <option value="hanakonda">
-                      Hanamkonda District (sec_hanakonda)
-                    </option>
-                    <option value="jagtial">
-                      Jagtial District (sec_jagtial)
-                    </option>
-                    <option value="jangaon">
-                      Jangaon District (sec_jangaon)
-                    </option>
-                    <option value="jayashankar">
-                      Jayashankar Bhupalpally (sec_jayashankar)
-                    </option>
-                    <option value="jogulamba">
-                      Jogulamba Gadwal (sec_jogulamba)
-                    </option>
-                    <option value="kamareddy">
-                      Kamareddy District (sec_kamareddy)
-                    </option>
-                    <option value="karimnagar">
-                      Karimnagar District (sec_karimnagar)
-                    </option>
-                    <option value="khammam">
-                      Khammam District (sec_khammam)
-                    </option>
-                    <option value="kumurambheem">
-                      Kumuram Bheem Asifabad (sec_kumurambheem)
-                    </option>
-                    <option value="mahabubabad">
-                      Mahabubabad District (sec_mahabubabad)
-                    </option>
-                    <option value="mahabubnagar">
-                      Mahabubnagar District (sec_mahabubnagar)
-                    </option>
-                    <option value="mancherial">
-                      Mancherial District (sec_mancherial)
-                    </option>
-                    <option value="medak">Medak District (sec_medak)</option>
-                    <option value="medchal">
-                      Medchal-Malkajgiri (sec_medchal)
-                    </option>
-                    <option value="mulugu">Mulugu District (sec_mulugu)</option>
-                    <option value="nagarkurnool">
-                      Nagarkurnool District (sec_nagarkurnool)
-                    </option>
-                    <option value="nalgonda">
-                      Nalgonda District (sec_nalgonda)
-                    </option>
-                    <option value="narayanpet">
-                      Narayanpet District (sec_narayanpet)
-                    </option>
-                    <option value="nirmal">Nirmal District (sec_nirmal)</option>
-                    <option value="nizamabad">
-                      Nizamabad District (sec_nizamabad)
-                    </option>
-                    <option value="peddapalli">
-                      Peddapalli District (sec_peddapalli)
-                    </option>
-                    <option value="rajanna_sircilla">
-                      Rajanna Sircilla (sec_sircilla)
-                    </option>
-                    <option value="rangareddy">
-                      Rangareddy District (sec_rangareddy)
-                    </option>
-                    <option value="sangareddy">
-                      Sangareddy District (sec_sangareddy)
-                    </option>
-                    <option value="siddipet">
-                      Siddipet District (sec_siddipet)
-                    </option>
-                    <option value="suryapet">
-                      Suryapet District (sec_suryapet)
-                    </option>
-                    <option value="vikarabad">
-                      Vikarabad District (sec_vikarabad)
-                    </option>
-                    <option value="wanaparthy">
-                      Wanaparthy District (sec_wanaparthy)
-                    </option>
-                    <option value="warangal">
-                      Warangal District (sec_warangal)
-                    </option>
-                    <option value="yadadri">
-                      Yadadri Bhuvanagiri (sec_yadadri)
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Username Field -->
-              <div>
-                <label for="username" class="form-label text-xs">
-                  Secretary Username <span class="text-red-500">*</span>
-                </label>
-                <div class="input-icon-wrapper">
-                  <i class="fa-solid fa-user-shield input-icon"></i>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    required
-                    value="sec_hyderabad"
-                    placeholder="e.g. sec_hyderabad"
-                    class="form-input text-sm font-mono"
-                    autocomplete="username"
-                  />
-                </div>
-                <p class="text-[11px] text-slate-500 mt-1">
-                  Format:
-                  <code
-                    class="bg-slate-100 px-1 py-0.5 rounded text-emerald-800"
-                    >sec_&lt;district_name&gt;</code
-                  >
-                </p>
-              </div>
-
-              <!-- Password Field with Toggle -->
-              <div>
-                <div class="flex items-center justify-between mb-1">
-                  <label for="password" class="form-label text-xs mb-0">
-                    Password <span class="text-red-500">*</span>
-                  </label>
-                  <a
-                    href="javascript:void(0)"
-                    onclick="
-                      alert(
-                        'Password reset link sent to registered District Secretary official phone/email.',
-                      )
-                    "
-                    class="text-[11px] text-[#0D5C3A] font-semibold hover:underline"
-                  >
-                    Forgot Password?
-                  </a>
-                </div>
-                <div class="input-icon-wrapper">
-                  <i class="fa-solid fa-key input-icon"></i>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    required
-                    value="••••••••••••"
-                    placeholder="Enter assigned password"
-                    class="form-input text-sm pr-10"
-                    autocomplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    id="toggle-password"
-                    class="input-action"
-                    title="Show or hide password"
-                    aria-label="Toggle password visibility"
-                  >
-                    <i class="fa-regular fa-eye"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Remember me & Captcha check -->
-              <div
-                class="flex items-center justify-between text-xs text-slate-600 pt-1"
-              >
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked
-                    class="rounded border-slate-300 text-[#0D5C3A] focus:ring-[#0D5C3A]"
-                  />
-                  <span>Keep session active</span>
-                </label>
-                <span
-                  class="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-medium"
-                  >SSL Encrypted</span
-                >
-              </div>
-
-              <!-- Login Action Button -->
-              <div class="pt-2">
-                <button
-                  type="submit"
-                  class="w-full bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm"
-                >
-                  <i class="fa-solid fa-right-to-bracket"></i>
-                  <span>Sign In to Secretary Portal</span>
-                </button>
-              </div>
-            </form>
-
-            <!-- Security Disclaimer Note -->
-            <div
-              class="mt-6 p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-slate-700 text-xs"
-            >
-              <div class="flex items-start gap-2">
-                <i
-                  class="fa-solid fa-shield-halved text-amber-700 text-sm mt-0.5"
-                ></i>
-                <div class="leading-relaxed">
-                  <strong class="text-slate-900"
-                    >Authorized Access Only:</strong
-                  >
-                  This portal is exclusively restricted to the certified and
-                  affiliated District Secretaries of the 33 Districts of
-                  Telangana. Unauthorized attempts are monitored and logged
-                  under the IT Act.
-                </div>
-              </div>
+                <i class="fa-solid fa-envelope"></i>
+              </span>
+              <input
+                type="email"
+                id="email"
+                required
+                placeholder="sec_hyderabad@telanganayoga.org"
+                class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition"
+              />
             </div>
           </div>
 
-          <!-- Footer Help Link inside card -->
-          <div
-            class="bg-slate-50 px-6 py-3 border-t border-slate-200 text-center text-xs text-slate-500"
-          >
-            Need portal credentials or affiliation assistance? <br />
-            Contact State Secretary Office:
-            <a
-              href="tel:04023458899"
-              class="text-[#0D5C3A] font-semibold hover:underline"
-              >040-2345 8899</a
+          <div>
+            <label
+              for="password"
+              class="block text-xs font-semibold text-slate-700 mb-1"
+              >Password</label
             >
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"
+              >
+                <i class="fa-solid fa-lock"></i>
+              </span>
+              <input
+                type="password"
+                id="password"
+                required
+                placeholder="••••••••••••"
+                class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition"
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="text-center mt-6 text-xs text-slate-500">
-          &copy; 2025 Telangana Yoga Association &bull; SATS Government of
-          Telangana
-        </div>
+          <button
+            type="submit"
+            id="login-btn"
+            class="w-full mt-2 bg-[#0D5C3A] hover:bg-[#083d26] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95"
+          >
+            <span>Sign In to Secretary Portal</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
       </div>
     </main>
 
+    <!-- Footer -->
     <footer
       class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800"
     >
-      <div
-        class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2"
-      >
-        <div>
-          Government of Telangana &bull; Sports Authority of Telangana State
-        </div>
-        <div class="flex space-x-4">
-          <a href="index.html" class="hover:text-amber-300">Public Portal</a>
-          <a href="index.html#rules" class="hover:text-amber-300"
-            >Rules &amp; Regulations</a
-          >
-          <a href="index.html#about" class="hover:text-amber-300"
-            >Contact Helpdesk</a
-          >
-        </div>
+      <div>
+        Telangana Yoga Association &bull; Sports Authority of Telangana State
+        (SATS)
       </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- Form Handler Script -->
     <script>
-      // District selector auto-fill username helper
-      const distSelector = document.getElementById("district-selector");
-      const usernameInput = document.getElementById("username");
-
-      if (distSelector && usernameInput) {
-        distSelector.addEventListener("change", () => {
-          const val = distSelector.value;
-          usernameInput.value = "sec_" + val;
-        });
-      }
-
-      // Toggle Password Visibility
-      const toggleBtn = document.getElementById("toggle-password");
-      const pwdInput = document.getElementById("password");
-      if (toggleBtn && pwdInput) {
-        toggleBtn.addEventListener("click", () => {
-          const isPwd = pwdInput.type === "password";
-          pwdInput.type = isPwd ? "text" : "password";
-          toggleBtn.innerHTML = isPwd
-            ? '<i class="fa-regular fa-eye-slash"></i>'
-            : '<i class="fa-regular fa-eye"></i>';
-        });
-      }
-
-      // Submit handler
       document
-        .getElementById("secretary-login-form")
-        ?.addEventListener("submit", (e) => {
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
           e.preventDefault();
-          // Store current district in sessionStorage
-          const dist = distSelector
-            ? distSelector.options[distSelector.selectedIndex].text.split(
-                " (",
-              )[0]
-            : "Hyderabad District";
-          sessionStorage.setItem("current_district", dist);
-          sessionStorage.setItem(
-            "current_username",
-            usernameInput ? usernameInput.value : "sec_hyderabad",
-          );
-          window.location.href = "dashboard.html";
+
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          const errorBox = document.getElementById("login-error");
+          const errorText = document.getElementById("login-error-text");
+          const submitBtn = document.getElementById("login-btn");
+
+          errorBox.classList.add("hidden");
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying...`;
+
+          try {
+            const res = await fetch("/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+              sessionStorage.setItem(
+                "current_district",
+                data.district || "Hyderabad",
+              );
+              window.location.href = "/dashboard.html";
+            } else {
+              errorText.textContent = data.error || "Invalid credentials.";
+              errorBox.classList.remove("hidden");
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1"></i>`;
+            }
+          } catch (err) {
+            console.error("Login request failed:", err);
+            errorText.textContent =
+              "Server connection failed. Ensure server is online.";
+            errorBox.classList.remove("hidden");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1"></i>`;
+          }
         });
     </script>
   </body>
