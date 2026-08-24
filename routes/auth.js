@@ -45,15 +45,16 @@ router.post('/login', async (req, res) => {
       status: 'SUCCESS'
     });
 
+    // FIX: use the single shared JWT_SECRET constant (was 'your_secret_key' before, causing verify() to fail silently)
     const token = jwt.sign(
       {
         id: user._id,
-        district: user.district,
+        email: user.email,
         role: user.role,
-        name: user.secretaryName
+        district: user.district
       },
       JWT_SECRET,
-      { expiresIn: '8h' }
+      { expiresIn: '1d' }
     );
 
     res.cookie('token', token, {
@@ -63,8 +64,11 @@ router.post('/login', async (req, res) => {
       maxAge: 8 * 60 * 60 * 1000
     });
 
+    // FIX: return the token in the JSON body too, since the frontend reads
+    // sessionStorage("token") and sends it as a Bearer header.
     return res.json({
       success: true,
+      token,
       district: user.district,
       role: user.role,
       secretaryName: user.secretaryName
@@ -97,8 +101,14 @@ router.get('/logout', (req, res) => {
 });
 
 // Auth Guard Middleware
+// FIX: now accepts either the httpOnly cookie OR an Authorization: Bearer header,
+// instead of only checking the cookie while the frontend sends a header that was ignored.
 function requireAuth(req, res, next) {
-  const token = req.cookies?.token;
+  const bearerToken = req.headers.authorization?.startsWith('Bearer ')
+    ? req.headers.authorization.split(' ')[1]
+    : null;
+  const token = req.cookies?.token || bearerToken;
+
   if (!token) return res.redirect('/login.html');
 
   try {

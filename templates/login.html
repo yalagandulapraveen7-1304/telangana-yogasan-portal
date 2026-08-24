@@ -195,6 +195,8 @@
             const data = await res.json();
 
             if (res.ok && data.success) {
+              // FIX: store the token so dashboard.html's Authorization header is real
+              sessionStorage.setItem("token", data.token || "");
               sessionStorage.setItem("current_role", data.role || "SECRETARY");
               sessionStorage.setItem(
                 "current_district",

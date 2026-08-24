@@ -28,10 +28,8 @@ const upload = multer({ storage: storage });
 // 1. GET /portal/athletes/list (Supports Super Admin bypass & flexible district matching)
 // 1. GET /portal/athletes/list (Robust Super Admin bypass & case-insensitive matching)
 router.get('/list', requireAuth, async (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   try {
-    console.log("🔍 GET /portal/athletes/list - Authenticated User:", req.user);
-    let filter = {};
-
     // Normalize role and district to uppercase for safe comparison
     const role = (req.user.role || '').toUpperCase().trim();
     const district = (req.user.district || '').toUpperCase().trim();
