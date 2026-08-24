@@ -76,12 +76,6 @@
         </span>
       </div>
 
-      <div class="flex items-center gap-3">
-        <a href="dashboard.html" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-          <i class="fa-solid fa-arrow-left"></i>
-          <span>Back to Dashboard</span>
-        </a>
-      </div>
 
     </div>
   </header>
@@ -131,7 +125,6 @@
       enctype="multipart/form-data" 
       class="space-y-6"
     >
-      <input type="hidden" name="district" id="hidden-district" value="Hyderabad" /><!-- MUST ADD THIS HIDDEN INPUT SO MONGODB DOESN'T REJECT THE SAVE -->
      
       <!-- SECTION A: ATHLETE PERSONAL INFORMATION -->
       <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
@@ -294,26 +287,58 @@
               />
             </div>
           </div>
-
-          <!-- Contact Mobile Number -->
-          <div>
-            <label for="mobile_number" class="form-label">
-              Parent / Athlete Contact Mobile <span class="text-red-500">*</span>
-            </label>
-            <div class="input-icon-wrapper">
-              <i class="fa-solid fa-phone input-icon"></i>
-              <input 
-                type="tel" 
-                id="mobile_number" 
-                name="mobile_number" 
-                required 
-                pattern="[6-9][0-9]{9}" 
-                placeholder="10-digit mobile number" 
-                class="form-input text-sm"
-              />
-            </div>
-          </div>
-
+<!-- District Selection for Nomination -->
+<div class="sm:col-span-2">
+  <label for="district-select" class="form-label">
+    Target District Association <span class="text-red-500">*</span>
+  </label>
+  <div class="input-icon-wrapper">
+    <i class="fa-solid fa-map-location-dot input-icon"></i>
+    <select 
+      id="district-select" 
+      name="district" 
+      required
+      class="form-input text-sm bg-white font-medium"
+    >
+      <option value="" disabled selected>-- Select Athlete's District --</option>
+      <option value="Adilabad">Adilabad</option>
+      <option value="Bhadradri Kothagudem">Bhadradri Kothagudem</option>
+      <option value="Hyderabad">Hyderabad</option>
+      <option value="Jagtial">Jagtial</option>
+      <option value="Jangaon">Jangaon</option>
+      <option value="Jayashankar Bhupalpally">Jayashankar Bhupalpally</option>
+      <option value="Jogulamba Gadwal">Jogulamba Gadwal</option>
+      <option value="Kamareddy">Kamareddy</option>
+      <option value="Karimnagar">Karimnagar</option>
+      <option value="Khammam">Khammam</option>
+      <option value="Komaram Bheem Asifabad">Komaram Bheem Asifabad</option>
+      <option value="Mahabubabad">Mahabubabad</option>
+      <option value="Mahabubnagar">Mahabubnagar</option>
+      <option value="Mancherial">Mancherial</option>
+      <option value="Medak">Medak</option>
+      <option value="Medchal Malkajgiri">Medchal Malkajgiri</option>
+      <option value="Mulugu">Mulugu</option>
+      <option value="Nagarkurnool">Nagarkurnool</option>
+      <option value="Nalgonda">Nalgonda</option>
+      <option value="Narayanpet">Narayanpet</option>
+      <option value="Nirmal">Nirmal</option>
+      <option value="Nizamabad">Nizamabad</option>
+      <option value="Peddapalli">Peddapalli</option>
+      <option value="Rajanna Sircilla">Rajanna Sircilla</option>
+      <option value="Ranga Reddy">Ranga Reddy</option>
+      <option value="Sangareddy">Sangareddy</option>
+      <option value="Siddipet">Siddipet</option>
+      <option value="Suryapet">Suryapet</option>
+      <option value="Vikarabad">Vikarabad</option>
+      <option value="Wanaparthy">Wanaparthy</option>
+      <option value="Warangal">Warangal</option>
+      <option value="Hanamkonda">Hanamkonda</option>
+      <option value="Yadadri Bhuvanagiri">Yadadri Bhuvanagiri</option>
+    </select>
+  </div>
+  <p class="text-[11px] text-slate-500 mt-1">Select the district where the athlete resides and competes.</p>
+</div>
+        
           <!-- Residential Address -->
           <div>
             <label for="residential_address" class="form-label">
@@ -327,6 +352,24 @@
                 name="residential_address" 
                 required 
                 placeholder="House No, Street, Locality" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+  <!-- Contact Mobile Number -->
+          <div>
+            <label for="mobile_number" class="form-label">
+              Parent / Athlete Contact Mobile <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-phone input-icon"></i>
+              <input 
+                type="tel" 
+                id="mobile_number" 
+                name="mobile_number" 
+                required 
+                pattern="[6-9][0-9]{9}" 
+                placeholder="10-digit mobile number" 
                 class="form-input text-sm"
               />
             </div>
@@ -509,7 +552,7 @@
   </footer>
 
   <script src="/static/js/main.js"></script>
-  <script>
+ <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('nomination-form');
       const districtHiddenInput = document.getElementById('hidden-district');
@@ -535,28 +578,32 @@
             });
 
             if (response.ok) {
-              window.location.href = '/dashboard.html';
+              // Reset the form fields cleanly for the next entry
+              form.reset();
+              
+              // Re-apply the active district to the hidden/dropdown field after reset
+              const distSelect = document.getElementById('district-select');
+              if (distSelect) distSelect.value = activeDist;
+
+              alert('Athlete nomination saved successfully!');
             } else {
               const errData = await response.json().catch(() => ({}));
               alert('Failed to save athlete: ' + (errData.details || errData.error || 'Unknown error'));
-              if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Submit Athlete Nomination`;
-              }
             }
           } catch (err) {
             console.error('Network submission error:', err);
             alert('Network error while saving nomination.');
+          } finally {
+            // Always restore the submit button state whether it succeeded or failed
             if (submitBtn) {
               submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Submit Athlete Nomination`;
+              submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane text-amber-300"></i> <span>Submit Athlete Nomination</span>`;
             }
           }
         });
       }
     });
-  </script>
-  
+  </script> 
     <script>
     // Set active district name from session storage
     const activeDist = sessionStorage.getItem('current_district');

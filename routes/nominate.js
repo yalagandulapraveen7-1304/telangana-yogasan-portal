@@ -58,20 +58,27 @@ router.post(
         selectedEvents = ['Traditional Yogasana'];
       }
 
-      const athletePayload = {
-        firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
-        lastName: (b.lastName || b.last_name || '').trim(),
-        dob: b.dob || new Date(),
-        gender: b.gender || 'Female',
-        aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || '0000').toString().trim(),
-        guardianName: (b.guardianName || b.guardian_name || '').trim(),
-        institutionName: (b.institutionName || b.institution_name || '').trim(),
-        mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
-        residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
-        district: req.user.district, // Enforced via JWT
-        events: selectedEvents,
-        category: b.category || 'Junior',
-        status: 'Submitted'
+     // Inside POST /nominate handler:
+const athletePayload = {
+  firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
+  lastName: (b.lastName || b.last_name || '').trim(),
+  dob: b.dob || new Date(),
+  gender: b.gender || 'Female',
+  aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || '0000').toString().trim(),
+  guardianName: (b.guardianName || b.guardian_name || '').trim(),
+  institutionName: (b.institutionName || b.institution_name || '').trim(),
+  mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
+  residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
+  
+  // FIXED: Allow form dropdown selection, fallback to logged-in user's district, or default to Hyderabad
+// Safe district extraction (handles both string and array inputs)
+  district: typeof (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')) === 'string' 
+    ? (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')).trim() 
+    : 'Hyderabad',
+  events: selectedEvents,
+  category: b.category || 'Junior',
+  status: 'Submitted'
+
       };
 
       if (req.files) {

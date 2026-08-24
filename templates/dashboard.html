@@ -145,16 +145,6 @@
             >
           </h1>
         </div>
-
-        <div>
-          <a
-            href="nominate.html"
-            class="inline-flex items-center gap-2 bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-md transition transform hover:-translate-y-0.5"
-          >
-            <i class="fa-solid fa-user-plus text-amber-300"></i>
-            <span>+ Register New Athlete</span>
-          </a>
-        </div>
       </div>
 
       <!-- District Association Strip -->
@@ -869,21 +859,23 @@
 
       document.addEventListener("DOMContentLoaded", loadLiveAthletes);
 
-      document.addEventListener('DOMContentLoaded', async () => {
-  // Check if current user is a super admin based on session storage or cookie
-  const userRole = sessionStorage.getItem('current_role') || 'SECRETARY';
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Check if current user is a super admin based on session storage or cookie
+        const userRole = sessionStorage.getItem("current_role") || "SECRETARY";
 
-  if (userRole === 'SUPER_ADMIN') {
-    const container = document.getElementById('audit-log-container');
-    if (container) container.classList.remove('hidden');
+        if (userRole === "SUPER_ADMIN") {
+          const container = document.getElementById("audit-log-container");
+          if (container) container.classList.remove("hidden");
 
-    try {
-      const res = await fetch('/auth/logs');
-      if (res.ok) {
-        const logs = await res.json();
-        const tbody = document.getElementById('audit-log-rows');
-        if (tbody) {
-          tbody.innerHTML = logs.map(log => `
+          try {
+            const res = await fetch("/auth/logs");
+            if (res.ok) {
+              const logs = await res.json();
+              const tbody = document.getElementById("audit-log-rows");
+              if (tbody) {
+                tbody.innerHTML = logs
+                  .map(
+                    (log) => `
             <tr class="hover:bg-slate-50 transition">
               <td class="p-3 font-mono text-[11px] text-slate-500">${new Date(log.loginAt).toLocaleString()}</td>
               <td class="p-3 font-semibold text-slate-900">${log.email}</td>
@@ -893,19 +885,21 @@
               </td>
               <td class="p-3 font-mono text-[11px]">${log.ipAddress}</td>
               <td class="p-3">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${log.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${log.status === "SUCCESS" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}">
                   ${log.status}
                 </span>
               </td>
             </tr>
-          `).join('');
+          `,
+                  )
+                  .join("");
+              }
+            }
+          } catch (err) {
+            console.error("Failed to load audit logs in UI:", err);
+          }
         }
-      }
-    } catch (err) {
-      console.error('Failed to load audit logs in UI:', err);
-    }
-  }
-});
+      });
     </script>
   </body>
 </html>
