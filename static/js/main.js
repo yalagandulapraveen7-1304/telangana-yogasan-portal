@@ -250,16 +250,9 @@ function showSubmitSuccess() {
         Nomination Submitted!
       </h2>
       <p style="color:#64748b;margin-bottom:1.5rem;font-size:.9rem;">
-        The athlete has been successfully nominated. You can view the entry in your dashboard.
+        The Payment is succesfull
       </p>
-      <a href="dashboard.html"
-         style="background:#0D5C3A;color:#fff;padding:.75rem 2rem;border-radius:2rem;
-                text-decoration:none;font-weight:700;font-size:.9rem;
-                display:inline-block;transition:background .2s;"
-         onmouseover="this.style.background='#0a4229'"
-         onmouseout="this.style.background='#0D5C3A'">
-        Back to Dashboard
-      </a>
+     
     </div>
   `;
   document.body.appendChild(overlay);

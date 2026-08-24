@@ -42,23 +42,28 @@
       class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] py-3 px-6 shadow-sm"
     >
       <div class="max-w-6xl mx-auto flex items-center justify-between">
-        <a href="index.html" class="flex items-center gap-3">
+        <!-- Logo and Title Group -->
+        <div class="flex items-center gap-3.5">
           <div
-            class="w-9 h-9 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059]"
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-0.5 flex items-center justify-center border-2 border-[#C5A059] shadow-sm overflow-hidden flex-shrink-0"
           >
-            <i class="fa-solid fa-om text-[#0D5C3A] text-lg"></i>
+            <img
+              src="static/images/TSYSC.png"
+              class="w-full h-full object-contain rounded-full"
+              alt="Telangana Yoga Association Logo"
+            />
           </div>
           <div>
-            <div
-              class="text-[10px] text-amber-300 font-bold uppercase tracking-wider"
+            <h1
+              class="font-bold text-xs sm:text-sm tracking-wider font-display uppercase leading-tight"
             >
-              Telangana Yoga Association
-            </div>
-            <div class="text-sm font-bold text-white font-display">
-              State Inter-District Championship
-            </div>
+              Telangana State Yoga Association
+            </h1>
+            <p class="text-[11px] sm:text-xs text-amber-200 font-medium">
+              State Inter-District Championship Portal
+            </p>
           </div>
-        </a>
+        </div>
         <a
           href="index.html"
           class="text-xs text-emerald-200 hover:text-white flex items-center gap-1"
@@ -190,6 +195,7 @@
             const data = await res.json();
 
             if (res.ok && data.success) {
+              sessionStorage.setItem("current_role", data.role || "SECRETARY");
               sessionStorage.setItem(
                 "current_district",
                 data.district || "Hyderabad",

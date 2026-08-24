@@ -26,5 +26,4 @@ const AthleteSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-module.exports = mongoose.models.Athlete || mongoose.model('Athlete', AthleteSchema);
+module.exports = mongoose.model('Athlete', AthleteSchema, 'athletes'); // Force exact collection name

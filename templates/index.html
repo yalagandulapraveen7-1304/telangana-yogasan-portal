@@ -122,12 +122,6 @@
               A+
             </button>
           </div>
-          <span class="text-slate-400">|</span>
-          <span
-            class="text-amber-300 font-medium cursor-pointer hover:underline"
-            title="Language Switcher"
-            >English / తెలుగు</span
-          >
         </div>
       </div>
     </div>
@@ -145,22 +139,22 @@
           >
             <!-- Telangana Emblem Crest SVG / Icon -->
             <div
-              class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-1 flex items-center justify-center shadow-md flex-shrink-0 border-2 border-[#C5A059]"
+              class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0 border-2 border-[#C5A059]"
             >
               <div
-                class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center text-center p-0.5"
+                class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center text-center"
               >
-                <i class="fa-solid fa-om text-amber-300 text-lg sm:text-xl"></i>
-                <span
-                  class="text-[6px] tracking-tight font-bold text-amber-100 uppercase mt-0.5"
-                  >TYA</span
-                >
+                <img
+                  src="/static/images/TSYSC.png"
+                  alt=""
+                  class="w-full h-auto"
+                />
               </div>
             </div>
 
             <div class="flex flex-col">
               <span
-                class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-amber-300"
+                class="text-[8px] sm:text-xs font-semibold uppercase tracking-wider text-amber-300"
               >
                 Telangana Yoga Association &bull; SATS
               </span>
@@ -310,7 +304,6 @@
                   <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
 
-                
                 <a href="login.html" class="btn-primary">
                   <i class="fa-solid fa-id-badge"></i>
                   <span>District Secretary Login</span>
@@ -376,22 +369,25 @@
             <!-- Hero Graphic Card / Official Badge -->
             <div class="lg:col-span-4 flex justify-center">
               <div
-                class="bg-white/10 backdrop-blur-md border border-amber-300/40 p-6 sm:p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full relative"
+                class="border border-amber-300/40 p-6 sm:p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full relative overflow-hidden bg-cover bg-center"
+                style="
+                  background-image:
+                    linear-gradient(
+                      rgba(13, 92, 58, 0.4),
+                      rgba(13, 92, 58, 0.4)
+                    ),
+                    url(&quot;/images/yoga-tree.jpg&quot;);
+                "
               >
-                <div
-                  class="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-amber-300 to-amber-600 flex items-center justify-center text-emerald-950 text-4xl shadow-inner mb-4"
-                >
-                  <i class="fa-solid fa-yin-yang"></i>
-                </div>
-                <h3 class="text-lg font-bold text-white mb-1">
+                <h3 class="text-lg font-bold text-white mb-1 relative z-10">
                   State Selection Trials
                 </h3>
-                <p class="text-xs text-emerald-100 mb-4">
+                <p class="text-xs text-emerald-100 mb-4 relative z-10">
                   Performance evaluated by certified National &amp; State Level
                   Judges as per National Yogasana Sports Federation protocols.
                 </p>
                 <div
-                  class="bg-emerald-900/60 rounded-lg p-3 border border-white/10 text-left space-y-1.5 text-xs text-slate-200"
+                  class="bg-emerald-950/80 rounded-lg p-3 border border-white/10 text-left space-y-1.5 text-xs text-slate-200 relative z-10"
                 >
                   <div class="flex items-center gap-2">
                     <i class="fa-solid fa-check-circle text-amber-400"></i>
@@ -575,7 +571,6 @@
           </div>
         </div>
       </section>
-
       <!-- SECTION 2: TOURNAMENT DISCIPLINES -->
       <section id="disciplines" class="py-16 bg-slate-100/70">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -592,7 +587,8 @@
             </p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- 5 Columns in one row on large screens (lg:grid-cols-5) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             <!-- Discipline 1: Traditional -->
             <div
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
@@ -686,6 +682,28 @@
                 class="mt-auto w-full bg-amber-50 text-[#C5A059] text-xs font-semibold py-1.5 px-3 rounded-md"
               >
                 Fluid Transition &bull; Tempo Match
+              </div>
+            </div>
+
+            <!-- Discipline 5: Free Flow -->
+            <div
+              class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
+            >
+              <div
+                class="w-16 h-16 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center text-2xl mb-4"
+              >
+                <i class="fa-solid fa-person-praying"></i>
+              </div>
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Free Flow</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                It is a continuous sequence of yoga postures performed smoothly
+                and rhythmically, linking one asana to the next with controlled
+                breathing and graceful movements.
+              </p>
+              <div
+                class="mt-auto w-full bg-emerald-50 text-[#0D5C3A] text-xs font-semibold py-1.5 px-3 rounded-md"
+              >
+                Flow &bull; Alignment &bull; Breathing-control
               </div>
             </div>
           </div>
@@ -843,6 +861,158 @@
               Date of Birth. Any submission with forged age documents will lead
               to lifetime debarment by the State Disciplinary Committee.
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3.5: PHOTO GALLERY -->
+      <section id="gallery" class="py-16 bg-slate-100/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="section-badge">Championship Moments</span>
+            <h2 class="text-3xl font-bold font-display text-slate-900">
+              Photo Gallery
+            </h2>
+            <div class="section-divider mx-auto"></div>
+            <p class="text-slate-600 text-sm sm:text-base">
+              Glimpses from District Selection Trials, State Championship
+              rounds, and felicitation ceremonies across Telangana.
+            </p>
+          </div>
+
+          <div
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+          >
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-01.jpg"
+                  alt="Traditional Yogasana performance at District Selection Trials"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Traditional Yogasana &bull; District Trials
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-02.jpg"
+                  alt="Artistic Yogasana solo performance"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Artistic Yogasana &bull; Solo Round
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-03.jpg"
+                  alt="Artistic Yogasana pair performance with synchronized posture"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Artistic Pair &bull; State Finals
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-04.jpg"
+                  alt="Rhythmic Yogasana pair performance with music"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Rhythmic Pair &bull; Championship Round
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-05.jpg"
+                  alt="Certified judges panel evaluating performance"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Judges Panel &bull; Technical Scrutiny
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-06.jpg"
+                  alt="Medal ceremony and felicitation of winning athletes"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Medal Ceremony &bull; Felicitation
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-07.jpg"
+                  alt="District Secretaries at the nomination and registration desk"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Registration Desk &bull; District Secretaries
+              </div>
+            </div>
+
+            <div class="card overflow-hidden group cursor-pointer bg-white">
+              <div
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+              >
+                <img
+                  src="/static/images/gallery/gallery-08.jpg"
+                  alt="Indoor championship stage and mat layout"
+                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+              </div>
+              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
+                Championship Stage &bull; Venue Setup
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 text-center">
+            <a
+              href="javascript:void(0)"
+              onclick="alert('Opening Full Championship Photo Gallery...')"
+              class="inline-flex items-center gap-2 bg-[#0D5C3A] text-white hover:bg-[#0a4229] px-6 py-2.5 rounded-full text-xs font-bold shadow transition"
+            >
+              <i class="fa-solid fa-images"></i>
+              <span>View Full Gallery</span>
+            </a>
           </div>
         </div>
       </section>

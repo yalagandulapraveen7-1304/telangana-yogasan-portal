@@ -25,18 +25,36 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// 1. GET /portal/athletes/list (District scoped)
+// 1. GET /portal/athletes/list (Supports Super Admin bypass & flexible district matching)
+// 1. GET /portal/athletes/list (Robust Super Admin bypass & case-insensitive matching)
 router.get('/list', requireAuth, async (req, res) => {
   try {
-    const athletes = await Athlete.find({ district: req.user.district }).sort({ createdAt: -1 });
+    console.log("🔍 GET /portal/athletes/list - Authenticated User:", req.user);
+    let filter = {};
+
+    // Normalize role and district to uppercase for safe comparison
+    const role = (req.user.role || '').toUpperCase().trim();
+    const district = (req.user.district || '').toUpperCase().trim();
+
+    // If Super Admin or All Districts, leave filter empty to return all records
+    if (role === 'SUPER_ADMIN' || district === 'ALL_DISTRICTS' || district === 'ALL') {
+      filter = {}; 
+    } else {
+      const userDist = (req.user.district || '').replace(/ district/i, '').trim();
+      filter.district = { $regex: new RegExp(`^${userDist}(\\s+District)?$`, 'i') };
+    }
+
+    console.log("🔍 Final MongoDB Filter:", filter);
+    const athletes = await Athlete.find(filter).sort({ createdAt: -1 });
+    console.log(`📦 Successfully retrieved ${athletes.length} athletes from database.`);
+    
     res.json(athletes);
   } catch (err) {
-    console.error('Fetch Error:', err);
+    console.error('Fetch Error in /portal/athletes/list:', err);
     res.status(500).json({ error: 'Failed to retrieve athletes' });
   }
 });
-
-// 2. POST /portal/athletes/nominate (District scoped)
+// 2. POST /portal/athletes/nominate
 router.post(
   '/nominate',
   requireAuth,
@@ -58,27 +76,22 @@ router.post(
         selectedEvents = ['Traditional Yogasana'];
       }
 
-     // Inside POST /nominate handler:
-const athletePayload = {
-  firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
-  lastName: (b.lastName || b.last_name || '').trim(),
-  dob: b.dob || new Date(),
-  gender: b.gender || 'Female',
-  aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || '0000').toString().trim(),
-  guardianName: (b.guardianName || b.guardian_name || '').trim(),
-  institutionName: (b.institutionName || b.institution_name || '').trim(),
-  mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
-  residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
-  
-  // FIXED: Allow form dropdown selection, fallback to logged-in user's district, or default to Hyderabad
-// Safe district extraction (handles both string and array inputs)
-  district: typeof (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')) === 'string' 
-    ? (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')).trim() 
-    : 'Hyderabad',
-  events: selectedEvents,
-  category: b.category || 'Junior',
-  status: 'Submitted'
-
+      const athletePayload = {
+        firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
+        lastName: (b.lastName || b.last_name || '').trim(),
+        dob: b.dob || new Date(),
+        gender: b.gender || 'Female',
+        aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || '0000').toString().trim(),
+        guardianName: (b.guardianName || b.guardian_name || '').trim(),
+        institutionName: (b.institutionName || b.institution_name || '').trim(),
+        mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
+        residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
+        district: typeof (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')) === 'string'
+          ? (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')).trim()
+          : 'Hyderabad',
+        events: selectedEvents,
+        category: b.category || 'Junior',
+        status: 'Submitted'
       };
 
       if (req.files) {
@@ -122,8 +135,15 @@ const athletePayload = {
 router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
     const { status, remarks } = req.body;
+    let query = { _id: req.params.id };
+
+    if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
+      const userDist = (req.user.district || '').replace(/ district/i, '').trim();
+      query.district = { $regex: new RegExp(`^${userDist}(\\s+District)?$`, 'i') };
+    }
+
     const updated = await Athlete.findOneAndUpdate(
-      { _id: req.params.id, district: req.user.district },
+      query,
       { status, remarks },
       { new: true }
     );
@@ -133,29 +153,6 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Status Update Error:', err);
     res.status(500).json({ error: 'Failed to update status' });
-  }
-});
-
-// 1. GET /portal/athletes/list
-router.get('/list', requireAuth, async (req, res) => {
-  try {
-    let filter = {};
-
-    if (req.user.role === 'SUPER_ADMIN') {
-      // Super admins view all districts, or optionally filter via ?district=Warangal
-      if (req.query.district && req.query.district !== 'ALL') {
-        filter.district = req.query.district;
-      }
-    } else {
-      // Standard secretaries are strictly scoped to their own district
-      filter.district = req.user.district;
-    }
-
-    const athletes = await Athlete.find(filter).sort({ createdAt: -1 });
-    res.json(athletes);
-  } catch (err) {
-    console.error('Fetch Error:', err);
-    res.status(500).json({ error: 'Failed to retrieve athletes' });
   }
 });
 

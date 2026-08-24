@@ -587,23 +587,24 @@
         if (bannerEl)
           bannerEl.textContent = savedDistrict + " Yoga Association";
       }
-
       async function loadLiveAthletes() {
         try {
-          const response = await fetch("/portal/athletes/list");
+          const token = sessionStorage.getItem("token");
+
+          // Update the endpoint URL here:
+          const response = await fetch("/portal/athletes/list", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
           if (!response.ok)
             throw new Error(`Server returned ${response.status}`);
+
           const athletes = await response.json();
           liveAthletesList = athletes;
 
-          // 1. Update Metrics Grid (Always counts EVERY athlete)
-          const elTotal = document.getElementById("metric-total");
-          const elVerified = document.getElementById("metric-verified");
-          const elPending = document.getElementById("metric-pending");
-          const elClarification = document.getElementById(
-            "metric-clarification",
-          );
-
+          // 1. Update Metrics Grid
           const totalCount = athletes.length;
           const verifiedCount = athletes.filter(
             (a) => a.status === "Verified",
@@ -613,10 +614,12 @@
           ).length;
           const pendingCount = totalCount - verifiedCount - clarificationCount;
 
-          if (elTotal) elTotal.textContent = totalCount;
-          if (elVerified) elVerified.textContent = verifiedCount;
-          if (elPending) elPending.textContent = pendingCount;
-          if (elClarification) elClarification.textContent = clarificationCount;
+          document.getElementById("metric-total").textContent = totalCount;
+          document.getElementById("metric-verified").textContent =
+            verifiedCount;
+          document.getElementById("metric-pending").textContent = pendingCount;
+          document.getElementById("metric-clarification").textContent =
+            clarificationCount;
 
           // 2. Draw Table for Page 1
           renderTablePage();
@@ -624,7 +627,6 @@
           console.error("Error fetching live athletes:", err);
         }
       }
-
       // 3. Pagination Rendering Logic
       function renderTablePage() {
         const tbody = document.getElementById("athlete-table-body");
