@@ -576,27 +576,46 @@
       let currentPage = 1;
       const rowsPerPage = 10;
 
-      // Session Header Init
-      const savedDistrict = sessionStorage.getItem("current_district");
-      if (savedDistrict) {
+      // Session Header Init (Supports Super Admin & Districts)
+      document.addEventListener("DOMContentLoaded", () => {
+        const savedDistrict =
+          sessionStorage.getItem("current_district") || "Hyderabad";
+        const userRole = sessionStorage.getItem("current_role") || "SECRETARY";
+
         const headerEl = document.getElementById("district-header-name");
         const pageEl = document.getElementById("page-district-title");
         const bannerEl = document.getElementById("district-banner-title");
-        if (headerEl) headerEl.textContent = savedDistrict;
-        if (pageEl) pageEl.textContent = savedDistrict + " Dashboard";
-        if (bannerEl)
-          bannerEl.textContent = savedDistrict + " Yoga Association";
-      }
+        const badgeEl = document.querySelector("header .bg-amber-400");
+
+        if (userRole === "SUPER_ADMIN" || savedDistrict === "ALL_DISTRICTS") {
+          if (headerEl) headerEl.textContent = "ALL_DISTRICTS Dashboard";
+          if (pageEl) pageEl.textContent = "Statewide Super Admin Dashboard";
+          if (bannerEl) bannerEl.textContent = "ALL_DISTRICTS Yoga Association";
+          if (badgeEl) badgeEl.textContent = "ALL";
+        } else {
+          if (headerEl)
+            headerEl.textContent = savedDistrict + " District Association";
+          if (pageEl)
+            pageEl.textContent =
+              savedDistrict + " District Secretary Dashboard";
+          if (bannerEl)
+            bannerEl.textContent = savedDistrict + " District Yoga Association";
+          if (badgeEl)
+            badgeEl.textContent = savedDistrict.substring(0, 3).toUpperCase();
+        }
+
+        loadLiveAthletes();
+      });
+
       async function loadLiveAthletes() {
         try {
           const token = sessionStorage.getItem("token");
 
-          // Update the endpoint URL here:
           const response = await fetch("/portal/athletes/list", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            cache: "no-store", // ADD THIS — prevents 304/cached reuse
+            cache: "no-store",
           });
 
           if (!response.ok)
@@ -628,7 +647,8 @@
           console.error("Error fetching live athletes:", err);
         }
       }
-      // 3. Pagination Rendering Logic
+
+      // 3. Pagination & Table Rendering Logic
       function renderTablePage() {
         const tbody = document.getElementById("athlete-table-body");
         const emptyState = document.getElementById("table-empty-state");
@@ -652,12 +672,10 @@
         if (currentPage > totalPages) currentPage = totalPages;
         if (currentPage < 1) currentPage = 1;
 
-        // Slice data for the current page
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = Math.min(startIndex + rowsPerPage, totalItems);
         const pageData = liveAthletesList.slice(startIndex, endIndex);
 
-        // Draw Rows for this specific page
         pageData.forEach((athlete) => {
           const initials =
             (
@@ -694,44 +712,43 @@
           const row = document.createElement("tr");
           row.className = "hover:bg-slate-50 transition-colors text-sm";
           row.innerHTML = `
-            <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
-            <td class="py-3.5 px-4">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
-                  ${initials}
-                </div>
-                <div>
-                  <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
-                  <div class="text-[11px] text-slate-500">ID: [Aadhaar Redacted]</div>
-                </div>
+          <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
+          <td class="py-3.5 px-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
+                ${initials}
               </div>
-            </td>
-            <td class="py-3.5 px-4">
-              <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
-              <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
-            </td>
-            <td class="py-3.5 px-4">
-              <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">${athlete.category || "-"}</span>
-            </td>
-            <td class="py-3.5 px-4">
-              <div class="flex flex-wrap gap-1">${eventTags}</div>
-            </td>
-            <td class="py-3.5 px-4">
-              <button type="button" onclick="openVerificationModal('${athlete._id}')" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
-                <i class="fa-solid fa-file-shield text-emerald-600"></i> View Proof
-              </button>
-            </td>
-            <td class="py-3.5 px-4">${statusBadge}</td>
-            <td class="py-3.5 px-4 text-right">
-              <button type="button" onclick="openVerificationModal('${athlete._id}')" title="View ID / Details" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors">
-                <i class="fa-solid fa-id-card"></i>
-              </button>
-            </td>
-          `;
+              <div>
+                <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
+                <div class="text-[11px] text-slate-500">ID: [Aadhaar Redacted]</div>
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
+            <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">${athlete.category || "-"}</span>
+          </td>
+          <td class="py-3.5 px-4">
+            <div class="flex flex-wrap gap-1">${eventTags}</div>
+          </td>
+          <td class="py-3.5 px-4">
+            <a href="admitcard.html?id=${athlete._id}" target="_blank" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-id-card text-emerald-600"></i> View Admit Card
+            </a>
+          </td>
+          <td class="py-3.5 px-4">${statusBadge}</td>
+          <td class="py-3.5 px-4 text-right">
+            <a href="admitcard.html?id=${athlete._id}" target="_blank" title="View Admit Card" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors inline-block">
+              <i class="fa-solid fa-id-card"></i>
+            </a>
+          </td>
+        `;
           tbody.appendChild(row);
         });
 
-        // 4. Update the Pagination Footer UI
         updatePaginationControls(
           startIndex + 1,
           endIndex,
@@ -745,15 +762,12 @@
           `Showing <span class="font-bold text-slate-800">${start}</span> to <span class="font-bold text-slate-800">${end}</span> of <span class="font-bold text-slate-800">${total}</span> Nominated Athletes`;
 
         let btnHTML = "";
-
-        // Previous
         if (currentPage === 1) {
           btnHTML += `<button class="px-2.5 py-1 rounded border border-slate-300 bg-slate-50 text-slate-400 font-medium cursor-not-allowed" disabled>Previous</button>`;
         } else {
           btnHTML += `<button onclick="goToPage(${currentPage - 1})" class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-100 font-medium text-slate-700 transition">Previous</button>`;
         }
 
-        // Numbers
         for (let i = 1; i <= totalPages; i++) {
           if (i === currentPage) {
             btnHTML += `<button class="px-2.5 py-1 rounded border border-[#0D5C3A] bg-[#0D5C3A] text-white font-bold">${i}</button>`;
@@ -762,7 +776,6 @@
           }
         }
 
-        // Next
         if (currentPage === totalPages) {
           btnHTML += `<button class="px-2.5 py-1 rounded border border-slate-300 bg-slate-50 text-slate-400 font-medium cursor-not-allowed" disabled>Next</button>`;
         } else {
@@ -772,69 +785,12 @@
         document.getElementById("pagination-controls").innerHTML = btnHTML;
       }
 
-      // Triggers when a pagination button is clicked
       function goToPage(page) {
         currentPage = page;
         renderTablePage();
       }
 
-      // Modal Controls
-      function openVerificationModal(athleteId) {
-        const athlete = liveAthletesList.find((a) => a._id === athleteId);
-        if (!athlete) return;
-
-        currentAthleteId = athlete._id;
-
-        document.getElementById("modal-athlete-name").textContent =
-          `${athlete.firstName || ""} ${athlete.lastName || ""}`;
-        document.getElementById("modal-athlete-meta").textContent =
-          `Chest No: ${athlete.chestNumber || "PENDING"} | Category: ${athlete.category || "N/A"}`;
-        document.getElementById("modal-gender").textContent =
-          athlete.gender || "-";
-        document.getElementById("modal-dob").textContent = athlete.dob
-          ? new Date(athlete.dob).toLocaleDateString("en-GB")
-          : "-";
-        document.getElementById("modal-events").textContent =
-          (athlete.events || []).join(", ") || "None";
-        document.getElementById("scrutiny-remarks").value =
-          athlete.remarks || "";
-
-        let rawPath = athlete.dobProofPath || athlete.photoPath || "";
-        let formattedUrl = "";
-        if (rawPath) {
-          const filename = rawPath.split(/[\\/]/).pop();
-          formattedUrl = `/uploads/${encodeURIComponent(filename)}`;
-        }
-
-        const imgEl = document.getElementById("modal-proof-img");
-        const pdfEl = document.getElementById("modal-proof-pdf");
-        const fallbackEl = document.getElementById("modal-proof-fallback");
-
-        imgEl.classList.add("hidden");
-        pdfEl.classList.add("hidden");
-        fallbackEl.classList.add("hidden");
-
-        if (formattedUrl) {
-          if (formattedUrl.toLowerCase().endsWith(".pdf")) {
-            pdfEl.src = formattedUrl;
-            pdfEl.classList.remove("hidden");
-          } else {
-            imgEl.src = formattedUrl;
-            imgEl.classList.remove("hidden");
-          }
-        } else {
-          fallbackEl.classList.remove("hidden");
-        }
-
-        document
-          .getElementById("verification-modal")
-          .classList.remove("hidden");
-      }
-
-      function closeModal() {
-        document.getElementById("verification-modal").classList.add("hidden");
-      }
-
+      // Modal & Audit Log Handlers
       async function updateAthleteStatus(newStatus) {
         if (!currentAthleteId) return;
         const remarks = document.getElementById("scrutiny-remarks").value;
@@ -851,7 +807,7 @@
 
           if (res.ok) {
             closeModal();
-            loadLiveAthletes(); // Fetch fresh data & redraw
+            loadLiveAthletes();
           } else {
             alert("Failed to update status.");
           }
@@ -860,10 +816,7 @@
         }
       }
 
-      document.addEventListener("DOMContentLoaded", loadLiveAthletes);
-
       document.addEventListener("DOMContentLoaded", async () => {
-        // Check if current user is a super admin based on session storage or cookie
         const userRole = sessionStorage.getItem("current_role") || "SECRETARY";
 
         if (userRole === "SUPER_ADMIN") {

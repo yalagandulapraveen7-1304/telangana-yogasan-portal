@@ -4,67 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      Telangana State Inter-District Yogasana Sports Championship | SATS &
+      Telangana State Inter-District Yogasana Sports Championship | SATS &amp;
       Telangana Yoga Association
     </title>
     <meta
       name="description"
-      content="Official State Championship & Selection Trials for 33 Districts of Telangana under the aegis of Sports Authority of Telangana State."
+      content="Official State Championship &amp; Selection Trials for 33 Districts of Telangana under the aegis of Sports Authority of Telangana State."
     />
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Font Awesome Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              "tg-green": {
-                DEFAULT: "#0D5C3A",
-                50: "#eef8f2",
-                100: "#d7efe2",
-                600: "#0f5132",
-                700: "#0D5C3A",
-                800: "#0a4229",
-                900: "#062919",
-              },
-              "tg-gold": {
-                DEFAULT: "#C5A059",
-                light: "#f5e6c8",
-                hover: "#b8893d",
-                500: "#C5A059",
-                600: "#b08d46",
-              },
-              "tg-crimson": "#8B0000",
-              "tg-slate": "#F8FAFC",
-            },
-            fontFamily: {
-              sans: ["Inter", "Plus Jakarta Sans", "system-ui", "sans-serif"],
-              display: ["Plus Jakarta Sans", "Inter", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
-    <!-- Compiled Tailwind CSS v4 -->
-    <link rel="stylesheet" href="../static/css/output.css" />
-
-    <!-- Custom overrides (if any) -->
-    <link rel="stylesheet" href="../static/css/custom.css" />
+    <!-- ✅ CORRECT ROOT-RELATIVE PATHS -->
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/output.css" />
+    <link rel="stylesheet" href="/static/css/custom.css" />
   </head>
   <body
     class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen"
@@ -83,8 +33,9 @@
           <span
             class="inline-flex items-center gap-1.5 font-medium tracking-wide"
           >
+            <!-- Local SVG Emblem -->
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg"
+              src="../static/images/Emblem_of_India.svg"
               alt="Emblem of India"
               class="h-4 w-auto inline filter brightness-0 invert opacity-90"
             />
@@ -137,16 +88,15 @@
             href="index.html"
             class="flex items-center gap-3.5 group text-decoration-none"
           >
-            <!-- Telangana Emblem Crest SVG / Icon -->
             <div
               class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0 border-2 border-[#C5A059]"
             >
               <div
-                class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center text-center"
+                class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center text-center overflow-hidden"
               >
                 <img
-                  src="/static/images/TSYSC.png"
-                  alt=""
+                  src="../static/images/TSYSC.png"
+                  alt="Logo"
                   class="w-full h-auto"
                 />
               </div>
@@ -213,7 +163,7 @@
           <a
             href="#announcements"
             class="block px-3 py-2 rounded-md text-white font-medium hover:bg-emerald-800"
-            >Notice Board & Updates</a
+            >Notice Board &amp; Updates</a
           >
           <a
             href="#disciplines"
@@ -223,7 +173,7 @@
           <a
             href="#eligibility"
             class="block px-3 py-2 rounded-md text-white font-medium hover:bg-emerald-800"
-            >Eligibility & Age Divisions</a
+            >Eligibility &amp; Age Divisions</a
           >
           <a
             href="#districts"
@@ -256,17 +206,17 @@
       <div class="overflow-hidden whitespace-nowrap w-full">
         <div class="marquee-content inline-block text-emerald-950">
           📢 District Secretaries: Online Athlete Nominations are now open for
-          Sub-Junior, Junior & Senior categories. &bull; Aadhaar-linked Date of
-          Birth certificate is mandatory. &bull; Official Championship schedule
-          and venue circulars will be published via Notice Board below. &bull;
-          Contact State Grievance Cell for affiliation and portal access
+          Sub-Junior, Junior &amp; Senior categories. &bull; Aadhaar-linked Date
+          of Birth certificate is mandatory. &bull; Official Championship
+          schedule and venue circulars will be published via Notice Board below.
+          &bull; Contact State Grievance Cell for affiliation and portal access
           inquiries.
         </div>
       </div>
     </div>
 
     <main id="main-content" class="flex-grow">
-      <!-- Hero Banner (STRICTLY NO HARDCODED DATES OR VENUES) -->
+      <!-- Hero Banner -->
       <section class="hero py-16 md:py-24 text-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 w-full">
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -279,7 +229,7 @@
               </div>
 
               <h1
-                class="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-extrabold tracking-tight font-display text-white leading-tight mb-4"
+                class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight font-display text-white leading-tight mb-4"
               >
                 Telangana State Inter-District <br class="hidden sm:inline" />
                 <span class="text-amber-300">Yogasana Sports Championship</span>
@@ -300,7 +250,7 @@
               >
                 <a href="nominate.html" class="btn-primary">
                   <i class="fa-solid fa-id-badge"></i>
-                  <span>Register as New Athelate</span>
+                  <span>Register as New Athlete</span>
                   <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
 
@@ -311,17 +261,13 @@
                 </a>
 
                 <a href="#gallery" class="btn-primary pr-12 pl-10">
-                  <i class="fa-solid fa-id-badge"></i>
+                  <i class="fa-solid fa-images"></i>
                   <span>View Gallery</span>
                   <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
                 <a
-                  href=""
-                  onclick="
-                    alert(
-                      'Downloading Official Rulebook PDF (Telangana Yoga Association Guidelines 2025-26)...',
-                    )
-                  " 
+                  href="../static/images/Yoga Federation Rules &amp; Regulations.pdf"
+                  target="_blank"
                   class="btn-outline"
                 >
                   <i class="fa-solid fa-file-pdf text-red-400"></i>
@@ -366,7 +312,7 @@
               </div>
             </div>
 
-            <!-- Hero Graphic Card / Official Badge -->
+            <!-- Hero Graphic Card -->
             <div class="lg:col-span-4 flex justify-center">
               <div
                 class="border border-green-800/40 p-6 sm:p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full relative overflow-hidden bg-cover bg-center"
@@ -376,7 +322,7 @@
                       rgba(13, 92, 58, 0.4),
                       rgba(13, 92, 58, 0.4)
                     ),
-                    url(&quot;static/images/yoga-tree.jpg&quot;);
+                    url(&quot;../static/images/yoga-tree.jpg&quot;);
                 "
               >
                 <h3 class="text-lg font-bold text-white mb-1 relative z-10">
@@ -390,15 +336,15 @@
                   class="bg-emerald-950/80 rounded-lg p-3 border border-white/10 text-left space-y-1.5 text-xs text-slate-200 relative z-10"
                 >
                   <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-check-circle text-amber-400"></i>
+                    <i class="fa-solid fa-circle-check text-amber-400"></i>
                     <span>Affiliated to Telangana Yoga Association</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-check-circle text-amber-400"></i>
+                    <i class="fa-solid fa-circle-check text-amber-400"></i>
                     <span>Endorsed by Sports Authority (SATS)</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-check-circle text-amber-400"></i>
+                    <i class="fa-solid fa-circle-check text-amber-400"></i>
                     <span>National Championship Pathway</span>
                   </div>
                 </div>
@@ -408,7 +354,7 @@
         </div>
       </section>
 
-      <!-- SECTION 1: LATEST UPDATES & OFFICIAL ANNOUNCEMENTS (NOTICE BOARD) -->
+      <!-- SECTION 1: LATEST UPDATES & NOTICE BOARD -->
       <section
         id="announcements"
         class="py-12 bg-white border-b border-slate-200"
@@ -571,6 +517,7 @@
           </div>
         </div>
       </section>
+
       <!-- SECTION 2: TOURNAMENT DISCIPLINES -->
       <section id="disciplines" class="py-16 bg-slate-100/70">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -587,9 +534,8 @@
             </p>
           </div>
 
-          <!-- 5 Columns in one row on large screens (lg:grid-cols-5) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            <!-- Discipline 1: Traditional -->
+            <!-- Discipline 1 -->
             <div
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
@@ -613,7 +559,7 @@
               </div>
             </div>
 
-            <!-- Discipline 2: Artistic Solo -->
+            <!-- Discipline 2 -->
             <div
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
@@ -637,7 +583,7 @@
               </div>
             </div>
 
-            <!-- Discipline 3: Artistic Pair -->
+            <!-- Discipline 3 -->
             <div
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
@@ -661,7 +607,7 @@
               </div>
             </div>
 
-            <!-- Discipline 4: Rhythmic Pair -->
+            <!-- Discipline 4 -->
             <div
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
@@ -685,7 +631,7 @@
               </div>
             </div>
 
-            <!-- Discipline 5: Free Flow -->
+            <!-- Discipline 5 -->
             <div
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
@@ -888,7 +834,7 @@
                 class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-01.jpg"
+                  src="../static/images/gallery/gallery-01.jpg"
                   alt="Traditional Yogasana performance at District Selection Trials"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -903,7 +849,7 @@
                 class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-02.jpg"
+                  src="../static/images/gallery/gallery-02.jpg"
                   alt="Artistic Yogasana solo performance"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -918,7 +864,7 @@
                 class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-03.jpg"
+                  src="../static/images/gallery/gallery-03.jpg"
                   alt="Artistic Yogasana pair performance with synchronized posture"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -933,7 +879,7 @@
                 class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-04.jpg"
+                  src="../static/images/gallery/gallery-04.jpg"
                   alt="Rhythmic Yogasana pair performance with music"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -948,7 +894,7 @@
                 class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-05.jpg"
+                  src="../static/images/gallery/gallery-05.jpg"
                   alt="Certified judges panel evaluating performance"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -963,7 +909,7 @@
                 class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-06.jpg"
+                  src="../static/images/gallery/gallery-06.jpg"
                   alt="Medal ceremony and felicitation of winning athletes"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -978,7 +924,7 @@
                 class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-07.jpg"
+                  src="../static/images/gallery/gallery-07.jpg"
                   alt="District Secretaries at the nomination and registration desk"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -993,7 +939,7 @@
                 class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
               >
                 <img
-                  src="/static/images/gallery/gallery-08.jpg"
+                  src="../static/images/gallery/gallery-08.jpg"
                   alt="Indoor championship stage and mat layout"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 />
@@ -1269,7 +1215,7 @@
             </div>
 
             <div
-              class="bg-gradient-to-br from-emerald-800 to-emerald-950 p-8 rounded-2xl text-white shadow-xl"
+              class="bg-gradient-to-bl from-emerald-800 to-emerald-950 p-8 rounded-2xl text-white shadow-xl"
             >
               <h3
                 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2"
@@ -1472,8 +1418,9 @@
         </div>
       </div>
     </footer>
-    <!-- Update this line to start with /static/ -->
-    <script src="/static/js/main.js"></script>
+
+    <!-- Local Scripts -->
+    <script src="../static/js/main.js"></script>
     <script>
       // Accessibility font resizer
       const rootEl = document.documentElement;
@@ -1491,7 +1438,5 @@
           rootEl.style.fontSize = "90%";
         });
     </script>
-    <!-- Before </body> -->
-    <script src="../static/js/main.js"></script>
   </body>
 </html>

@@ -162,12 +162,12 @@ function initDocUpload() {
   });
 }
 
-/* ── Nomination Form Validation ──────────────────────────── */
+/* ── Nomination Form Validation & Submission ──────────────────────────── */
 function initNominationForm() {
   const form = $('#nomination-form');
   if (!form) return;
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     let valid = true;
 
@@ -178,7 +178,7 @@ function initNominationForm() {
       el.style.borderColor = '';
     });
 
-    // Required fields
+    // Required fields check
     const required = $$('[required]', form);
     required.forEach(field => {
       if (!field.value.trim()) {
@@ -197,7 +197,7 @@ function initNominationForm() {
       }
     }
 
-    // Aadhaar last 4 digits
+    // Aadhaar last 4 digits check
     const aadhaar = $('#aadhaar-input', form);
     if (aadhaar && aadhaar.value && !/^\d{4}$/.test(aadhaar.value)) {
       markInvalid(aadhaar, 'Enter exactly 4 digits');
@@ -215,12 +215,52 @@ function initNominationForm() {
       valid = false;
     }
 
-    if (valid) {
-      showSubmitSuccess();
+    if (!valid) return;
+
+    // Submit via Fetch API
+    const submitBtn = $('#submit-btn') || form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i>Submitting...`;
+    }
+
+    try {
+      const formData = new FormData(form);
+      const token = sessionStorage.getItem("token");
+
+      const res = await fetch("/portal/athletes/nominate", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Nomination Successful</span>`;
+        }
+        showSubmitSuccess(data.athlete._id);
+      } else {
+        showAlert(data.error || "Failed to submit nomination", "error");
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Submit Nomination</span>`;
+        }
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      showAlert("Network error during nomination submission", "error");
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Submit Nomination</span>`;
+      }
     }
   });
 }
-
 function markInvalid(field, msg) {
   field.style.borderColor = '#ef4444';
   field.classList.add('error');
@@ -236,31 +276,51 @@ function makeError(msg) {
   return el;
 }
 
-function showSubmitSuccess() {
+/* ── Nomination Form Success Popup with Admit Card Link ──── */
+function showSubmitSuccess(athleteId = '') {
   const overlay = document.createElement('div');
   overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;
-    display:flex;align-items:center;justify-content:center;
+    position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;
+    display:flex;align-items:center;justify-content:center;padding:1rem;
+    backdrop-filter: blur(4px);
   `;
+  
+  // If an athleteId is passed, show the Admit Card button
+  let admitCardButtonHTML = '';
+  if (athleteId) {
+    admitCardButtonHTML = `
+      <a href="admitcard.html?id=${athleteId}" target="_blank" style="
+        display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;
+        background:#0D5C3A;color:#fff;padding:.875rem 1rem;border-radius:.75rem;
+        font-size:.875rem;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(13,92,58,.25);
+        margin-bottom:.75rem;transition:background .2s;
+      ">
+        <i class="fa-solid fa-id-card"></i> View & Print Admit Card (Hall Ticket)
+      </a>
+    `;
+  }
+
   overlay.innerHTML = `
-    <div style="background:#fff;border-radius:1rem;padding:2.5rem;max-width:400px;text-align:center;
+    <div style="background:#fff;border-radius:1rem;padding:2.5rem;max-width:420px;width:100%;text-align:center;
                 box-shadow:0 25px 50px rgba(0,0,0,.25);border-top:4px solid #C5A059;">
       <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
       <h2 style="color:#0D5C3A;font-size:1.25rem;font-weight:800;margin-bottom:.5rem;">
         Nomination Submitted!
       </h2>
       <p style="color:#64748b;margin-bottom:1.5rem;font-size:.9rem;">
-        The Payment is succesfull
+        The payment is successful and your athlete nomination has been recorded.
       </p>
-     
+      ${admitCardButtonHTML}
+      <a href="dashboard.html" style="
+        display:block;width:100%;background:#f1f5f9;color:#334155;padding:.75rem 1rem;
+        border-radius:.75rem;font-size:.85rem;font-weight:600;text-decoration:none;
+      ">
+        Go to Dashboard
+      </a>
     </div>
   `;
   document.body.appendChild(overlay);
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.remove();
-  });
 }
-
 /* ── Simple toast alert ──────────────────────────────────── */
 function showAlert(msg, type = 'info') {
   const el = document.createElement('div');

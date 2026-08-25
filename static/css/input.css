@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+
+  --color-tg-green: #0D5C3A;
+  --color-tg-green-50: #eef8f2;
+  --color-tg-green-100: #d7efe2;
+  --color-tg-green-600: #0f5132;
+  --color-tg-green-700: #0D5C3A;
+  --color-tg-green-800: #0a4229;
+  --color-tg-green-900: #062919;
+
+  --color-tg-gold: #C5A059;
+  --color-tg-gold-light: #f5e6c8;
+  --color-tg-gold-hover: #b8893d;
+
+  --color-tg-crimson: #8B0000;
+  --color-tg-slate: #F8FAFC;
+}

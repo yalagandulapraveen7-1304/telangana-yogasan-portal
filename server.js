@@ -48,7 +48,9 @@ app.get('/login.html', (req, res) => {
 app.get(['/', '/index.html'], (req, res) => {
   res.sendFile('index.html', { root: templateDir });
 });
-
+app.get('/admitcard.html', requireAuth, (req, res) => {
+  res.sendFile('admitcard.html', { root: templateDir });
+});
 // Database & Server
 mongoose
   .connect(MONGO_URI)
