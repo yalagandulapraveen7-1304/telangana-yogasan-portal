@@ -23,10 +23,10 @@
       <div class="flex items-center gap-3">
         
           <div class="w-14  h-14 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059]">
-            <img src="/static/images/TSYSC.png" alt="Logo">
+          <a href="index.html"> <img src="/static/images/TSYSC.png" alt="Logo"></a> 
           </div>
           <div class="hidden sm:block">
-            <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">Telangana Yoga Association</div>
+            <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider"><a href="index.html">Telangana Yoga Association</a></div>
             <div class="text-sm font-bold text-white font-display">State Inter-District Championship</div>
           </div>
         </a>
@@ -61,7 +61,7 @@
             Athlete Nomination &amp; Verification Form
           </h1>
           <p class="text-xs sm:text-sm text-slate-600 mt-1">
-            District: <strong id="form-district-name" class="text-[#0D5C3A]">Hyderabad District Association</strong> &bull; Complete all mandatory fields marked with <span class="text-red-500">*</span>
+            Complete all mandatory fields marked with <span class="text-red-500">*</span>
           </p>
         </div>
 
@@ -139,6 +139,7 @@
 
           <!-- Date of Birth & Dynamic Category Preview (CRITICAL REQUIREMENT) -->
           <div class="sm:col-span-2 bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200">
+            <input type="hidden" name="category" id="hidden-category" value="Junior" />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
               
               <div>
@@ -152,12 +153,12 @@
                     id="dob-input" 
                     name="dob" 
                     required 
-                    min="1995-01-01" 
-                    max="2016-12-31" 
+                    min="1940-01-01" 
+                    max="2018-12-31" 
                     class="form-input text-sm bg-white font-medium"
                   />
                 </div>
-                <p class="text-[11px] text-slate-500 mt-1">Eligible birth range: 10 to &lt;28 years.</p>
+                <p class="text-[11px] text-slate-500 mt-1">Official Divisions: Sub-Junior (08–14 Yrs), Junior (14–18 Yrs), Senior (18+ Yrs).</p>
               </div>
 
               <!-- DYNAMIC COMPUTED AGE CATEGORY BADGE (NO MANUAL DROPDOWN) -->
@@ -356,7 +357,7 @@
           
           <!-- Event 1: Traditional -->
           <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
-            <input type="checkbox" name="events[]" value="Traditional Yogasana" checked class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <input type="checkbox" name="events[]" value="Free Flow" checked class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
                <div class="ml-3">
                 <div class="font-bold text-sm text-slate-900">
                   Free Flow Yogasana
@@ -432,10 +433,10 @@
             <p class="text-[11px] text-slate-500 mb-3">Front-facing white background photo (Max 2MB)</p>
             
             <div class="upload-zone bg-white py-6">
-              <input type="file" name="passport_photo" accept="image/*" />
+              <input type="file" name="passport_photo" id="passport-input" accept="image/*" />
               <div class="space-y-1">
-                <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]"></i>
-                <div class="text-xs font-semibold text-slate-700">Click or drag &amp; drop photo here</div>
+                <i id="passport-icon" class="fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]"></i>
+                <div id="passport-text" class="text-xs font-semibold text-slate-700">Click or drag &amp; drop photo here</div>
                 <div class="text-[10px] text-slate-400">PNG, JPG or WEBP up to 2MB</div>
               </div>
             </div>
@@ -454,10 +455,10 @@
             <p class="text-[11px] text-slate-500 mb-3">Birth Certificate / SSC Bonafide / School Record</p>
             
             <div class="upload-zone bg-white py-6">
-             <input type="file" name="dob_certificate" accept="image/*,.pdf" />
+              <input type="file" name="dob_certificate" id="dob-cert-input" accept="image/*,.pdf" />
               <div class="space-y-1">
-                <i class="fa-solid fa-file-shield text-2xl text-amber-600"></i>
-                <div class="text-xs font-semibold text-slate-700">Click or drag &amp; drop certificate</div>
+                <i id="dob-icon" class="fa-solid fa-file-shield text-2xl text-amber-600"></i>
+                <div id="dob-text" class="text-xs font-semibold text-slate-700">Click or drag &amp; drop certificate</div>
                 <div class="text-[10px] text-slate-400">PDF, JPG, PNG up to 5MB</div>
               </div>
             </div>
@@ -484,7 +485,7 @@
       </div>
 
       <!-- Submit & Action Buttons -->
-      <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
         <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm text-center">
           Cancel &amp; Return
         </a>
@@ -500,16 +501,78 @@
   </main>
 
   <!-- Form Footer -->
- <!-- Form Footer -->
- <footer class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-12">
+  <footer class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-12">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-2">
       <div>Telangana Yoga Association &bull; Sports Authority of Telangana State (SATS)</div>
     </div>
   </footer>
 
   <script src="/static/js/main.js"></script>
- <script>
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // --- 1. Passport Photo Handler (Icon change + File Name + Image Thumbnail Preview) ---
+      const passportInput = document.getElementById('passport-input');
+      const passportIcon = document.getElementById('passport-icon');
+      const passportText = document.getElementById('passport-text');
+      const passportPreview = document.getElementById('passport-preview');
+
+      if (passportInput) {
+        passportInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            // Change icon to a green checkmark
+            if (passportIcon) {
+              passportIcon.className = "fa-solid fa-circle-check text-2xl text-emerald-600 transition-all duration-300 scale-110";
+            }
+            
+            // Show file name
+            if (passportText) {
+              passportText.textContent = file.name;
+              passportText.className = "text-xs font-bold text-emerald-800 truncate max-w-xs mx-auto";
+            }
+
+            // Render image thumbnail preview
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              if (passportPreview) {
+                passportPreview.src = event.target.result;
+                passportPreview.style.display = 'block';
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      // --- 2. DOB Certificate Handler (Shows "Document Uploaded:" + File Name) ---
+      const dobCertInput = document.getElementById('dob-cert-input');
+      const dobIcon = document.getElementById('dob-icon');
+      const dobText = document.getElementById('dob-text');
+      const dobFileName = document.getElementById('dob-file-name');
+
+      if (dobCertInput) {
+        dobCertInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            // Change icon to a green checkmark
+            if (dobIcon) {
+              dobIcon.className = "fa-solid fa-circle-check text-2xl text-emerald-600 transition-all duration-300 scale-110";
+            }
+            
+            // Explicit confirmation text + file name
+            if (dobText) {
+              dobText.textContent = `Document Uploaded: ${file.name}`;
+              dobText.className = "text-xs font-bold text-emerald-800 truncate max-w-xs mx-auto";
+            }
+            if (dobFileName) {
+              dobFileName.textContent = `✓ Document Uploaded: ${file.name}`;
+              dobFileName.className = "mt-3 text-xs font-bold text-emerald-700";
+            }
+          }
+        });
+      }
+
+      // --- 3. Form Submission Handler ---
       const form = document.getElementById('nomination-form');
       const districtHiddenInput = document.getElementById('hidden-district');
       const activeDist = sessionStorage.getItem('current_district') || 'Hyderabad';
@@ -534,12 +597,30 @@
             });
 
             if (response.ok) {
-              // Reset the form fields cleanly for the next entry
               form.reset();
               
-              // Re-apply the active district to the hidden/dropdown field after reset
+              // Restore active district
               const distSelect = document.getElementById('district-select');
               if (distSelect) distSelect.value = activeDist;
+              if (districtHiddenInput) districtHiddenInput.value = activeDist;
+
+              // Reset upload zones UI
+              if (passportIcon) passportIcon.className = "fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]";
+              if (passportText) {
+                passportText.textContent = "Click or drag & drop photo here";
+                passportText.className = "text-xs font-semibold text-slate-700";
+              }
+              if (passportPreview) passportPreview.style.display = "none";
+
+              if (dobIcon) dobIcon.className = "fa-solid fa-file-shield text-2xl text-amber-600";
+              if (dobText) {
+                dobText.textContent = "Click or drag & drop certificate";
+                dobText.className = "text-xs font-semibold text-slate-700";
+              }
+              if (dobFileName) {
+                dobFileName.textContent = "No document chosen yet";
+                dobFileName.className = "mt-3 text-xs font-medium text-slate-600";
+              }
 
               alert('Athlete nomination saved successfully!');
             } else {
@@ -550,7 +631,6 @@
             console.error('Network submission error:', err);
             alert('Network error while saving nomination.');
           } finally {
-            // Always restore the submit button state whether it succeeded or failed
             if (submitBtn) {
               submitBtn.disabled = false;
               submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane text-amber-300"></i> <span>Submit Athlete Nomination</span>`;
@@ -563,19 +643,9 @@
     <script>
     // Set active district name from session storage
     const activeDist = sessionStorage.getItem('current_district');
-    
-    // Update Header
-    if (activeDist) {
-      const el = document.getElementById('form-district-name');
-      if (el) el.textContent = activeDist + ' Association';
-      
-      // AUTO-FILL THE HIDDEN INPUT FOR MONGODB
-      const hiddenInput = document.getElementById('hidden-district');
-      if (hiddenInput) hiddenInput.value = activeDist;
-    } else {
-      // Fallback if session is empty during testing
-      const hiddenInput = document.getElementById('hidden-district');
-      if (hiddenInput) hiddenInput.value = "Hyderabad"; 
+    const hiddenInput = document.getElementById('hidden-district');
+    if (hiddenInput) {
+      hiddenInput.value = activeDist || "Hyderabad";
     }
 
     // Default sample date

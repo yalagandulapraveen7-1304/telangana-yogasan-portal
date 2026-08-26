@@ -1,50 +1,58 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+const Razorpay = require('razorpay');
+
 const Athlete = require('../models/Athlete');
 const { requireAuth } = require('./auth');
+const upload = require('../middleware/upload'); // Using your secure middleware!
 
-// Ensure uploads folder exists
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Razorpay Initialization
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_YOUR_KEY',
+  key_secret: process.env.RAZORPAY_KEY_SECRET || 'YOUR_SECRET'
+});
+const FEE_PER_EVENT = 260; // ₹260 per event
+
+/**
+ * Calculates official Age Group Category as per Yoga Federation Regulations:
+ * 1. Sub-Junior: 08 to <14 Years (Group A: 08-10 Yrs, Group B: 10-14 Yrs)
+ * 2. Junior:     14 to <18 Years (14-18 Yrs)
+ * 3. Senior:     18+ Years (Group A: 18-25 Yrs, Group B: 25-35 Yrs, Group C: Above 35 Yrs)
+ */
+function calculateAgeCategory(dob) {
+  if (!dob) return 'Junior';
+  const birthDate = new Date(dob);
+  const today = new Date();
+  const refDate = new Date(today.getFullYear(), 11, 31);
+  const age = (refDate - birthDate) / (1000 * 60 * 60 * 24 * 365.25);
+  if (age >= 8 && age < 14) return 'Sub-Junior';
+  if (age >= 14 && age < 18) return 'Junior';
+  if (age >= 18) return 'Senior';
+  return 'Sub-Junior';
 }
 
-// Multer storage setup
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage: storage });
-
-// 1. GET /portal/athletes/list (Supports Super Admin bypass & flexible district matching)
-// 1. GET /portal/athletes/list (Robust Super Admin bypass & case-insensitive matching)
+// ==========================================
+// 1. GET /portal/athletes/list
+// ==========================================
 router.get('/list', requireAuth, async (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   try {
-    // Normalize role and district to uppercase for safe comparison
     const role = (req.user.role || '').toUpperCase().trim();
     const district = (req.user.district || '').toUpperCase().trim();
 
-    // If Super Admin or All Districts, leave filter empty to return all records
-    if (role === 'SUPER_ADMIN' || district === 'ALL_DISTRICTS' || district === 'ALL') {
-      filter = {}; 
-    } else {
+    // BUG FIX: Added 'let' to initialize the variable properly
+    let filter = {}; 
+
+    if (role !== 'SUPER_ADMIN' && district !== 'ALL_DISTRICTS' && district !== 'ALL') {
       const userDist = (req.user.district || '').replace(/ district/i, '').trim();
       filter.district = { $regex: new RegExp(`^${userDist}(\\s+District)?$`, 'i') };
     }
 
     console.log("🔍 Final MongoDB Filter:", filter);
     const athletes = await Athlete.find(filter).sort({ createdAt: -1 });
-    console.log(`📦 Successfully retrieved ${athletes.length} athletes from database.`);
     
     res.json(athletes);
   } catch (err) {
@@ -52,7 +60,51 @@ router.get('/list', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve athletes' });
   }
 });
-// 2. POST /portal/athletes/nominate
+
+// ==========================================
+// 2. POST /portal/athletes/create-order
+// ==========================================
+router.post('/create-order', requireAuth, async (req, res) => {
+  try {
+    const { events } = req.body;
+    let selectedEvents = [];
+    
+    if (Array.isArray(events)) {
+      selectedEvents = events;
+    } else if (typeof events === 'string' && events.trim()) {
+      selectedEvents = [events.trim()];
+    }
+
+    if (selectedEvents.length === 0) {
+      return res.status(400).json({ success: false, message: 'Please select at least one event.' });
+    }
+
+    // Calculate total amount in Paise (₹260 = 26000 paise)
+    const amountInPaise = selectedEvents.length * FEE_PER_EVENT * 100;
+
+    const options = {
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: `nom_${Date.now()}`
+    };
+
+    const order = await razorpay.orders.create(options);
+    
+    res.json({
+      success: true,
+      orderId: order.id,
+      amount: options.amount / 100,
+      keyId: process.env.RAZORPAY_KEY_ID
+    });
+  } catch (error) {
+    console.error('Order creation error:', error);
+    res.status(500).json({ success: false, message: 'Payment gateway initialization failed.' });
+  }
+});
+
+// ==========================================
+// 3. POST /portal/athletes/nominate (Uploads + Payment Verify)
+// ==========================================
 router.post(
   '/nominate',
   requireAuth,
@@ -63,6 +115,23 @@ router.post(
   async (req, res) => {
     try {
       const b = req.body || {};
+
+      // --- PAYMENT VERIFICATION ---
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = b;
+      
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res.status(400).json({ error: 'Payment details are missing. Nomination failed.' });
+      }
+
+      // Verify HMAC SHA256 signature
+      const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+      hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+      const generatedSignature = hmac.digest('hex');
+
+      if (generatedSignature !== razorpay_signature) {
+        return res.status(400).json({ error: 'Payment verification failed. Invalid signature.' });
+      }
+      // ----------------------------
 
       let selectedEvents = [];
       const rawEvents = b['events[]'] || b.events;
@@ -79,7 +148,7 @@ router.post(
         lastName: (b.lastName || b.last_name || '').trim(),
         dob: b.dob || new Date(),
         gender: b.gender || 'Female',
-        aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || '0000').toString().trim(),
+        aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || 'XXXX').toString().trim(),
         guardianName: (b.guardianName || b.guardian_name || '').trim(),
         institutionName: (b.institutionName || b.institution_name || '').trim(),
         mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
@@ -88,8 +157,16 @@ router.post(
           ? (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')).trim()
           : 'Hyderabad',
         events: selectedEvents,
-        category: b.category || 'Junior',
-        status: 'Submitted'
+        category: b.category || calculateAgeCategory(b.dob),
+        status: 'Submitted',
+        // Save the successful payment record to the database
+        paymentDetails: {
+          orderId: razorpay_order_id,
+          paymentId: razorpay_payment_id,
+          amount: selectedEvents.length * FEE_PER_EVENT,
+          status: 'PAID',
+          paidAt: new Date()
+        }
       };
 
       if (req.files) {
@@ -129,7 +206,9 @@ router.post(
   }
 );
 
-// 3. PATCH /portal/athletes/:id/status
+// ==========================================
+// 4. PATCH /portal/athletes/:id/status
+// ==========================================
 router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
     const { status, remarks } = req.body;

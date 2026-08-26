@@ -35,9 +35,30 @@ function initMobileNav() {
 
 /* ── DOB → Age Category Calculator ──────────────────────── */
 const AGE_CATEGORIES = [
-  { name: 'Sub-Junior', min: 10, max: 14, cssClass: 'badge-subjunior', icon: '🌱' },
-  { name: 'Junior',     min: 14, max: 18, cssClass: 'badge-junior',    icon: '⚡' },
-  { name: 'Senior',     min: 18, max: 28, cssClass: 'badge-senior',    icon: '🏆' },
+  { 
+    name: 'Sub-Junior', 
+    min: 8, 
+    max: 14, 
+    cssClass: 'badge-subjunior', 
+    icon: '🌱',
+    getSubGroup: (age) => age < 10 ? 'Sub Junior Group (A) • 08–10 Yrs' : 'Sub Junior Group (B) • 10–14 Yrs'
+  },
+  { 
+    name: 'Junior',     
+    min: 14, 
+    max: 18, 
+    cssClass: 'badge-junior',    
+    icon: '⚡',
+    getSubGroup: (age) => 'Junior Group • 14–18 Yrs'
+  },
+  { 
+    name: 'Senior',     
+    min: 18, 
+    max: 120, 
+    cssClass: 'badge-senior',    
+    icon: '🏆',
+    getSubGroup: (age) => age < 25 ? 'Senior Group (A) • 18–25 Yrs' : (age <= 35 ? 'Senior Group (B) • 25–35 Yrs' : 'Senior Group (C) • Above 35 Yrs')
+  },
 ];
 
 function calcAgeOnDate(dob, refDate) {
@@ -55,15 +76,24 @@ function getCategory(dob) {
   if (isNaN(age) || age < 0) return null;
 
   for (const cat of AGE_CATEGORIES) {
-    if (age >= cat.min && age < cat.max) return cat;
+    if (age >= cat.min && age < cat.max) {
+      return {
+        name: cat.name,
+        subGroup: cat.getSubGroup ? cat.getSubGroup(age) : cat.name,
+        cssClass: cat.cssClass,
+        icon: cat.icon,
+        age: age
+      };
+    }
   }
-  return { name: 'Not Eligible', min: null, max: null, cssClass: 'badge-ineligible', icon: '⛔' };
+  return { name: 'Not Eligible', subGroup: 'Minimum age is 8 years', cssClass: 'badge-ineligible', icon: '⛔', age: age };
 }
 
 function initDOBCalculator() {
   const dobInput = $('#dob-input');
   const badge    = $('#age-category-badge');
   const ageDisp  = $('#age-display');
+  const hiddenCat = $('#hidden-category');
   if (!dobInput || !badge) return;
 
   function update() {
@@ -72,6 +102,7 @@ function initDOBCalculator() {
       badge.textContent = '—';
       badge.className = 'badge badge-pending';
       if (ageDisp) ageDisp.textContent = '';
+      if (hiddenCat) hiddenCat.value = 'Junior';
       return;
     }
 
@@ -81,27 +112,42 @@ function initDOBCalculator() {
     if (!cat) {
       badge.textContent = '⛔ Invalid Date';
       badge.className = 'badge badge-ineligible';
+      if (hiddenCat) hiddenCat.value = '';
       return;
     }
 
-    badge.innerHTML = `${cat.icon} ${cat.name}`;
+    if (cat.name === 'Not Eligible') {
+      badge.innerHTML = `${cat.icon} Not Eligible (Min 8 Yrs)`;
+      badge.className = 'badge ' + cat.cssClass;
+      if (ageDisp) {
+        ageDisp.textContent = 'Athletes must be at least 8 years of age as per Championship norms.';
+        ageDisp.style.color = '#dc2626';
+      }
+      if (hiddenCat) hiddenCat.value = '';
+      return;
+    }
+
+    badge.innerHTML = `${cat.icon} ${cat.name} &bull; <span class="text-xs font-semibold opacity-90">${cat.subGroup}</span>`;
 
     // Remove old classes, apply new
     badge.className = 'badge ' + cat.cssClass;
     badge.style.fontSize = '.85rem';
-    badge.style.padding  = '.3rem 1rem';
+    badge.style.padding  = '.35rem 1.1rem';
+
+    // Update hidden category input for backend submission
+    if (hiddenCat) hiddenCat.value = cat.name;
 
     // Show computed age
     if (ageDisp) {
       const today = new Date();
       const yrs  = Math.floor((today - dob) / (1000*60*60*24*365.25));
-      ageDisp.textContent = `Age: ${yrs} yr(s) | Championship Year Age: ${
-        Math.floor(calcAgeOnDate(dob, new Date(today.getFullYear(), 11, 31)))
-      } yr(s)`;
+      const champAge = Math.floor(cat.age);
+      ageDisp.style.color = '';
+      ageDisp.textContent = `Age: ${yrs} yr(s) | Championship Age: ${champAge} yr(s) (${cat.subGroup})`;
     }
 
     // Pulse animation
-    badge.style.transform = 'scale(1.08)';
+    badge.style.transform = 'scale(1.05)';
     setTimeout(() => badge.style.transform = '', 250);
   }
 
@@ -192,7 +238,7 @@ function initNominationForm() {
     if (dob && dob.value) {
       const cat = getCategory(new Date(dob.value));
       if (cat && cat.name === 'Not Eligible') {
-        markInvalid(dob, 'Athlete age is outside eligible range (10 – <28 years)');
+        markInvalid(dob, 'Athlete must be at least 8 years of age (Sub-Junior, Junior or Senior)');
         valid = false;
       }
     }
@@ -311,12 +357,7 @@ function showSubmitSuccess(athleteId = '') {
         The payment is successful and your athlete nomination has been recorded.
       </p>
       ${admitCardButtonHTML}
-      <a href="dashboard.html" style="
-        display:block;width:100%;background:#f1f5f9;color:#334155;padding:.75rem 1rem;
-        border-radius:.75rem;font-size:.85rem;font-weight:600;text-decoration:none;
-      ">
-        Go to Dashboard
-      </a>
+  
     </div>
   `;
   document.body.appendChild(overlay);

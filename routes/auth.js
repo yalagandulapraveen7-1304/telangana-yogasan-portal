@@ -57,12 +57,12 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 8 * 60 * 60 * 1000
-    });
+ res.cookie('token', token, {
+  httpOnly: true,
+  secure: true, // Enforces transmission only over HTTPS
+  sameSite: 'strict',
+  maxAge: 24 * 60 * 60 * 1000 // 1 day
+});
 
     // FIX: return the token in the JSON body too, since the frontend reads
     // sessionStorage("token") and sends it as a Bearer header.
