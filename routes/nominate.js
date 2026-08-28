@@ -207,6 +207,89 @@ router.post(
 );
 
 // ==========================================
+// 3b. POST /portal/athletes/bulk-nominate (School / Institution Registration)
+// ==========================================
+router.post(
+  '/bulk-nominate',
+  upload.any(),
+  async (req, res) => {
+    try {
+      const b = req.body;
+      const schoolName = (b.school_name || b.institutionName || 'Unknown School').trim();
+      const district = (b.district || 'Hyderabad').trim();
+      const coachName = (b.coach_name || b.principal_name || '').trim();
+      const coachMobile = (b.coach_mobile || '').trim();
+      const studentsData = typeof b.students === 'string' ? JSON.parse(b.students) : (b.students || []);
+
+      if (!studentsData || studentsData.length === 0) {
+        return res.status(400).json({ error: 'No student athletes provided in delegation.' });
+      }
+
+      // Map uploaded files by fieldname
+      const fileMap = {};
+      if (req.files && Array.isArray(req.files)) {
+        req.files.forEach(f => {
+          fileMap[f.fieldname] = `/uploads/${f.filename}`;
+        });
+      }
+
+      const createdAthletes = [];
+      const distStr = district.toUpperCase();
+      const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
+
+      for (let i = 0; i < studentsData.length; i++) {
+        const s = studentsData[i];
+        const category = s.category || calculateAgeCategory(s.dob);
+        const catLower = category.toLowerCase();
+        let catCode = 'JR';
+        if (catLower.includes('sub')) catCode = 'SJ';
+        else if (catLower.includes('sen')) catCode = 'SR';
+
+        const count = await Athlete.countDocuments({ district, category });
+        const serial = String(count + 1 + i).padStart(2, '0');
+        const chestNumber = `${distCode}-${catCode}-${serial}`;
+
+        const athleteDoc = new Athlete({
+          firstName: (s.firstName || s.first_name || 'Athlete').trim(),
+          lastName: (s.lastName || s.last_name || '').trim(),
+          dob: s.dob || new Date(),
+          gender: s.gender || 'Female',
+          aadhaarLast4: (s.aadhaarLast4 || s.aadhaar_last_4 || '0000').toString().trim(),
+          guardianName: (s.guardianName || s.guardian_name || '').trim(),
+          institutionName: schoolName,
+          district: district,
+          coachName: coachName,
+          coachMobile: coachMobile,
+          mobileNumber: s.mobileNumber || s.mobile_number || coachMobile,
+          residentialAddress: (s.residentialAddress || s.residential_address || schoolName).trim(),
+          events: Array.isArray(s.events) && s.events.length > 0 ? s.events : ['Traditional Yogasana'],
+          category: category,
+          dobProofType: s.dobProofType || 'School Bonafide',
+          photoPath: fileMap[`photo_${i}`] || fileMap[`passport_photo_${i}`] || '',
+          dobProofPath: fileMap[`dob_${i}`] || fileMap[`dob_certificate_${i}`] || '',
+          chestNumber: chestNumber,
+          status: 'Submitted'
+        });
+
+        await athleteDoc.save();
+        createdAthletes.push(athleteDoc);
+      }
+
+      res.status(201).json({
+        success: true,
+        count: createdAthletes.length,
+        school: schoolName,
+        district: district,
+        athletes: createdAthletes
+      });
+    } catch (err) {
+      console.error('Bulk School Nomination Error:', err);
+      res.status(500).json({ error: 'Failed to process school nomination', details: err.message });
+    }
+  }
+);
+
+// ==========================================
 // 4. PATCH /portal/athletes/:id/status
 // ==========================================
 router.patch('/:id/status', requireAuth, async (req, res) => {

@@ -70,6 +70,10 @@ app.get('/admitcard.html', requireAuth, (req, res) => {
 });
 
 // Public HTML pages
+app.get('/school-nominate.html', (req, res) => {
+  res.sendFile('school-nominate.html', { root: templateDir });
+});
+
 app.get('/login.html', (req, res) => {
   res.sendFile('login.html', { root: templateDir });
 });

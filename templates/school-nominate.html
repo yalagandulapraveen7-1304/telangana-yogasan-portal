@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School &amp; Institution Athlete Nomination | Telangana State Yogasana Championship</title>
+  <meta name="description" content="Official School, College and Academy Bulk Athlete Registration Portal for Telangana State Inter-District Yogasana Sports Championship." />
+
+  <!-- Local Offline Assets -->
+  <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="/static/css/output.css" />
+  <link rel="stylesheet" href="/static/css/custom.css" />
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+  <!-- A11y Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to nomination form</a>
+
+  <!-- Top Gov & Portal Header -->
+  <header class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-14 h-14 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059] shadow-sm">
+          <a href="index.html"><img src="/static/images/TSYSC.png" alt="TSYSC Logo" class="w-full h-auto"></a> 
+        </div>
+        <div>
+          <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">
+            <a href="index.html" class="hover:underline">Telangana Yoga Association</a>
+          </div>
+          <div class="text-sm font-bold text-white font-display">State Inter-District Championship</div>
+        </div>
+        <span class="text-emerald-500 hidden md:inline">|</span>
+        <span class="hidden sm:inline-flex items-center gap-1.5 bg-emerald-900/80 text-amber-300 text-xs px-3 py-1 rounded-full font-semibold border border-amber-300/30">
+          <i class="fa-solid fa-school"></i> School &amp; Institution Entry
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="nominate.html" class="text-xs bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-1.5 rounded-lg border border-white/20 transition flex items-center gap-1">
+          <i class="fa-solid fa-user"></i> <span class="hidden sm:inline">Individual Form</span>
+        </a>
+        <a href="index.html" class="text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Portal Home</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content" class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+    
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-slate-500 flex items-center gap-2 mb-4" aria-label="Breadcrumb">
+      <a href="index.html" class="hover:text-emerald-800 font-medium">Public Home</a>
+      <span>/</span>
+      <a href="nominate.html" class="hover:text-emerald-800 font-medium">Nomination</a>
+      <span>/</span>
+      <span class="text-slate-800 font-semibold">School &amp; Institution Delegation</span>
+    </nav>
+
+    <!-- Page Title & Guidance Card -->
+    <div class="bg-white rounded-2xl p-6 mb-6 border border-slate-200 shadow-sm border-t-4 border-t-[#0D5C3A]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span class="section-badge mb-1">Institutional Team Entry</span>
+          <h1 class="text-2xl sm:text-3xl font-bold font-display text-slate-900">
+            School &amp; Academy Athlete Nomination
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1">
+            Register multiple student athletes under your school, college, or club delegation with verified document proofs.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-4 py-2.5 rounded-xl text-xs text-emerald-900">
+          <i class="fa-solid fa-graduation-cap text-2xl text-emerald-700"></i>
+          <div>
+            <div class="font-bold">Form: SCH-NOM-2025</div>
+            <div class="text-[10px] text-emerald-700">Bulk Delegation Upload</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official School Nomination Form -->
+    <form id="school-nomination-form" class="space-y-6" onsubmit="return false;">
+      
+      <!-- SECTION 1: INSTITUTION & COACH DETAILS -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        
+        <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+            1
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 font-display">Institution &amp; Physical Director Information</h2>
+            <p class="text-xs text-slate-500">Provide official school identification, principal, and coach contact details.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          
+          <!-- School / College / Academy Name -->
+          <div class="sm:col-span-2">
+            <label for="school_name" class="form-label">
+              School / College / Institution Name <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-school input-icon"></i>
+              <input 
+                type="text" 
+                id="school_name" 
+                name="school_name" 
+                required 
+                placeholder="e.g. Telangana Model School / Delhi Public School" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Affiliation / UDISE / Reg No -->
+          <div>
+            <label for="affiliation_code" class="form-label">
+              UDISE / Affiliation / Reg No. <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-hashtag input-icon"></i>
+              <input 
+                type="text" 
+                id="affiliation_code" 
+                name="affiliation_code" 
+                required 
+                placeholder="e.g. 36010200101 / CBSE-1234" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- District -->
+          <div>
+            <label for="district" class="form-label">
+              District <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-map-location-dot input-icon"></i>
+              <select id="district" name="district" required class="form-input text-sm bg-white font-medium">
+                <option value="" disabled selected>-- Select District --</option>
+                <option value="Adilabad">Adilabad</option>
+                <option value="Bhadradri Kothagudem">Bhadradri Kothagudem</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Jagtial">Jagtial</option>
+                <option value="Jangaon">Jangaon</option>
+                <option value="Jayashankar Bhupalpally">Jayashankar Bhupalpally</option>
+                <option value="Jogulamba Gadwal">Jogulamba Gadwal</option>
+                <option value="Kamareddy">Kamareddy</option>
+                <option value="Karimnagar">Karimnagar</option>
+                <option value="Khammam">Khammam</option>
+                <option value="Komaram Bheem Asifabad">Komaram Bheem Asifabad</option>
+                <option value="Mahabubabad">Mahabubabad</option>
+                <option value="Mahabubnagar">Mahabubnagar</option>
+                <option value="Mancherial">Mancherial</option>
+                <option value="Medak">Medak</option>
+                <option value="Medchal Malkajgiri">Medchal Malkajgiri</option>
+                <option value="Mulugu">Mulugu</option>
+                <option value="Nagarkurnool">Nagarkurnool</option>
+                <option value="Nalgonda">Nalgonda</option>
+                <option value="Narayanpet">Narayanpet</option>
+                <option value="Nirmal">Nirmal</option>
+                <option value="Nizamabad">Nizamabad</option>
+                <option value="Peddapalli">Peddapalli</option>
+                <option value="Rajanna Sircilla">Rajanna Sircilla</option>
+                <option value="Ranga Reddy">Ranga Reddy</option>
+                <option value="Sangareddy">Sangareddy</option>
+                <option value="Siddipet">Siddipet</option>
+                <option value="Suryapet">Suryapet</option>
+                <option value="Vikarabad">Vikarabad</option>
+                <option value="Wanaparthy">Wanaparthy</option>
+                <option value="Warangal">Warangal</option>
+                <option value="Hanamkonda">Hanamkonda</option>
+                <option value="Yadadri Bhuvanagiri">Yadadri Bhuvanagiri</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Principal / Headmaster Name -->
+          <div>
+            <label for="principal_name" class="form-label">
+              Principal / Headmaster Name <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-user-tie input-icon"></i>
+              <input 
+                type="text" 
+                id="principal_name" 
+                name="principal_name" 
+                required 
+                placeholder="Principal Full Name" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Physical Director / Coach Name -->
+          <div>
+            <label for="coach_name" class="form-label">
+              Physical Director (PET) / Coach <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-person-chalkboard input-icon"></i>
+              <input 
+                type="text" 
+                id="coach_name" 
+                name="coach_name" 
+                required 
+                placeholder="Accompanying Teacher / Coach" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Coach Mobile Number -->
+          <div>
+            <label for="coach_mobile" class="form-label">
+              Coach / Teacher Contact Mobile <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-phone input-icon"></i>
+              <input 
+                type="tel" 
+                id="coach_mobile" 
+                name="coach_mobile" 
+                required 
+                pattern="[6-9][0-9]{9}" 
+                placeholder="10-digit mobile number" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Official School Email -->
+          <div>
+            <label for="school_email" class="form-label">
+              Official Email Address <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-envelope input-icon"></i>
+              <input 
+                type="email" 
+                id="school_email" 
+                name="school_email" 
+                required 
+                placeholder="school@domain.edu.in" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- School Address -->
+          <div class="sm:col-span-2 lg:col-span-3">
+            <label for="school_address" class="form-label">
+              Institution Campus Address <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-location-dot input-icon"></i>
+              <input 
+                type="text" 
+                id="school_address" 
+                name="school_address" 
+                required 
+                placeholder="Campus Address, Street, Mandal / Area" 
+                class="form-input text-sm"
+              />
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SECTION 2: STUDENT ATHLETES ROSTER -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-slate-200">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+              2
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-slate-900 font-display">Student Athletes Delegation Roster</h2>
+              <p class="text-xs text-slate-500">Add all students representing your institution with verified DOB and photo proofs.</p>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            id="add-student-btn"
+            class="inline-flex items-center gap-2 bg-[#0D5C3A] hover:bg-[#0a4229] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition hover:scale-[1.02]"
+          >
+            <i class="fa-solid fa-plus-circle"></i> Add Another Student
+          </button>
+        </div>
+
+        <!-- Dynamic Student Cards Container -->
+        <div id="students-container" class="space-y-6">
+          <!-- Student cards will be injected here dynamically -->
+        </div>
+
+      </div>
+
+      <!-- SECTION 3: DELEGATION SUMMARY & FEE CALCULATION -->
+      <div class="bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-2xl p-6 sm:p-8 shadow-md">
+        <div class="flex items-center justify-between pb-4 mb-6 border-b border-white/10">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold text-sm">
+              3
+            </div>
+            <div>
+              <h3 class="text-base font-bold font-display text-white">Delegation Summary &amp; Fee Estimation</h3>
+              <p class="text-xs text-emerald-200/80">Real-time breakdown of athletes and registered disciplines (₹260/event).</p>
+            </div>
+          </div>
+          <span class="text-xs bg-emerald-800/80 text-emerald-100 px-3 py-1 rounded-full border border-emerald-600/50 font-semibold">
+            Official SATS Norms
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 text-center">
+          <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div class="text-2xl font-black text-amber-300" id="summary-students-count">0</div>
+            <div class="text-xs text-slate-300 font-medium mt-1">Total Athletes</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div class="text-2xl font-black text-amber-300" id="summary-events-count">0</div>
+            <div class="text-xs text-slate-300 font-medium mt-1">Total Events</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div class="text-2xl font-black text-amber-300" id="summary-subjunior-count">0</div>
+            <div class="text-xs text-slate-300 font-medium mt-1">Sub-Junior / Junior</div>
+          </div>
+          <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div class="text-2xl font-black text-emerald-400" id="summary-total-fee">₹0</div>
+            <div class="text-xs text-slate-300 font-medium mt-1">Total Entry Fee</div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: PRINCIPAL & PET DECLARATION -->
+        <div class="bg-white/10 rounded-xl p-4 border border-white/15">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="school-declaration" required class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <div class="text-xs text-emerald-100 leading-relaxed">
+              <strong>Official Institutional Certification:</strong> I hereby certify on behalf of the institution that all nominated students are bona fide enrolled students of this school/college. Their original Date of Birth certificates, School Study Bonafides, and Aadhaar cards have been verified and found genuine as per Yoga Federation regulations.
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <button 
+          type="button" 
+          id="submit-school-btn"
+          class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-base shadow-lg hover:shadow-xl transition transform hover:scale-[1.02] flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-circle-check"></i> Submit School Delegation &amp; Generate Admit Cards
+        </button>
+        <a 
+          href="index.html" 
+          class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm transition text-center"
+        >
+          Cancel &amp; Return Home
+        </a>
+      </div>
+
+    </form>
+
+    <!-- SUCCESS / ADMIT CARDS MODAL -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto mb-3">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900 font-display">School Delegation Registered Successfully!</h3>
+          <p class="text-xs text-slate-600 mt-1" id="modal-subtitle">
+            All student athletes have been assigned official championship chest numbers.
+          </p>
+        </div>
+
+        <!-- Roster Results Table -->
+        <div class="border border-slate-200 rounded-xl overflow-hidden mb-6">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3">Chest No</th>
+                <th class="p-3">Athlete Name</th>
+                <th class="p-3">Category</th>
+                <th class="p-3">Events</th>
+                <th class="p-3 text-center">Admit Card</th>
+              </tr>
+            </thead>
+            <tbody id="modal-roster-body" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Result rows injected dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button 
+            type="button" 
+            onclick="window.print()" 
+            class="btn-primary text-xs flex items-center gap-2"
+          >
+            <i class="fa-solid fa-print"></i> Print Delegation Summary
+          </button>
+          <a 
+            href="index.html" 
+            class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-5 py-2.5 rounded-xl border border-slate-300 transition"
+          >
+            Return to Public Portal
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#0a4229] text-emerald-100/70 border-t border-amber-400/30 py-6 text-xs text-center">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="text-slate-300">&copy; 2025 Telangana Yoga Association &bull; Under the aegis of Sports Authority of Telangana State (SATS)</p>
+      <p class="text-[11px] text-emerald-300/60 mt-1">Official Technical Scrutiny &amp; State Championship Platform</p>
+    </div>
+  </footer>
+
+  <!-- School Registration Logic -->
+  <script>
+    const FEE_PER_EVENT = 260;
+    const AGE_CATEGORIES = [
+      { name: 'Sub-Junior', min: 8, max: 14, badgeClass: 'bg-purple-100 text-purple-800 border-purple-200', icon: '🌱', getGroup: (age) => age < 10 ? 'Sub-Junior (08–10 Yrs)' : 'Sub-Junior (10–14 Yrs)' },
+      { name: 'Junior',     min: 14, max: 18, badgeClass: 'bg-blue-100 text-blue-800 border-blue-200', icon: '⚡', getGroup: () => 'Junior (14–18 Yrs)' },
+      { name: 'Senior',     min: 18, max: 120, badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: '🏆', getGroup: (age) => age < 25 ? 'Senior (18–25 Yrs)' : (age <= 35 ? 'Senior (25–35 Yrs)' : 'Senior (Above 35 Yrs)') }
+    ];
+
+    function calculateCategory(dobStr) {
+      if (!dobStr) return null;
+      const dob = new Date(dobStr);
+      const today = new Date();
+      const refDate = new Date(today.getFullYear(), 11, 31);
+      const age = (refDate - dob) / (1000 * 60 * 60 * 24 * 365.25);
+      if (isNaN(age) || age < 0) return null;
+
+      for (const cat of AGE_CATEGORIES) {
+        if (age >= cat.min && age < cat.max) {
+          return {
+            name: cat.name,
+            group: cat.getGroup(age),
+            badgeClass: cat.badgeClass,
+            icon: cat.icon,
+            ageYears: Math.floor(age)
+          };
+        }
+      }
+      return { name: 'Not Eligible', group: 'Min Age 8 Yrs Required', badgeClass: 'bg-rose-100 text-rose-800 border-rose-200', icon: '⛔', ageYears: Math.floor(age) };
+    }
+
+    let studentIndex = 0;
+
+    function createStudentCard(index) {
+      const card = document.createElement('div');
+      card.className = 'student-card bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 relative transition';
+      card.id = `student-card-${index}`;
+      card.dataset.index = index;
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-[#0D5C3A] text-white flex items-center justify-center text-xs font-bold student-number">
+              ${index + 1}
+            </span>
+            <span class="font-bold text-slate-800 text-sm font-display student-title">
+              Student Athlete #${index + 1}
+            </span>
+          </div>
+          ${index > 0 ? `
+            <button type="button" onclick="removeStudent(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold flex items-center gap-1 hover:underline">
+              <i class="fa-solid fa-trash-can"></i> Remove Student
+            </button>
+          ` : ''}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <!-- First Name -->
+          <div>
+            <label class="form-label text-xs">First Name <span class="text-red-500">*</span></label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-user input-icon"></i>
+              <input type="text" name="student_${index}_first_name" required placeholder="e.g. Rahul" class="form-input text-xs student-first-name" />
+            </div>
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label class="form-label text-xs">Last Name / Surname <span class="text-red-500">*</span></label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-user-tag input-icon"></i>
+              <input type="text" name="student_${index}_last_name" required placeholder="e.g. Reddy" class="form-input text-xs student-last-name" />
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div>
+            <label class="form-label text-xs">Gender <span class="text-red-500">*</span></label>
+            <div class="flex items-center gap-4 mt-2">
+              <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700">
+                <input type="radio" name="student_${index}_gender" value="Female" checked class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-3.5 h-3.5 student-gender" />
+                <span>Female</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700">
+                <input type="radio" name="student_${index}_gender" value="Male" class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-3.5 h-3.5 student-gender" />
+                <span>Male</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Date of Birth -->
+          <div>
+            <label class="form-label text-xs">Date of Birth <span class="text-red-500">*</span></label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-calendar-day input-icon"></i>
+              <input 
+                type="date" 
+                name="student_${index}_dob" 
+                required 
+                min="1940-01-01" 
+                max="2018-12-31" 
+                class="form-input text-xs student-dob bg-white" 
+                onchange="handleDOBChange(${index})"
+              />
+            </div>
+          </div>
+
+          <!-- Computed Age Category Badge -->
+          <div>
+            <label class="form-label text-xs">Computed Division (Auto)</label>
+            <div id="student_${index}_cat_badge" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200 flex items-center gap-1.5">
+              <span>Select Date of Birth</span>
+            </div>
+            <input type="hidden" name="student_${index}_category" id="student_${index}_cat_hidden" value="Junior" />
+          </div>
+
+          <!-- Aadhaar Last 4 -->
+          <div>
+            <label class="form-label text-xs">Aadhaar (Last 4 Digits) <span class="text-red-500">*</span></label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-fingerprint input-icon"></i>
+              <input type="text" name="student_${index}_aadhaar" required maxlength="4" pattern="\\d{4}" placeholder="XXXX" class="form-input text-xs font-mono tracking-widest student-aadhaar" />
+            </div>
+          </div>
+
+          <!-- Father / Guardian Name -->
+          <div>
+            <label class="form-label text-xs">Father / Guardian Name <span class="text-red-500">*</span></label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-people-roof input-icon"></i>
+              <input type="text" name="student_${index}_guardian" required placeholder="Parent Name" class="form-input text-xs student-guardian" />
+            </div>
+          </div>
+
+          <!-- Proof Document Type -->
+          <div class="sm:col-span-2">
+            <label class="form-label text-xs">DOB Proof Document Type <span class="text-red-500">*</span></label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-file-shield input-icon"></i>
+              <select name="student_${index}_proof_type" class="form-input text-xs bg-white student-proof-type">
+                <option value="School Bonafide / Study Certificate">School Bonafide / Study Certificate (Recommended for Schools)</option>
+                <option value="Municipal Birth Certificate">Municipal Birth Certificate</option>
+                <option value="SSC Marksheet / Transfer Certificate">SSC Marksheet / Transfer Certificate (T.C.)</option>
+                <option value="Aadhaar Card (Full DOB)">Aadhaar Card (Full DOB)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Event Disciplines -->
+          <div class="sm:col-span-2 lg:col-span-3 pt-2">
+            <label class="form-label text-xs mb-2">Competition Disciplines (Select at least 1) <span class="text-red-500">*</span></label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#0D5C3A] cursor-pointer text-xs transition">
+                <input type="checkbox" name="student_${index}_events" value="Traditional Yogasana" checked onchange="updateSummary()" class="text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-3.5 h-3.5 student-event-cb" />
+                <span class="font-medium">Traditional</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#0D5C3A] cursor-pointer text-xs transition">
+                <input type="checkbox" name="student_${index}_events" value="Free Flow Yogasana" onchange="updateSummary()" class="text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-3.5 h-3.5 student-event-cb" />
+                <span class="font-medium">Free Flow</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#0D5C3A] cursor-pointer text-xs transition">
+                <input type="checkbox" name="student_${index}_events" value="Artistic Yogasana Solo" onchange="updateSummary()" class="text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-3.5 h-3.5 student-event-cb" />
+                <span class="font-medium">Artistic Solo</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#0D5C3A] cursor-pointer text-xs transition">
+                <input type="checkbox" name="student_${index}_events" value="Artistic Yogasana Pair" onchange="updateSummary()" class="text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-3.5 h-3.5 student-event-cb" />
+                <span class="font-medium">Artistic Pair</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#0D5C3A] cursor-pointer text-xs transition">
+                <input type="checkbox" name="student_${index}_events" value="Rhythmic Yogasana Pair" onchange="updateSummary()" class="text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-3.5 h-3.5 student-event-cb" />
+                <span class="font-medium">Rhythmic Pair</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Document Uploads (Passport Photo + DOB Certificate) -->
+          <div class="sm:col-span-2 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            
+            <!-- Photo Upload -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                <img id="student_${index}_photo_preview" class="w-full h-full object-cover hidden" />
+                <i id="student_${index}_photo_icon" class="fa-solid fa-camera text-slate-400"></i>
+              </div>
+              <div class="flex-grow">
+                <div class="text-[11px] font-bold text-slate-700">Passport Photo (JPG/PNG) <span class="text-red-500">*</span></div>
+                <input 
+                  type="file" 
+                  name="passport_photo_${index}" 
+                  id="student_${index}_photo_input" 
+                  accept="image/*" 
+                  class="text-[10px] text-slate-500 mt-1 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-emerald-50 file:text-[#0D5C3A] hover:file:bg-emerald-100"
+                  onchange="handlePhotoUpload(${index})"
+                />
+              </div>
+            </div>
+
+            <!-- DOB Certificate Upload -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-amber-600 text-lg flex-shrink-0">
+                <i id="student_${index}_dob_icon" class="fa-solid fa-file-shield"></i>
+              </div>
+              <div class="flex-grow">
+                <div class="text-[11px] font-bold text-slate-700">Verified DOB Proof (PDF/JPG) <span class="text-red-500">*</span></div>
+                <input 
+                  type="file" 
+                  name="dob_certificate_${index}" 
+                  id="student_${index}_dob_input" 
+                  accept="image/*,.pdf" 
+                  class="text-[10px] text-slate-500 mt-1 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-amber-50 file:text-amber-800 hover:file:bg-amber-100"
+                  onchange="handleDobUpload(${index})"
+                />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+      return card;
+    }
+
+    function addStudent() {
+      const container = document.getElementById('students-container');
+      const card = createStudentCard(studentIndex);
+      container.appendChild(card);
+      studentIndex++;
+      updateStudentNumbers();
+      updateSummary();
+    }
+
+    function removeStudent(idx) {
+      const card = document.getElementById(`student-card-${idx}`);
+      if (card) {
+        card.remove();
+        updateStudentNumbers();
+        updateSummary();
+      }
+    }
+
+    function updateStudentNumbers() {
+      const cards = document.querySelectorAll('.student-card');
+      cards.forEach((c, i) => {
+        const numBadge = c.querySelector('.student-number');
+        const title = c.querySelector('.student-title');
+        if (numBadge) numBadge.textContent = i + 1;
+        if (title) title.textContent = `Student Athlete #${i + 1}`;
+      });
+    }
+
+    function handleDOBChange(idx) {
+      const dobInput = document.querySelector(`[name="student_${idx}_dob"]`);
+      const badge = document.getElementById(`student_${idx}_cat_badge`);
+      const hiddenCat = document.getElementById(`student_${idx}_cat_hidden`);
+      if (!dobInput || !badge) return;
+
+      const cat = calculateCategory(dobInput.value);
+      if (!cat) {
+        badge.className = 'px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200';
+        badge.innerHTML = '<span>Select Date of Birth</span>';
+        if (hiddenCat) hiddenCat.value = 'Junior';
+      } else {
+        badge.className = `px-3 py-2 rounded-xl text-xs font-bold border flex items-center gap-1.5 ${cat.badgeClass}`;
+        badge.innerHTML = `${cat.icon} <span>${cat.group}</span>`;
+        if (hiddenCat) hiddenCat.value = cat.name;
+      }
+      updateSummary();
+    }
+
+    function handlePhotoUpload(idx) {
+      const input = document.getElementById(`student_${idx}_photo_input`);
+      const preview = document.getElementById(`student_${idx}_photo_preview`);
+      const icon = document.getElementById(`student_${idx}_photo_icon`);
+      if (input && input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.src = e.target.result;
+          preview.classList.remove('hidden');
+          if (icon) icon.classList.add('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function handleDobUpload(idx) {
+      const input = document.getElementById(`student_${idx}_dob_input`);
+      const icon = document.getElementById(`student_${idx}_dob_icon`);
+      if (input && input.files && input.files[0] && icon) {
+        icon.className = 'fa-solid fa-circle-check text-emerald-600';
+      }
+    }
+
+    function updateSummary() {
+      const cards = document.querySelectorAll('.student-card');
+      const totalStudents = cards.length;
+      let totalEvents = 0;
+      let subJuniorJuniorCount = 0;
+
+      cards.forEach(c => {
+        const checkedEvents = c.querySelectorAll('.student-event-cb:checked');
+        totalEvents += checkedEvents.length;
+
+        const dobVal = c.querySelector('.student-dob')?.value;
+        const cat = calculateCategory(dobVal);
+        if (cat && (cat.name === 'Sub-Junior' || cat.name === 'Junior')) {
+          subJuniorJuniorCount++;
+        }
+      });
+
+      const totalFee = totalEvents * FEE_PER_EVENT;
+
+      document.getElementById('summary-students-count').textContent = totalStudents;
+      document.getElementById('summary-events-count').textContent = totalEvents;
+      document.getElementById('summary-subjunior-count').textContent = subJuniorJuniorCount;
+      document.getElementById('summary-total-fee').textContent = `₹${totalFee.toLocaleString('en-IN')}`;
+    }
+
+    // Initialize with 2 student forms by default
+    window.addEventListener('DOMContentLoaded', () => {
+      addStudent();
+      addStudent();
+    });
+
+    document.getElementById('add-student-btn')?.addEventListener('click', addStudent);
+
+    // Form Submission & API Integration
+    document.getElementById('submit-school-btn')?.addEventListener('click', async () => {
+      const schoolName = document.getElementById('school_name')?.value?.trim();
+      const district = document.getElementById('district')?.value;
+      const coachName = document.getElementById('coach_name')?.value?.trim();
+      const coachMobile = document.getElementById('coach_mobile')?.value?.trim();
+      const principalName = document.getElementById('principal_name')?.value?.trim();
+      const declaration = document.getElementById('school-declaration')?.checked;
+
+      if (!schoolName || !district || !coachName || !coachMobile || !principalName) {
+        alert('Please complete all mandatory institution and coach details marked with *');
+        return;
+      }
+
+      if (!declaration) {
+        alert('Please accept the Institutional Certification declaration checkbox before submitting.');
+        return;
+      }
+
+      const cards = document.querySelectorAll('.student-card');
+      if (cards.length === 0) {
+        alert('Please add at least one student athlete to the delegation roster.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('school_name', schoolName);
+      formData.append('district', district);
+      formData.append('coach_name', coachName);
+      formData.append('coach_mobile', coachMobile);
+      formData.append('principal_name', principalName);
+
+      const studentsList = [];
+      let hasValidationError = false;
+
+      cards.forEach((c, idx) => {
+        const firstName = c.querySelector('.student-first-name')?.value?.trim();
+        const lastName = c.querySelector('.student-last-name')?.value?.trim();
+        const gender = c.querySelector('.student-gender:checked')?.value || 'Female';
+        const dob = c.querySelector('.student-dob')?.value;
+        const aadhaar = c.querySelector('.student-aadhaar')?.value?.trim();
+        const guardian = c.querySelector('.student-guardian')?.value?.trim();
+        const proofType = c.querySelector('.student-proof-type')?.value;
+
+        const eventCheckboxes = c.querySelectorAll('.student-event-cb:checked');
+        const events = Array.from(eventCheckboxes).map(cb => cb.value);
+
+        if (!firstName || !lastName || !dob || !aadhaar || aadhaar.length !== 4) {
+          alert(`Please fill valid details for Student #${idx + 1} (Name, Date of Birth, 4-digit Aadhaar).`);
+          hasValidationError = true;
+          return;
+        }
+
+        if (events.length === 0) {
+          alert(`Please select at least 1 competition event for Student #${idx + 1}.`);
+          hasValidationError = true;
+          return;
+        }
+
+        const catObj = calculateCategory(dob);
+        const category = catObj ? catObj.name : 'Junior';
+
+        studentsList.push({
+          firstName,
+          lastName,
+          gender,
+          dob,
+          aadhaarLast4: aadhaar,
+          guardianName: guardian,
+          events,
+          category,
+          dobProofType: proofType,
+          institutionName: schoolName
+        });
+
+        // Append file attachments
+        const photoInput = c.querySelector(`#student_${c.dataset.index}_photo_input`);
+        const dobInput = c.querySelector(`#student_${c.dataset.index}_dob_input`);
+
+        if (photoInput && photoInput.files[0]) {
+          formData.append(`photo_${idx}`, photoInput.files[0]);
+        }
+        if (dobInput && dobInput.files[0]) {
+          formData.append(`dob_${idx}`, dobInput.files[0]);
+        }
+      });
+
+      if (hasValidationError) return;
+
+      formData.append('students', JSON.stringify(studentsList));
+
+      const submitBtn = document.getElementById('submit-school-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Registering Delegation...';
+
+      try {
+        const response = await fetch('/portal/athletes/bulk-nominate', {
+          method: 'POST',
+          body: formData
+        });
+
+        const res = await response.json();
+
+        if (response.ok && res.success) {
+          showSuccessModal(res);
+        } else {
+          alert(res.error || 'Failed to submit school nomination. Please verify all fields.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit School Delegation &amp; Generate Admit Cards';
+        }
+      } catch (err) {
+        console.error('Submission error:', err);
+        alert('Network or server error during submission. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit School Delegation &amp; Generate Admit Cards';
+      }
+    });
+
+    function showSuccessModal(data) {
+      const modal = document.getElementById('success-modal');
+      const tableBody = document.getElementById('modal-roster-body');
+      const subtitle = document.getElementById('modal-subtitle');
+
+      subtitle.textContent = `Successfully registered ${data.count} student athlete(s) for ${data.school} (${data.district} District).`;
+      tableBody.innerHTML = '';
+
+      (data.athletes || []).forEach(ath => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="p-3 font-mono font-bold text-[#0D5C3A]">${ath.chestNumber || 'HYD-JR-01'}</td>
+          <td class="p-3 font-semibold">${ath.firstName} ${ath.lastName}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">${ath.category}</span></td>
+          <td class="p-3 text-[11px] text-slate-600">${(ath.events || []).join(', ')}</td>
+          <td class="p-3 text-center">
+            <a href="admitcard.html?id=${ath._id}" target="_blank" class="inline-flex items-center gap-1 text-[#0D5C3A] hover:underline font-bold text-xs">
+              <i class="fa-solid fa-id-card"></i> View Card
+            </a>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+
+      modal.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

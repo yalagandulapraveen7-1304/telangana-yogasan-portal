@@ -19,6 +19,9 @@ const AthleteSchema = new mongoose.Schema(
       enum: ['Submitted', 'Verified', 'Clarification', 'Pending'],
       default: 'Submitted'
     },
+    dobProofType: { type: String, default: 'Birth Certificate', trim: true },
+    coachName: { type: String, default: '', trim: true },
+    coachMobile: { type: String, default: '', trim: true },
     remarks: { type: String, default: '' },
     photoPath: { type: String, default: '' },
     dobProofPath: { type: String, default: '' },
