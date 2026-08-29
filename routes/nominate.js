@@ -4,10 +4,20 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
+const rateLimit = require('express-rate-limit');
 
 const Athlete = require('../models/Athlete');
 const { requireAuth } = require('./auth');
 const upload = require('../middleware/upload'); // Using your secure middleware!
+
+// Rate limiter for nomination actions and payment creation
+const nominationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 40,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many nomination requests. Please try again after 15 minutes.' }
+});
 
 // Razorpay Initialization
 const razorpay = new Razorpay({
@@ -43,7 +53,6 @@ router.get('/list', requireAuth, async (req, res) => {
     const role = (req.user.role || '').toUpperCase().trim();
     const district = (req.user.district || '').toUpperCase().trim();
 
-    // BUG FIX: Added 'let' to initialize the variable properly
     let filter = {}; 
 
     if (role !== 'SUPER_ADMIN' && district !== 'ALL_DISTRICTS' && district !== 'ALL') {
@@ -62,17 +71,20 @@ router.get('/list', requireAuth, async (req, res) => {
 });
 
 // ==========================================
-// 1b. GET /portal/athletes/:id/public-card (Public Admit Card View)
+// 1b. GET /portal/athletes/:id/public-card (Public Admit Card View - Data Minimized)
 // ==========================================
 router.get('/:id/public-card', async (req, res) => {
   try {
     const athleteId = req.params.id;
     let athlete;
 
+    // Strict projection: Omit sensitive PII like residentialAddress, mobileNumber, dobProofPath, coachMobile, remarks
+    const publicFields = 'firstName lastName dob gender category district chestNumber events status guardianName institutionName aadhaarLast4 photoPath';
+
     if (athleteId && athleteId.match(/^[0-9a-fA-F]{24}$/)) {
-      athlete = await Athlete.findById(athleteId);
+      athlete = await Athlete.findById(athleteId).select(publicFields);
     } else if (athleteId) {
-      athlete = await Athlete.findOne({ chestNumber: athleteId.toUpperCase().trim() });
+      athlete = await Athlete.findOne({ chestNumber: athleteId.toUpperCase().trim() }).select(publicFields);
     }
 
     if (!athlete) {
@@ -89,7 +101,7 @@ router.get('/:id/public-card', async (req, res) => {
 // ==========================================
 // 2. POST /portal/athletes/create-order
 // ==========================================
-router.post('/create-order', async (req, res) => {
+router.post('/create-order', nominationLimiter, async (req, res) => {
   try {
     const { events } = req.body;
     let selectedEvents = [];
@@ -132,6 +144,7 @@ router.post('/create-order', async (req, res) => {
 // ==========================================
 router.post(
   '/nominate',
+  nominationLimiter,
   upload.fields([
     { name: 'passport_photo', maxCount: 1 },
     { name: 'dob_certificate', maxCount: 1 }
@@ -226,7 +239,7 @@ router.post(
       res.status(201).json({ success: true, athlete: newAthlete });
     } catch (err) {
       console.error('Nomination Error:', err);
-      res.status(500).json({ error: 'Failed to nominate athlete', details: err.message });
+      res.status(500).json({ error: 'Failed to nominate athlete. Please check the submitted data and try again.' });
     }
   }
 );
@@ -236,6 +249,7 @@ router.post(
 // ==========================================
 router.post(
   '/bulk-nominate',
+  nominationLimiter,
   upload.any(),
   async (req, res) => {
     try {
@@ -309,7 +323,7 @@ router.post(
       });
     } catch (err) {
       console.error('Bulk School Nomination Error:', err);
-      res.status(500).json({ error: 'Failed to process school nomination', details: err.message });
+      res.status(500).json({ error: 'Failed to process school nomination delegation. Please check format and try again.' });
     }
   }
 );

@@ -1,13 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const Secretary = require('../models/Secretary');
 const LoginLog = require('../models/LoginLog');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tya_secure_jwt_secret_key_2026';
 
+// Dedicated Rate Limiter for Authentication (Brute-force protection)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15-minute window
+  max: 10, // Max 10 attempts per IP per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts from this IP. Please try again after 15 minutes.' }
+});
+
 // 1. POST /auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { email, password } = req.body || {};
   const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
   const userAgent = req.headers['user-agent'] || 'Unknown Device';
@@ -45,7 +55,6 @@ router.post('/login', async (req, res) => {
       status: 'SUCCESS'
     });
 
-    // FIX: use the single shared JWT_SECRET constant (was 'your_secret_key' before, causing verify() to fail silently)
     const token = jwt.sign(
       {
         id: user._id,
@@ -57,15 +66,13 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1d' }
     );
 
- res.cookie('token', token, {
-  httpOnly: true,
-  secure: true, // Enforces transmission only over HTTPS
-  sameSite: 'strict',
-  maxAge: 24 * 60 * 60 * 1000 // 1 day
-});
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
 
-    // FIX: return the token in the JSON body too, since the frontend reads
-    // sessionStorage("token") and sends it as a Bearer header.
     return res.json({
       success: true,
       token,
@@ -75,7 +82,7 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     console.error('Login Error:', err);
-    return res.status(500).json({ error: 'Internal server error', details: err.message });
+    return res.status(500).json({ error: 'Authentication failed. Please try again later.' });
   }
 });
 

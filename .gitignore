@@ -2,3 +2,5 @@
 node_modules/
 localhost*.pem
 uploads/
+*.seeded_credentials.json
+.seeded_credentials.json

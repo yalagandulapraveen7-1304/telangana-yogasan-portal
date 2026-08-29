@@ -7,19 +7,56 @@ const fs = require('fs');
 const https = require('https');
 const express = require('express');
 
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
 const { router: authRoutes, requireAuth } = require('./routes/auth');
 const nominateRoutes = require('./routes/nominate');
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/telangana_yoga';
-const IS_PROD = process.env.NODE_ENV === 'production'; // NEW: Check environment
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+// Warn if using default secrets in production
+if (IS_PROD && (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'tya_secure_jwt_secret_key_2026')) {
+  console.warn('⚠️ [SECURITY WARNING] Default JWT_SECRET is in use in production! Please set a strong JWT_SECRET in environment variables.');
+}
 
 // 1. MUST DEFINE 'app' FIRST
 const app = express();
 
-// 2. Setup Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 2. Setup Security & Core Middleware
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://checkout.razorpay.com"],
+        scriptSrcAttr: ["'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https:"],
+        fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
+        connectSrc: ["'self'", "https://api.razorpay.com"],
+        frameSrc: ["'self'", "https://api.razorpay.com"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: IS_PROD ? [] : null
+      }
+    },
+    crossOriginEmbedderPolicy: false
+  })
+);
+
+// General Rate Limiter for API endpoints
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests from this IP, please try again later.' }
+});
+
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(cookieParser());
 
 app.use((req, res, next) => {
@@ -53,8 +90,8 @@ app.get('/uploads/:filename', (req, res) => {
 });
 
 // 4. API Routes
-app.use('/auth', authRoutes);
-app.use('/portal/athletes', nominateRoutes);
+app.use('/auth', apiLimiter, authRoutes);
+app.use('/portal/athletes', apiLimiter, nominateRoutes);
 
 // 5. Template Directory Setup
 const templateDir = path.join(__dirname, 'templates');
@@ -83,6 +120,18 @@ app.get(['/login', '/login.html'], (req, res) => {
 
 app.get(['/', '/index', '/index.html'], (req, res) => {
   res.sendFile('index.html', { root: templateDir });
+});
+
+// Global Error Handler (Hides stack traces and sensitive error details from clients)
+app.use((err, req, res, next) => {
+  console.error('Unhandled Server Error:', err);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(err.status || 500).json({
+    success: false,
+    error: 'An unexpected error occurred. Please try again later.'
+  });
 });
 
 // 6. Database Connection & Environment-Aware Server Startup
