@@ -2,10 +2,19 @@ const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
 
+const fs = require('fs');
+const os = require('os');
+
+// Determine upload destination directory safely
+const uploadDir = process.env.VERCEL ? os.tmpdir() : path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 // 1. Secure Storage & Renaming Strategy
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads/'); 
+    cb(null, uploadDir); 
   },
   filename: function (req, file, cb) {
     // Generate a random 16-byte hex string for the filename

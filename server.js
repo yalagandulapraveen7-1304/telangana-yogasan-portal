@@ -31,6 +31,8 @@ app.use((req, res, next) => {
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // SECURE UPLOADS ROUTE: Only logged-in District Secretaries can fetch documents
+const uploadDir = process.env.VERCEL ? require('os').tmpdir() : path.join(__dirname, 'uploads');
+
 app.get('/uploads/:filename', requireAuth, (req, res) => {
   const filename = req.params.filename;
 
@@ -40,7 +42,7 @@ app.get('/uploads/:filename', requireAuth, (req, res) => {
   }
 
   // Construct the absolute path to the file
-  const filePath = path.join(__dirname, 'uploads', filename);
+  const filePath = path.join(uploadDir, filename);
 
   // Verify the file actually exists on the disk before sending
   if (fs.existsSync(filePath)) {
@@ -83,12 +85,30 @@ app.get(['/', '/index.html'], (req, res) => {
 });
 
 // 6. Database Connection & Environment-Aware Server Startup
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected || mongoose.connection.readyState === 1) return;
+  try {
+    await mongoose.connect(MONGO_URI);
+    isConnected = true;
     console.log('✅ Connected to MongoDB');
-    
-    if (IS_PROD) {
+  } catch (err) {
+    console.error('❌ Database connection error:', err);
+  }
+};
+
+// Ensure DB connection for incoming serverless requests
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// Start HTTP/HTTPS server for long-running hosts (Local dev / Render)
+if (!process.env.VERCEL) {
+  connectDB().then(() => {
+    const hasSslCerts = fs.existsSync('localhost+2-key.pem') && fs.existsSync('localhost+2.pem');
+
+    if (IS_PROD || !hasSslCerts) {
       // Production: Live host (Render/AWS/etc.) handles SSL reverse-proxy
       app.listen(PORT, () => {
         console.log(`🚀 Production server running on port ${PORT}`);
@@ -104,7 +124,7 @@ mongoose
         console.log(`🔒 Local secure server running at https://localhost:${PORT}`);
       });
     }
-  })
-  .catch((err) => {
-    console.error('❌ Database connection error:', err);
   });
+}
+
+module.exports = app;
