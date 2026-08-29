@@ -64,7 +64,7 @@ router.get('/list', requireAuth, async (req, res) => {
 // ==========================================
 // 2. POST /portal/athletes/create-order
 // ==========================================
-router.post('/create-order', requireAuth, async (req, res) => {
+router.post('/create-order', async (req, res) => {
   try {
     const { events } = req.body;
     let selectedEvents = [];
@@ -103,11 +103,10 @@ router.post('/create-order', requireAuth, async (req, res) => {
 });
 
 // ==========================================
-// 3. POST /portal/athletes/nominate (Uploads + Payment Verify)
+// 3. POST /portal/athletes/nominate (Uploads + Optional Payment)
 // ==========================================
 router.post(
   '/nominate',
-  requireAuth,
   upload.fields([
     { name: 'passport_photo', maxCount: 1 },
     { name: 'dob_certificate', maxCount: 1 }
@@ -116,20 +115,28 @@ router.post(
     try {
       const b = req.body || {};
 
-      // --- PAYMENT VERIFICATION ---
+      // --- PAYMENT VERIFICATION (If Razorpay details provided) ---
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = b;
+      let paymentRecord = null;
       
-      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-        return res.status(400).json({ error: 'Payment details are missing. Nomination failed.' });
-      }
+      if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
+        if (process.env.RAZORPAY_KEY_SECRET) {
+          // Verify HMAC SHA256 signature
+          const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
+          hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+          const generatedSignature = hmac.digest('hex');
 
-      // Verify HMAC SHA256 signature
-      const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
-      hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-      const generatedSignature = hmac.digest('hex');
-
-      if (generatedSignature !== razorpay_signature) {
-        return res.status(400).json({ error: 'Payment verification failed. Invalid signature.' });
+          if (generatedSignature !== razorpay_signature) {
+            return res.status(400).json({ error: 'Payment verification failed. Invalid signature.' });
+          }
+        }
+        paymentRecord = {
+          orderId: razorpay_order_id,
+          paymentId: razorpay_payment_id,
+          amount: (b.events ? (Array.isArray(b.events) ? b.events.length : 1) : 1) * FEE_PER_EVENT,
+          status: 'PAID',
+          paidAt: new Date()
+        };
       }
       // ----------------------------
 
@@ -159,14 +166,7 @@ router.post(
         events: selectedEvents,
         category: b.category || calculateAgeCategory(b.dob),
         status: 'Submitted',
-        // Save the successful payment record to the database
-        paymentDetails: {
-          orderId: razorpay_order_id,
-          paymentId: razorpay_payment_id,
-          amount: selectedEvents.length * FEE_PER_EVENT,
-          status: 'PAID',
-          paidAt: new Date()
-        }
+        paymentDetails: paymentRecord || undefined
       };
 
       if (req.files) {

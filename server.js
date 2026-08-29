@@ -58,20 +58,20 @@ app.use('/portal/athletes', nominateRoutes);
 // 5. Template Directory Setup
 const templateDir = path.join(__dirname, 'templates');
 
-// Protected HTML pages
+// Protected HTML pages (Admin & District Secretaries)
 app.get('/dashboard.html', requireAuth, (req, res) => {
   res.sendFile('dashboard.html', { root: templateDir });
-});
-
-app.get('/nominate.html', requireAuth, (req, res) => {
-  res.sendFile('nominate.html', { root: templateDir });
 });
 
 app.get('/admitcard.html', requireAuth, (req, res) => {
   res.sendFile('admitcard.html', { root: templateDir });
 });
 
-// Public HTML pages
+// Public HTML pages (Open for everyone to register)
+app.get('/nominate.html', (req, res) => {
+  res.sendFile('nominate.html', { root: templateDir });
+});
+
 app.get('/school-nominate.html', (req, res) => {
   res.sendFile('school-nominate.html', { root: templateDir });
 });
