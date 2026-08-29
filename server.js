@@ -59,28 +59,28 @@ app.use('/portal/athletes', nominateRoutes);
 const templateDir = path.join(__dirname, 'templates');
 
 // Protected HTML pages (Admin & District Secretaries)
-app.get('/dashboard.html', requireAuth, (req, res) => {
+app.get(['/dashboard', '/dashboard.html'], requireAuth, (req, res) => {
   res.sendFile('dashboard.html', { root: templateDir });
 });
 
-app.get('/admitcard.html', requireAuth, (req, res) => {
+app.get(['/admitcard', '/admitcard.html'], requireAuth, (req, res) => {
   res.sendFile('admitcard.html', { root: templateDir });
 });
 
-// Public HTML pages (Open for everyone to register)
-app.get('/nominate.html', (req, res) => {
+// Public HTML pages (Clean URLs & .html fallback)
+app.get(['/nominate', '/nominate.html'], (req, res) => {
   res.sendFile('nominate.html', { root: templateDir });
 });
 
-app.get('/school-nominate.html', (req, res) => {
+app.get(['/school-nominate', '/school-nominate.html'], (req, res) => {
   res.sendFile('school-nominate.html', { root: templateDir });
 });
 
-app.get('/login.html', (req, res) => {
+app.get(['/login', '/login.html'], (req, res) => {
   res.sendFile('login.html', { root: templateDir });
 });
 
-app.get(['/', '/index.html'], (req, res) => {
+app.get(['/', '/index', '/index.html'], (req, res) => {
   res.sendFile('index.html', { root: templateDir });
 });
 
