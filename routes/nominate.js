@@ -62,6 +62,31 @@ router.get('/list', requireAuth, async (req, res) => {
 });
 
 // ==========================================
+// 1b. GET /portal/athletes/:id/public-card (Public Admit Card View)
+// ==========================================
+router.get('/:id/public-card', async (req, res) => {
+  try {
+    const athleteId = req.params.id;
+    let athlete;
+
+    if (athleteId && athleteId.match(/^[0-9a-fA-F]{24}$/)) {
+      athlete = await Athlete.findById(athleteId);
+    } else if (athleteId) {
+      athlete = await Athlete.findOne({ chestNumber: athleteId.toUpperCase().trim() });
+    }
+
+    if (!athlete) {
+      return res.status(404).json({ error: 'Athlete record not found' });
+    }
+
+    res.json(athlete);
+  } catch (err) {
+    console.error('Error fetching public admit card:', err);
+    res.status(500).json({ error: 'Failed to retrieve athlete details' });
+  }
+});
+
+// ==========================================
 // 2. POST /portal/athletes/create-order
 // ==========================================
 router.post('/create-order', async (req, res) => {

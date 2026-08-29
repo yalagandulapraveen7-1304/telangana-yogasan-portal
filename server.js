@@ -30,14 +30,14 @@ app.use((req, res, next) => {
 // 3. Static assets
 app.use('/static', express.static(path.join(__dirname, 'static')));
 
-// SECURE UPLOADS ROUTE: Only logged-in District Secretaries can fetch documents
+// Uploaded Document Images & Certificates Route
 const uploadDir = process.env.VERCEL ? require('os').tmpdir() : path.join(__dirname, 'uploads');
 
-app.get('/uploads/:filename', requireAuth, (req, res) => {
+app.get('/uploads/:filename', (req, res) => {
   const filename = req.params.filename;
 
   // Security check: Prevent Directory Traversal Attacks (e.g., requesting "../../.env")
-  if (filename.includes('..') || filename.includes('/')) {
+  if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
     return res.status(403).json({ success: false, message: 'Forbidden path execution.' });
   }
 
@@ -51,6 +51,7 @@ app.get('/uploads/:filename', requireAuth, (req, res) => {
     res.status(404).json({ success: false, message: 'Identity document not found or removed.' });
   }
 });
+
 // 4. API Routes
 app.use('/auth', authRoutes);
 app.use('/portal/athletes', nominateRoutes);
@@ -63,11 +64,11 @@ app.get(['/dashboard', '/dashboard.html'], requireAuth, (req, res) => {
   res.sendFile('dashboard.html', { root: templateDir });
 });
 
-app.get(['/admitcard', '/admitcard.html'], requireAuth, (req, res) => {
+// Public HTML pages (Clean URLs & .html fallback)
+app.get(['/admitcard', '/admitcard.html'], (req, res) => {
   res.sendFile('admitcard.html', { root: templateDir });
 });
 
-// Public HTML pages (Clean URLs & .html fallback)
 app.get(['/nominate', '/nominate.html'], (req, res) => {
   res.sendFile('nominate.html', { root: templateDir });
 });

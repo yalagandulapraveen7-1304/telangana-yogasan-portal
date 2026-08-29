@@ -272,13 +272,14 @@ function initNominationForm() {
 
     try {
       const formData = new FormData(form);
-      const token = sessionStorage.getItem("token");
+      const headers = {};
+      if (token && token !== "null" && token !== "undefined") {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
 
       const res = await fetch("/portal/athletes/nominate", {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
+        headers: headers,
         body: formData
       });
 

@@ -609,6 +609,7 @@
             });
 
             if (response.ok) {
+              const resData = await response.json().catch(() => ({}));
               form.reset();
               
               // Restore active district
@@ -616,25 +617,12 @@
               if (distSelect) distSelect.value = activeDist;
               if (districtHiddenInput) districtHiddenInput.value = activeDist;
 
-              // Reset upload zones UI
-              if (passportIcon) passportIcon.className = "fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]";
-              if (passportText) {
-                passportText.textContent = "Click or drag & drop photo here";
-                passportText.className = "text-xs font-semibold text-slate-700";
+              // Redirect directly to the generated Admit Card
+              if (resData && resData.athlete && resData.athlete._id) {
+                window.location.href = `admitcard.html?id=${resData.athlete._id}`;
+              } else {
+                alert('Athlete nomination saved successfully!');
               }
-              if (passportPreview) passportPreview.style.display = "none";
-
-              if (dobIcon) dobIcon.className = "fa-solid fa-file-shield text-2xl text-amber-600";
-              if (dobText) {
-                dobText.textContent = "Click or drag & drop certificate";
-                dobText.className = "text-xs font-semibold text-slate-700";
-              }
-              if (dobFileName) {
-                dobFileName.textContent = "No document chosen yet";
-                dobFileName.className = "mt-3 text-xs font-medium text-slate-600";
-              }
-
-              alert('Athlete nomination saved successfully!');
             } else {
               const errData = await response.json().catch(() => ({}));
               alert('Failed to save athlete: ' + (errData.details || errData.error || 'Unknown error'));

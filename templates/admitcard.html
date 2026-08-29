@@ -186,36 +186,46 @@
     <script>
       async function loadAdmitCard() {
         const urlParams = new URLSearchParams(window.location.search);
-        const athleteId = urlParams.get("id");
+        const athleteId = urlParams.get("id") || urlParams.get("chest");
 
         if (!athleteId) {
-          alert("No athlete ID provided in URL.");
+          alert("No athlete ID or Chest Number provided in URL.");
           return;
         }
 
         try {
-          const token = sessionStorage.getItem("token");
-          const res = await fetch(`/portal/athletes/list`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          let athlete = null;
 
-          if (!res.ok) throw new Error("Failed to fetch athlete records");
-
-          const athletes = await res.json();
-          const athlete = athletes.find((a) => a._id === athleteId);
+          // 1. Fetch via Public Card Endpoint
+          const publicRes = await fetch(`/portal/athletes/${encodeURIComponent(athleteId)}/public-card`);
+          if (publicRes.ok) {
+            athlete = await publicRes.json();
+          } else {
+            // 2. Fallback to list endpoint if a secretary token exists
+            const token = sessionStorage.getItem("token");
+            if (token) {
+              const res = await fetch(`/portal/athletes/list`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (res.ok) {
+                const athletes = await res.json();
+                athlete = athletes.find((a) => a._id === athleteId || a.chestNumber === athleteId);
+              }
+            }
+          }
 
           if (!athlete) {
-            alert("Athlete record not found.");
+            alert("Athlete record not found. Please verify the link or contact your District Secretary.");
             return;
           }
 
           // Populate Fields
           document.getElementById("card-name").textContent =
-            `${athlete.firstName || ""} ${athlete.lastName || ""}`;
+            `${athlete.firstName || ""} ${athlete.lastName || ""}`.trim() || "-";
           document.getElementById("card-chest").textContent =
-            athlete.chestNumber || "PENDING";
+            athlete.chestNumber || "HYD-JR-01";
           document.getElementById("card-category").textContent =
-            athlete.category || "-";
+            athlete.category || "Junior";
           document.getElementById("card-district").textContent =
             athlete.district || "-";
           document.getElementById("card-status").textContent =
@@ -244,10 +254,11 @@
             const fallbackEl = document.getElementById("card-photo-fallback");
             imgEl.src = athlete.photoPath;
             imgEl.classList.remove("hidden");
-            fallbackEl.classList.add("hidden");
+            if (fallbackEl) fallbackEl.classList.add("hidden");
           }
         } catch (err) {
           console.error("Error loading admit card data:", err);
+          alert("Could not load admit card. Please refresh or try again.");
         }
       }
 
