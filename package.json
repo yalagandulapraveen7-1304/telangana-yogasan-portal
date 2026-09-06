@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "build": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify || node -e \"console.log('Using committed CSS')\"",
+    "vercel-build": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify || node -e \"console.log('Using committed CSS')\"",
     "test": "node --test tests/**/*.test.js",
     "start": "node server.js",
     "dev": "nodemon server.js",
