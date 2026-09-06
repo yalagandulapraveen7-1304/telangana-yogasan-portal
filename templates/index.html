@@ -17,6 +17,15 @@
     />
     <meta property="og:image" content="/static/images/TSYSC.png" />
 
+    <!-- Preload Critical Web Fonts -->
+    <link rel="preload" href="/static/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/static/fonts/plus-jakarta-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Google Fonts CDN Fallback & Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" />
+
     <!-- Local Offline Assets -->
     <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="/static/css/output.css" />
@@ -43,6 +52,8 @@
             <img
               src="/static/images/Emblem_of_India.svg"
               alt="Government of India Emblem"
+              width="16"
+              height="18"
               class="h-4 sm:h-4.5 w-auto inline-block filter brightness-0 invert opacity-95"
             />
             GOVERNMENT OF TELANGANA
@@ -103,6 +114,10 @@
                 <img
                   src="/static/images/TSYSC.png"
                   alt="Logo"
+                  width="56"
+                  height="56"
+                  fetchpriority="high"
+                  decoding="sync"
                   class="w-full h-auto"
                 />
               </div>
@@ -863,6 +878,9 @@
                 <img
                   src="/static/images/gallery/gallery-01.jpg"
                   alt="Traditional Yogasana performance at District Selection Trials"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -879,6 +897,9 @@
                 <img
                   src="/static/images/gallery/gallery-02.jpg"
                   alt="Artistic Yogasana solo performance"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -895,6 +916,9 @@
                 <img
                   src="/static/images/gallery/gallery-03.jpg"
                   alt="Artistic Yogasana pair performance with synchronized posture"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -911,6 +935,9 @@
                 <img
                   src="/static/images/gallery/gallery-04.jpg"
                   alt="Rhythmic Yogasana pair performance with music"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -927,6 +954,9 @@
                 <img
                   src="/static/images/gallery/gallery-05.jpg"
                   alt="Certified judges panel evaluating performance"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -943,6 +973,9 @@
                 <img
                   src="/static/images/gallery/gallery-06.jpg"
                   alt="Medal ceremony and felicitation of winning athletes"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -959,6 +992,9 @@
                 <img
                   src="/static/images/gallery/gallery-07.jpg"
                   alt="District Secretaries at the nomination and registration desk"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -975,6 +1011,9 @@
                 <img
                   src="/static/images/gallery/gallery-08.jpg"
                   alt="Indoor championship stage and mat layout"
+                  width="280"
+                  height="280"
+                  decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
@@ -1455,7 +1494,7 @@
     </footer>
 
     <!-- Local Scripts -->
-    <script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js" defer></script>
     <script>
       // Accessibility font resizer
       const rootEl = document.documentElement;

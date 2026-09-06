@@ -6,6 +6,7 @@ const fs = require('fs');
 const https = require('https');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const compression = require('compression');
 
 const { PORT, IS_PROD } = require('./config/constants');
 const { connectDB } = require('./config/db');
@@ -58,6 +59,9 @@ app.use((_req, res, next) => {
   next();
 });
 
+// 2. HTTP Compression (Gzip/Deflate)
+app.use(compression({ threshold: 1024 }));
+
 // Request body limits to prevent Denial of Service
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
@@ -67,7 +71,15 @@ app.use(cookieParser());
 app.use(noSqlSanitizer);
 app.use(originGuard);
 
-// 2. Ensure Database Connection before handling any route requests
+// 3. Static Assets with aggressive caching headers (served without waiting on database)
+app.use('/static', express.static(path.join(__dirname, 'static'), {
+  maxAge: '30d',
+  immutable: true,
+  etag: true,
+  lastModified: true
+}));
+
+// 4. Ensure Database Connection before handling dynamic routes
 app.use(async (_req, _res, next) => {
   try {
     await connectDB();
@@ -76,9 +88,6 @@ app.use(async (_req, _res, next) => {
     next(err);
   }
 });
-
-// 3. Static Assets
-app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // Uploaded Document Images & Certificates Route (with path traversal defense)
 app.get('/uploads/:filename', (req, res) => {
@@ -95,6 +104,7 @@ app.get('/uploads/:filename', (req, res) => {
   }
 
   if (fileExists(filename)) {
+    res.setHeader('Cache-Control', 'public, max-age=86400');
     return res.sendFile(filePath);
   }
   return res.status(404).json({ success: false, message: 'Identity document not found or removed.' });
@@ -107,30 +117,35 @@ app.use('/portal/athletes', apiLimiter, nominateRoutes);
 // 5. Template Directory Setup & Page Routing
 const templateDir = path.join(__dirname, 'templates');
 
+function sendHtmlPage(res, filename) {
+  res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+  res.sendFile(filename, { root: templateDir });
+}
+
 // Protected HTML pages (Admin & District Secretaries)
 app.get(['/dashboard', '/dashboard.html'], requireAuth, (_req, res) => {
-  res.sendFile('dashboard.html', { root: templateDir });
+  sendHtmlPage(res, 'dashboard.html');
 });
 
 // Public HTML pages (Clean URLs & .html fallback)
 app.get(['/admitcard', '/admitcard.html'], (_req, res) => {
-  res.sendFile('admitcard.html', { root: templateDir });
+  sendHtmlPage(res, 'admitcard.html');
 });
 
 app.get(['/nominate', '/nominate.html'], (_req, res) => {
-  res.sendFile('nominate.html', { root: templateDir });
+  sendHtmlPage(res, 'nominate.html');
 });
 
 app.get(['/school-nominate', '/school-nominate.html'], (_req, res) => {
-  res.sendFile('school-nominate.html', { root: templateDir });
+  sendHtmlPage(res, 'school-nominate.html');
 });
 
 app.get(['/login', '/login.html'], (_req, res) => {
-  res.sendFile('login.html', { root: templateDir });
+  sendHtmlPage(res, 'login.html');
 });
 
 app.get(['/', '/index', '/index.html'], (_req, res) => {
-  res.sendFile('index.html', { root: templateDir });
+  sendHtmlPage(res, 'index.html');
 });
 
 // 6. Multer / File Upload Error Handler

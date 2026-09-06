@@ -6,6 +6,15 @@
   <title>School &amp; Institution Athlete Nomination | Telangana State Yogasana Championship</title>
   <meta name="description" content="Official School, College and Academy Bulk Athlete Registration Portal for Telangana State Inter-District Yogasana Sports Championship." />
 
+  <!-- Preload Critical Web Fonts -->
+  <link rel="preload" href="/static/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/static/fonts/plus-jakarta-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Google Fonts CDN Fallback & Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" />
+
   <!-- Local Offline Assets -->
   <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
   <link rel="stylesheet" href="/static/css/output.css" />
@@ -22,7 +31,7 @@
       
       <div class="flex items-center gap-3">
         <div class="w-14 h-14 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059] shadow-sm">
-          <a href="index.html"><img src="/static/images/TSYSC.png" alt="TSYSC Logo" class="w-full h-auto"></a> 
+          <a href="index.html"><img src="/static/images/TSYSC.png" alt="TSYSC Logo" width="56" height="56" fetchpriority="high" decoding="sync" class="w-full h-auto"></a> 
         </div>
         <div>
           <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">
