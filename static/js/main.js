@@ -273,6 +273,7 @@ function initNominationForm() {
     try {
       const formData = new FormData(form);
       const headers = {};
+      const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('token') : null;
       if (token && token !== "null" && token !== "undefined") {
         headers["Authorization"] = `Bearer ${token}`;
       }
@@ -283,16 +284,20 @@ function initNominationForm() {
         body: formData
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok && data.success) {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `<span>Nomination Successful</span>`;
         }
-        showSubmitSuccess(data.athlete._id);
+        if (data.athlete && data.athlete._id) {
+          window.location.href = `admitcard.html?id=${data.athlete._id}`;
+        } else {
+          showSubmitSuccess();
+        }
       } else {
-        showAlert(data.error || "Failed to submit nomination", "error");
+        showAlert(data.error || data.details || "Failed to submit nomination", "error");
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `<span>Submit Nomination</span>`;

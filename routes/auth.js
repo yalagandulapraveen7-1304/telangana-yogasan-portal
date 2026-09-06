@@ -1,33 +1,42 @@
+/**
+ * Authentication Routes
+ * Hardened against NoSQL injection, brute force, bcrypt DoS, and log injection.
+ */
+
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const rateLimit = require('express-rate-limit');
 const Secretary = require('../models/Secretary');
 const LoginLog = require('../models/LoginLog');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'tya_secure_jwt_secret_key_2026';
-
-// Dedicated Rate Limiter for Authentication (Brute-force protection)
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15-minute window
-  max: 10, // Max 10 attempts per IP per window
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many login attempts from this IP. Please try again after 15 minutes.' }
-});
+const { JWT_SECRET, IS_PROD } = require('../config/constants');
+const { requireAuth, loginLimiter, requireRole } = require('../middleware/auth');
+const { stripHtml } = require('../middleware/sanitize');
 
 // 1. POST /auth/login
 router.post('/login', loginLimiter, async (req, res) => {
   const { email, password } = req.body || {};
-  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
-  const userAgent = req.headers['user-agent'] || 'Unknown Device';
+
+  // Strict type & length checks (prevents NoSQL injection and bcrypt DoS)
+  if (typeof email !== 'string' || typeof password !== 'string') {
+    return res.status(400).json({ success: false, error: 'Email and password must be valid strings.' });
+  }
+
+  const cleanEmail = stripHtml(email).toLowerCase().trim();
+  if (!cleanEmail || !password) {
+    return res.status(400).json({ success: false, error: 'Email and password are required.' });
+  }
+
+  // Prevent bcrypt DoS via excessively large password strings
+  if (password.length > 128 || cleanEmail.length > 150) {
+    return res.status(400).json({ success: false, error: 'Input exceeds permissible length.' });
+  }
+
+  const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+  const clientIp = stripHtml(String(Array.isArray(rawIp) ? rawIp[0] : rawIp)).substring(0, 45);
+  const userAgent = stripHtml(String(req.headers['user-agent'] || 'Unknown Device')).substring(0, 200);
 
   try {
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    const user = await Secretary.findOne({ email: email.toLowerCase().trim() });
+    const user = await Secretary.findOne({ email: cleanEmail });
 
     if (!user || !(await user.comparePassword(password))) {
       if (user) {
@@ -41,7 +50,7 @@ router.post('/login', loginLimiter, async (req, res) => {
           status: 'FAILED'
         });
       }
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ success: false, error: 'Invalid email or password' });
     }
 
     // Record successful login
@@ -63,13 +72,14 @@ router.post('/login', loginLimiter, async (req, res) => {
         district: user.district
       },
       JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '1d', algorithm: 'HS256' }
     );
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: IS_PROD,
       sameSite: 'strict',
+      path: '/',
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     });
 
@@ -81,51 +91,26 @@ router.post('/login', loginLimiter, async (req, res) => {
       secretaryName: user.secretaryName
     });
   } catch (err) {
-    console.error('Login Error:', err);
-    return res.status(500).json({ error: 'Authentication failed. Please try again later.' });
+    console.error('Login error:', err.message);
+    return res.status(500).json({ success: false, error: 'Authentication failed. Please try again later.' });
   }
 });
 
 // 2. GET /auth/logs (Super Admin Only)
-router.get('/logs', requireAuth, async (req, res) => {
+router.get('/logs', requireAuth, requireRole('SUPER_ADMIN'), async (_req, res) => {
   try {
-    if (req.user.role !== 'SUPER_ADMIN') {
-      return res.status(403).json({ error: 'Access denied. State Admin privileges required.' });
-    }
-
-    const logs = await LoginLog.find().sort({ loginAt: -1 }).limit(100);
+    const logs = await LoginLog.find().sort({ loginAt: -1 }).limit(100).lean();
     return res.json(logs);
   } catch (err) {
-    console.error('Audit Log Fetch Error:', err);
-    return res.status(500).json({ error: 'Failed to retrieve login logs' });
+    console.error('Audit log fetch error:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to retrieve login logs' });
   }
 });
 
 // 3. GET /auth/logout
-router.get('/logout', (req, res) => {
-  res.clearCookie('token');
+router.get('/logout', (_req, res) => {
+  res.clearCookie('token', { path: '/' });
   res.redirect('/login.html');
 });
-
-// Auth Guard Middleware
-// FIX: now accepts either the httpOnly cookie OR an Authorization: Bearer header,
-// instead of only checking the cookie while the frontend sends a header that was ignored.
-function requireAuth(req, res, next) {
-  const bearerToken = req.headers.authorization?.startsWith('Bearer ')
-    ? req.headers.authorization.split(' ')[1]
-    : null;
-  const token = req.cookies?.token || bearerToken;
-
-  if (!token) return res.redirect('/login.html');
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.clearCookie('token');
-    return res.redirect('/login.html');
-  }
-}
 
 module.exports = { router, requireAuth };

@@ -1,13 +1,23 @@
+/**
+ * Secretary / Admin Mongoose Model
+ * Manages authentication credentials, roles, and district assignments.
+ */
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const SecretarySchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password: { type: String, required: true },
-  district: { type: String, required: true, default: 'Hyderabad' },
-  role: { type: String, enum: ['SECRETARY', 'SUPER_ADMIN'], default: 'SECRETARY' },
-  secretaryName: { type: String, default: 'District Secretary' }
-}, { timestamps: true });
+const SecretarySchema = new mongoose.Schema(
+  {
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password: { type: String, required: true },
+    district: { type: String, required: true, default: 'Hyderabad' },
+    role: { type: String, enum: ['SECRETARY', 'SUPER_ADMIN'], default: 'SECRETARY' },
+    secretaryName: { type: String, default: 'District Secretary' }
+  },
+  { timestamps: true }
+);
+
+SecretarySchema.index({ district: 1 });
 
 SecretarySchema.pre('save', async function () {
   if (this.isModified('password')) {

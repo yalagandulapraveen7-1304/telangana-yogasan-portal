@@ -607,6 +607,16 @@
         }
       }
 
+      function escapeHtml(str) {
+        return String(str || "").replace(/[&<>"']/g, (m) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[m]);
+      }
+
       // 3. Pagination & Table Rendering Logic
       function renderTablePage() {
         const tbody = document.getElementById("athlete-table-body");
@@ -637,13 +647,20 @@
 
         pageData.forEach((athlete) => {
           const initials =
-            (
-              (athlete.firstName?.[0] || "") + (athlete.lastName?.[0] || "")
-            ).toUpperCase() || "NA";
+            escapeHtml(
+              (
+                (athlete.firstName?.[0] || "") + (athlete.lastName?.[0] || "")
+              ).toUpperCase() || "NA"
+            );
           const age = athlete.dob
             ? new Date().getFullYear() - new Date(athlete.dob).getFullYear()
             : "-";
-          const chest = athlete.chestNumber || "PENDING";
+          const chest = escapeHtml(athlete.chestNumber || "PENDING");
+          const safeFirst = escapeHtml(athlete.firstName || "");
+          const safeLast = escapeHtml(athlete.lastName || "");
+          const safeGender = escapeHtml(athlete.gender || "-");
+          const safeCategory = escapeHtml(athlete.category || "-");
+          const safeId = encodeURIComponent(athlete._id || "");
 
           let statusBadge = "";
           if (athlete.status === "Verified") {
@@ -664,7 +681,7 @@
           const eventTags = (athlete.events || [])
             .map(
               (ev) =>
-                `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${ev}</span>`,
+                `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${escapeHtml(ev)}</span>`,
             )
             .join(" ");
 
@@ -678,29 +695,29 @@
                 ${initials}
               </div>
               <div>
-                <div class="font-semibold text-slate-900">${athlete.firstName || ""} ${athlete.lastName || ""}</div>
+                <div class="font-semibold text-slate-900">${safeFirst} ${safeLast}</div>
                 <div class="text-[11px] text-slate-500">ID: [Aadhaar Redacted]</div>
               </div>
             </div>
           </td>
           <td class="py-3.5 px-4">
-            <span class="font-medium text-slate-700">${athlete.gender || "-"} &bull; ${age} Yrs</span>
+            <span class="font-medium text-slate-700">${safeGender} &bull; ${age} Yrs</span>
             <div class="text-[10px] text-slate-500">DOB: ${athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-"}</div>
           </td>
           <td class="py-3.5 px-4">
-            <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">${athlete.category || "-"}</span>
+            <span class="inline-block px-2 py-0.5 text-xs font-semibold rounded border ${catColor}">${safeCategory}</span>
           </td>
           <td class="py-3.5 px-4">
             <div class="flex flex-wrap gap-1">${eventTags}</div>
           </td>
           <td class="py-3.5 px-4">
-            <a href="admitcard.html?id=${athlete._id}" target="_blank" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
+            <a href="admitcard.html?id=${safeId}" target="_blank" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
               <i class="fa-solid fa-id-card text-emerald-600"></i> View Admit Card
             </a>
           </td>
           <td class="py-3.5 px-4">${statusBadge}</td>
           <td class="py-3.5 px-4 text-right">
-            <a href="admitcard.html?id=${athlete._id}" target="_blank" title="View Admit Card" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors inline-block">
+            <a href="admitcard.html?id=${safeId}" target="_blank" title="View Admit Card" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors inline-block">
               <i class="fa-solid fa-id-card"></i>
             </a>
           </td>
@@ -753,13 +770,16 @@
       async function updateAthleteStatus(newStatus) {
         if (!currentAthleteId) return;
         const remarks = document.getElementById("scrutiny-remarks").value;
+        const token = sessionStorage.getItem("token");
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
 
         try {
           const res = await fetch(
             `/portal/athletes/${currentAthleteId}/status`,
             {
               method: "PATCH",
-              headers: { "Content-Type": "application/json" },
+              headers,
               body: JSON.stringify({ status: newStatus, remarks }),
             },
           );
@@ -783,7 +803,10 @@
           if (container) container.classList.remove("hidden");
 
           try {
-            const res = await fetch("/auth/logs");
+            const token = sessionStorage.getItem("token");
+            const headers = {};
+            if (token) headers["Authorization"] = `Bearer ${token}`;
+            const res = await fetch("/auth/logs", { headers });
             if (res.ok) {
               const logs = await res.json();
               const tbody = document.getElementById("audit-log-rows");
@@ -792,16 +815,16 @@
                   .map(
                     (log) => `
             <tr class="hover:bg-slate-50 transition">
-              <td class="p-3 font-mono text-[11px] text-slate-500">${new Date(log.loginAt).toLocaleString()}</td>
-              <td class="p-3 font-semibold text-slate-900">${log.email}</td>
+              <td class="p-3 font-mono text-[11px] text-slate-500">${escapeHtml(new Date(log.loginAt).toLocaleString())}</td>
+              <td class="p-3 font-semibold text-slate-900">${escapeHtml(log.email)}</td>
               <td class="p-3">
-                <span class="bg-emerald-50 text-[#0D5C3A] px-2 py-0.5 rounded font-medium">${log.district}</span>
-                <span class="text-[10px] text-slate-400 block">${log.role}</span>
+                <span class="bg-emerald-50 text-[#0D5C3A] px-2 py-0.5 rounded font-medium">${escapeHtml(log.district)}</span>
+                <span class="text-[10px] text-slate-400 block">${escapeHtml(log.role)}</span>
               </td>
-              <td class="p-3 font-mono text-[11px]">${log.ipAddress}</td>
+              <td class="p-3 font-mono text-[11px]">${escapeHtml(log.ipAddress)}</td>
               <td class="p-3">
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${log.status === "SUCCESS" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}">
-                  ${log.status}
+                  ${escapeHtml(log.status)}
                 </span>
               </td>
             </tr>

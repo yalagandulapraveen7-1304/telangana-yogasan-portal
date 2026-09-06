@@ -861,7 +861,7 @@
           body: formData
         });
 
-        const res = await response.json();
+        const res = await response.json().catch(() => ({}));
 
         if (response.ok && res.success) {
           showSuccessModal(res);
@@ -878,6 +878,16 @@
       }
     });
 
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[m]);
+    }
+
     function showSuccessModal(data) {
       const modal = document.getElementById('success-modal');
       const tableBody = document.getElementById('modal-roster-body');
@@ -889,13 +899,20 @@
       (data.athletes || []).forEach(ath => {
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
+        const chest = escapeHtml(ath.chestNumber || 'HYD-JR-01');
+        const safeFirst = escapeHtml(ath.firstName || '');
+        const safeLast = escapeHtml(ath.lastName || '');
+        const safeCat = escapeHtml(ath.category || '');
+        const safeEvents = (ath.events || []).map(escapeHtml).join(', ');
+        const safeId = encodeURIComponent(ath._id || '');
+
         tr.innerHTML = `
-          <td class="p-3 font-mono font-bold text-[#0D5C3A]">${ath.chestNumber || 'HYD-JR-01'}</td>
-          <td class="p-3 font-semibold">${ath.firstName} ${ath.lastName}</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">${ath.category}</span></td>
-          <td class="p-3 text-[11px] text-slate-600">${(ath.events || []).join(', ')}</td>
+          <td class="p-3 font-mono font-bold text-[#0D5C3A]">${chest}</td>
+          <td class="p-3 font-semibold">${safeFirst} ${safeLast}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">${safeCat}</span></td>
+          <td class="p-3 text-[11px] text-slate-600">${safeEvents}</td>
           <td class="p-3 text-center">
-            <a href="admitcard.html?id=${ath._id}" target="_blank" class="inline-flex items-center gap-1 text-[#0D5C3A] hover:underline font-bold text-xs">
+            <a href="admitcard.html?id=${safeId}" target="_blank" class="inline-flex items-center gap-1 text-[#0D5C3A] hover:underline font-bold text-xs">
               <i class="fa-solid fa-id-card"></i> View Card
             </a>
           </td>

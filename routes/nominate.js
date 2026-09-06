@@ -1,47 +1,36 @@
+/**
+ * Athlete Nomination & Management Routes
+ * Hardened with strict district-level authorization, NoSQL/ReDoS defense, and input sanitization.
+ */
+
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
-const crypto = require('crypto');
-const Razorpay = require('razorpay');
-const rateLimit = require('express-rate-limit');
 
 const Athlete = require('../models/Athlete');
-const { requireAuth } = require('./auth');
-const upload = require('../middleware/upload'); // Using your secure middleware!
+const { requireAuth, optionalAuth, nominationLimiter } = require('../middleware/auth');
+const upload = require('../middleware/upload');
+const { escapeRegex, stripHtml } = require('../middleware/sanitize');
+const { TELANGANA_DISTRICTS } = require('../config/constants');
+const {
+  calculateAgeCategory,
+  formatChestNumber,
+  sanitizeDistrictName
+} = require('../utils/category');
+const {
+  createOrder,
+  verifyPaymentSignature,
+  FEE_PER_EVENT
+} = require('../utils/payment');
 
-// Rate limiter for nomination actions and payment creation
-const nominationLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 40,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, error: 'Too many nomination requests. Please try again after 15 minutes.' }
-});
+const ALLOWED_STATUSES = new Set(['Submitted', 'Verified', 'Clarification', 'Pending']);
+const DISTRICTS_SET = new Set(TELANGANA_DISTRICTS.map((d) => d.toLowerCase()));
 
-// Razorpay Initialization
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_YOUR_KEY',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'YOUR_SECRET'
-});
-const FEE_PER_EVENT = 260; // ₹260 per event
-
-/**
- * Calculates official Age Group Category as per Yoga Federation Regulations:
- * 1. Sub-Junior: 08 to <14 Years (Group A: 08-10 Yrs, Group B: 10-14 Yrs)
- * 2. Junior:     14 to <18 Years (14-18 Yrs)
- * 3. Senior:     18+ Years (Group A: 18-25 Yrs, Group B: 25-35 Yrs, Group C: Above 35 Yrs)
- */
-function calculateAgeCategory(dob) {
-  if (!dob) return 'Junior';
-  const birthDate = new Date(dob);
-  const today = new Date();
-  const refDate = new Date(today.getFullYear(), 11, 31);
-  const age = (refDate - birthDate) / (1000 * 60 * 60 * 24 * 365.25);
-  if (age >= 8 && age < 14) return 'Sub-Junior';
-  if (age >= 14 && age < 18) return 'Junior';
-  if (age >= 18) return 'Senior';
-  return 'Sub-Junior';
+function validateDistrict(dist) {
+  if (!dist || typeof dist !== 'string') return 'Hyderabad';
+  const clean = dist.trim();
+  const match = TELANGANA_DISTRICTS.find((d) => d.toLowerCase() === clean.toLowerCase());
+  return match || 'Hyderabad';
 }
 
 // ==========================================
@@ -51,50 +40,93 @@ router.get('/list', requireAuth, async (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   try {
     const role = (req.user.role || '').toUpperCase().trim();
-    const district = (req.user.district || '').toUpperCase().trim();
+    const userDistrict = (req.user.district || '').toUpperCase().trim();
 
-    let filter = {}; 
+    const filter = {};
 
-    if (role !== 'SUPER_ADMIN' && district !== 'ALL_DISTRICTS' && district !== 'ALL') {
-      const userDist = (req.user.district || '').replace(/ district/i, '').trim();
-      filter.district = { $regex: new RegExp(`^${userDist}(\\s+District)?$`, 'i') };
+    // District-level isolation: Secretaries cannot see other districts
+    if (role !== 'SUPER_ADMIN' && userDistrict !== 'ALL_DISTRICTS' && userDistrict !== 'ALL') {
+      if (!req.user.district || typeof req.user.district !== 'string') {
+        filter.district = '__UNAUTHORIZED_NO_DISTRICT__';
+      } else {
+        const sanitized = escapeRegex(sanitizeDistrictName(req.user.district));
+        filter.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
+      }
     }
 
-    console.log("🔍 Final MongoDB Filter:", filter);
-    const athletes = await Athlete.find(filter).sort({ createdAt: -1 });
-    
-    res.json(athletes);
+    const athletes = await Athlete.find(filter).sort({ createdAt: -1 }).lean();
+    return res.json(athletes);
   } catch (err) {
-    console.error('Fetch Error in /portal/athletes/list:', err);
-    res.status(500).json({ error: 'Failed to retrieve athletes' });
+    console.error('Fetch error in /portal/athletes/list:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to retrieve athletes' });
   }
 });
 
 // ==========================================
-// 1b. GET /portal/athletes/:id/public-card (Public Admit Card View - Data Minimized)
+// 1b. GET /portal/athletes/:id/public-card (Admit Card View)
 // ==========================================
 router.get('/:id/public-card', async (req, res) => {
   try {
-    const athleteId = req.params.id;
+    const rawId = req.params.id;
+    if (!rawId || typeof rawId !== 'string') {
+      return res.status(400).json({ success: false, error: 'Invalid athlete identifier' });
+    }
+
+    const id = rawId.trim();
     let athlete;
 
-    // Strict projection: Omit sensitive PII like residentialAddress, mobileNumber, dobProofPath, coachMobile, remarks
+    // Strict projection: Omit sensitive PII (residentialAddress, mobileNumber, dobProofPath, coachMobile, remarks)
     const publicFields = 'firstName lastName dob gender category district chestNumber events status guardianName institutionName aadhaarLast4 photoPath';
 
-    if (athleteId && athleteId.match(/^[0-9a-fA-F]{24}$/)) {
-      athlete = await Athlete.findById(athleteId).select(publicFields);
-    } else if (athleteId) {
-      athlete = await Athlete.findOne({ chestNumber: athleteId.toUpperCase().trim() }).select(publicFields);
+    if (/^[0-9a-fA-F]{24}$/.test(id)) {
+      athlete = await Athlete.findById(id).select(publicFields).lean();
+    } else {
+      athlete = await Athlete.findOne({ chestNumber: id.toUpperCase().trim() }).select(publicFields).lean();
     }
 
     if (!athlete) {
-      return res.status(404).json({ error: 'Athlete record not found' });
+      return res.status(404).json({ success: false, error: 'Athlete record not found' });
     }
 
-    res.json(athlete);
+    return res.json(athlete);
   } catch (err) {
-    console.error('Error fetching public admit card:', err);
-    res.status(500).json({ error: 'Failed to retrieve athlete details' });
+    console.error('Error fetching public admit card:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to retrieve athlete details' });
+  }
+});
+
+// ==========================================
+// 1c. GET /portal/athletes/:id (Protected Athlete Record - Scoped to District)
+// ==========================================
+router.get('/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, error: 'Invalid athlete ID format.' });
+    }
+
+    const query = { _id: id };
+    const role = (req.user.role || '').toUpperCase().trim();
+    const userDistrict = (req.user.district || '').toUpperCase().trim();
+
+    if (role !== 'SUPER_ADMIN' && userDistrict !== 'ALL_DISTRICTS' && userDistrict !== 'ALL') {
+      if (!req.user.district || typeof req.user.district !== 'string') {
+        query.district = '__UNAUTHORIZED_NO_DISTRICT__';
+      } else {
+        const sanitized = escapeRegex(sanitizeDistrictName(req.user.district));
+        query.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
+      }
+    }
+
+    const athlete = await Athlete.findOne(query).lean();
+    if (!athlete) {
+      return res.status(404).json({ success: false, error: 'Athlete not found or unauthorized for your district.' });
+    }
+
+    return res.json(athlete);
+  } catch (err) {
+    console.error('Athlete detail fetch error:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to retrieve athlete details' });
   }
 });
 
@@ -103,11 +135,11 @@ router.get('/:id/public-card', async (req, res) => {
 // ==========================================
 router.post('/create-order', nominationLimiter, async (req, res) => {
   try {
-    const { events } = req.body;
+    const { events } = req.body || {};
     let selectedEvents = [];
-    
+
     if (Array.isArray(events)) {
-      selectedEvents = events;
+      selectedEvents = events.filter((e) => typeof e === 'string' && e.trim());
     } else if (typeof events === 'string' && events.trim()) {
       selectedEvents = [events.trim()];
     }
@@ -116,93 +148,104 @@ router.post('/create-order', nominationLimiter, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please select at least one event.' });
     }
 
-    // Calculate total amount in Paise (₹260 = 26000 paise)
-    const amountInPaise = selectedEvents.length * FEE_PER_EVENT * 100;
+    // Limit maximum event count to prevent abusive order creation
+    const eventCount = Math.min(selectedEvents.length, 10);
+    const orderData = await createOrder(eventCount);
 
-    const options = {
-      amount: amountInPaise,
-      currency: 'INR',
-      receipt: `nom_${Date.now()}`
-    };
-
-    const order = await razorpay.orders.create(options);
-    
-    res.json({
+    return res.json({
       success: true,
-      orderId: order.id,
-      amount: options.amount / 100,
-      keyId: process.env.RAZORPAY_KEY_ID
+      ...orderData
     });
-  } catch (error) {
-    console.error('Order creation error:', error);
-    res.status(500).json({ success: false, message: 'Payment gateway initialization failed.' });
+  } catch (err) {
+    console.error('Order creation error:', err.message);
+    return res.status(500).json({ success: false, message: 'Payment gateway initialization failed.' });
   }
 });
 
 // ==========================================
-// 3. POST /portal/athletes/nominate (Uploads + Optional Payment)
+// 3. POST /portal/athletes/nominate (Uploads + Payment Verification)
 // ==========================================
 router.post(
   '/nominate',
   nominationLimiter,
+  optionalAuth,
   upload.fields([
     { name: 'passport_photo', maxCount: 1 },
     { name: 'dob_certificate', maxCount: 1 }
   ]),
   async (req, res) => {
     try {
-      const b = req.body || {};
+      const body = req.body || {};
 
-      // --- PAYMENT VERIFICATION (If Razorpay details provided) ---
-      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = b;
+      // Payment Signature Verification
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
       let paymentRecord = null;
-      
-      if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
-        if (process.env.RAZORPAY_KEY_SECRET) {
-          // Verify HMAC SHA256 signature
-          const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET);
-          hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-          const generatedSignature = hmac.digest('hex');
 
-          if (generatedSignature !== razorpay_signature) {
-            return res.status(400).json({ error: 'Payment verification failed. Invalid signature.' });
-          }
+      if (razorpay_order_id && razorpay_payment_id && razorpay_signature) {
+        const isValid = verifyPaymentSignature(
+          String(razorpay_order_id),
+          String(razorpay_payment_id),
+          String(razorpay_signature)
+        );
+        if (!isValid) {
+          return res.status(400).json({ success: false, error: 'Payment verification failed. Invalid signature.' });
         }
+
+        const rawEvents = body['events[]'] || body.events;
+        const eventCount = Array.isArray(rawEvents) ? rawEvents.length : 1;
+
         paymentRecord = {
-          orderId: razorpay_order_id,
-          paymentId: razorpay_payment_id,
-          amount: (b.events ? (Array.isArray(b.events) ? b.events.length : 1) : 1) * FEE_PER_EVENT,
+          orderId: String(razorpay_order_id),
+          paymentId: String(razorpay_payment_id),
+          amount: eventCount * FEE_PER_EVENT,
           status: 'PAID',
           paidAt: new Date()
         };
       }
-      // ----------------------------
 
+      // Normalize & Sanitize Events
       let selectedEvents = [];
-      const rawEvents = b['events[]'] || b.events;
+      const rawEvents = body['events[]'] || body.events;
       if (Array.isArray(rawEvents)) {
-        selectedEvents = rawEvents.flat().filter(Boolean);
+        selectedEvents = rawEvents.flat().filter(Boolean).map((e) => stripHtml(String(e)));
       } else if (typeof rawEvents === 'string' && rawEvents.trim()) {
-        selectedEvents = [rawEvents.trim()];
+        selectedEvents = [stripHtml(rawEvents.trim())];
       } else {
         selectedEvents = ['Traditional Yogasana'];
       }
 
+      // STRICT DISTRICT AUTHORIZATION:
+      // If caller is authenticated as a District Secretary, FORCE their assigned district!
+      // They cannot spoof or modify the district by passing a different body parameter.
+      let districtValue;
+      if (req.user && req.user.role === 'SECRETARY') {
+        districtValue = req.user.district;
+      } else if (req.user && req.user.role === 'SUPER_ADMIN') {
+        districtValue = validateDistrict(body.district);
+      } else {
+        districtValue = validateDistrict(body.district);
+      }
+
+      const dobValue = body.dob ? new Date(body.dob) : new Date();
+      const category = body.category || calculateAgeCategory(dobValue);
+
+      // Validate Aadhaar (exactly 4 digits)
+      const rawAadhaar = String(body.aadhaarLast4 || body.aadhaar_last_4 || '0000').trim();
+      const aadhaarLast4 = /^\d{4}$/.test(rawAadhaar) ? rawAadhaar : '0000';
+
       const athletePayload = {
-        firstName: (b.firstName || b.first_name || 'Unnamed').trim(),
-        lastName: (b.lastName || b.last_name || '').trim(),
-        dob: b.dob || new Date(),
-        gender: b.gender || 'Female',
-        aadhaarLast4: (b.aadhaarLast4 || b.aadhaar_last_4 || 'XXXX').toString().trim(),
-        guardianName: (b.guardianName || b.guardian_name || '').trim(),
-        institutionName: (b.institutionName || b.institution_name || '').trim(),
-        mobileNumber: (b.mobileNumber || b.mobile_number || '').trim(),
-        residentialAddress: (b.residentialAddress || b.residential_address || '').trim(),
-        district: typeof (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')) === 'string'
-          ? (Array.isArray(b.district) ? b.district[0] : (b.district || req.user?.district || 'Hyderabad')).trim()
-          : 'Hyderabad',
-        events: selectedEvents,
-        category: b.category || calculateAgeCategory(b.dob),
+        firstName: stripHtml(String(body.firstName || body.first_name || 'Unnamed')).substring(0, 80),
+        lastName: stripHtml(String(body.lastName || body.last_name || '')).substring(0, 80),
+        dob: dobValue,
+        gender: ['Male', 'Female', 'Other'].includes(body.gender) ? body.gender : 'Female',
+        aadhaarLast4,
+        guardianName: stripHtml(String(body.guardianName || body.guardian_name || '')).substring(0, 100),
+        institutionName: stripHtml(String(body.institutionName || body.institution_name || '')).substring(0, 120),
+        mobileNumber: stripHtml(String(body.mobileNumber || body.mobile_number || '')).substring(0, 15),
+        residentialAddress: stripHtml(String(body.residentialAddress || body.residential_address || '')).substring(0, 250),
+        district: districtValue,
+        events: selectedEvents.slice(0, 10),
+        category,
         status: 'Submitted',
         paymentDetails: paymentRecord || undefined
       };
@@ -217,29 +260,19 @@ router.post(
       }
 
       // Generate Chest Number
-      const distStr = athletePayload.district.toUpperCase();
-      const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
-
-      let catCode = 'JR';
-      const cat = athletePayload.category.toLowerCase();
-      if (cat.includes('sub')) catCode = 'SJ';
-      else if (cat.includes('sen')) catCode = 'SR';
-
       const count = await Athlete.countDocuments({
         district: athletePayload.district,
         category: athletePayload.category
       });
-
-      const serial = String(count + 1).padStart(2, '0');
-      athletePayload.chestNumber = `${distCode}-${catCode}-${serial}`;
+      athletePayload.chestNumber = formatChestNumber(athletePayload.district, athletePayload.category, count + 1);
 
       const newAthlete = new Athlete(athletePayload);
       await newAthlete.save();
 
-      res.status(201).json({ success: true, athlete: newAthlete });
+      return res.status(201).json({ success: true, athlete: newAthlete });
     } catch (err) {
-      console.error('Nomination Error:', err);
-      res.status(500).json({ error: 'Failed to nominate athlete. Please check the submitted data and try again.' });
+      console.error('Nomination error:', err.message);
+      return res.status(500).json({ success: false, error: 'Failed to nominate athlete. Please check the submitted data and try again.' });
     }
   }
 );
@@ -250,80 +283,116 @@ router.post(
 router.post(
   '/bulk-nominate',
   nominationLimiter,
+  optionalAuth,
   upload.any(),
   async (req, res) => {
     try {
-      const b = req.body;
-      const schoolName = (b.school_name || b.institutionName || 'Unknown School').trim();
-      const district = (b.district || 'Hyderabad').trim();
-      const coachName = (b.coach_name || b.principal_name || '').trim();
-      const coachMobile = (b.coach_mobile || '').trim();
-      const studentsData = typeof b.students === 'string' ? JSON.parse(b.students) : (b.students || []);
+      const body = req.body || {};
+      const schoolName = stripHtml(String(body.school_name || body.institutionName || 'Unknown School')).substring(0, 120);
 
-      if (!studentsData || studentsData.length === 0) {
-        return res.status(400).json({ error: 'No student athletes provided in delegation.' });
+      // STRICT DISTRICT AUTHORIZATION: Lock to Secretary's assigned district
+      let district;
+      if (req.user && req.user.role === 'SECRETARY') {
+        district = req.user.district;
+      } else {
+        district = validateDistrict(body.district);
+      }
+
+      const coachName = stripHtml(String(body.coach_name || body.principal_name || '')).substring(0, 80);
+      const coachMobile = stripHtml(String(body.coach_mobile || '')).substring(0, 15);
+
+      let studentsData;
+      try {
+        studentsData = typeof body.students === 'string'
+          ? JSON.parse(body.students)
+          : (body.students || []);
+      } catch {
+        return res.status(400).json({ success: false, error: 'Invalid students payload. Must be valid JSON array.' });
+      }
+
+      if (!Array.isArray(studentsData) || studentsData.length === 0) {
+        return res.status(400).json({ success: false, error: 'No student athletes provided in delegation.' });
+      }
+
+      // Enforce batch size limit to prevent DoS
+      if (studentsData.length > 50) {
+        return res.status(400).json({ success: false, error: 'Delegation exceeds maximum limit of 50 students per submission.' });
       }
 
       // Map uploaded files by fieldname
       const fileMap = {};
       if (req.files && Array.isArray(req.files)) {
-        req.files.forEach(f => {
-          fileMap[f.fieldname] = `/uploads/${f.filename}`;
+        req.files.forEach((file) => {
+          fileMap[file.fieldname] = `/uploads/${file.filename}`;
         });
       }
 
-      const createdAthletes = [];
-      const distStr = district.toUpperCase();
-      const distCode = distStr.length >= 3 ? distStr.substring(0, 3) : 'HYD';
+      // Pre-calculate baseline counts per category
+      const categoriesInPayload = new Set();
+      studentsData.forEach((student) => {
+        const cat = student.category || calculateAgeCategory(student.dob);
+        categoriesInPayload.add(cat);
+      });
+
+      const categoryCounts = {};
+      await Promise.all(
+        Array.from(categoriesInPayload).map(async (cat) => {
+          categoryCounts[cat] = await Athlete.countDocuments({ district, category: cat });
+        })
+      );
+
+      const athleteDocs = [];
 
       for (let i = 0; i < studentsData.length; i++) {
-        const s = studentsData[i];
-        const category = s.category || calculateAgeCategory(s.dob);
-        const catLower = category.toLowerCase();
-        let catCode = 'JR';
-        if (catLower.includes('sub')) catCode = 'SJ';
-        else if (catLower.includes('sen')) catCode = 'SR';
+        const student = studentsData[i];
+        const category = student.category || calculateAgeCategory(student.dob);
 
-        const count = await Athlete.countDocuments({ district, category });
-        const serial = String(count + 1 + i).padStart(2, '0');
-        const chestNumber = `${distCode}-${catCode}-${serial}`;
+        categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        const chestNumber = formatChestNumber(district, category, categoryCounts[category]);
 
-        const athleteDoc = new Athlete({
-          firstName: (s.firstName || s.first_name || 'Athlete').trim(),
-          lastName: (s.lastName || s.last_name || '').trim(),
-          dob: s.dob || new Date(),
-          gender: s.gender || 'Female',
-          aadhaarLast4: (s.aadhaarLast4 || s.aadhaar_last_4 || '0000').toString().trim(),
-          guardianName: (s.guardianName || s.guardian_name || '').trim(),
+        const rawAadhaar = String(student.aadhaarLast4 || student.aadhaar_last_4 || '0000').trim();
+        const aadhaarLast4 = /^\d{4}$/.test(rawAadhaar) ? rawAadhaar : '0000';
+
+        let events = ['Traditional Yogasana'];
+        if (Array.isArray(student.events) && student.events.length > 0) {
+          events = student.events.map((e) => stripHtml(String(e))).slice(0, 10);
+        }
+
+        athleteDocs.push({
+          firstName: stripHtml(String(student.firstName || student.first_name || 'Athlete')).substring(0, 80),
+          lastName: stripHtml(String(student.lastName || student.last_name || '')).substring(0, 80),
+          dob: student.dob ? new Date(student.dob) : new Date(),
+          gender: ['Male', 'Female', 'Other'].includes(student.gender) ? student.gender : 'Female',
+          aadhaarLast4,
+          guardianName: stripHtml(String(student.guardianName || student.guardian_name || '')).substring(0, 100),
           institutionName: schoolName,
-          district: district,
-          coachName: coachName,
-          coachMobile: coachMobile,
-          mobileNumber: s.mobileNumber || s.mobile_number || coachMobile,
-          residentialAddress: (s.residentialAddress || s.residential_address || schoolName).trim(),
-          events: Array.isArray(s.events) && s.events.length > 0 ? s.events : ['Traditional Yogasana'],
-          category: category,
-          dobProofType: s.dobProofType || 'School Bonafide',
+          district,
+          coachName,
+          coachMobile,
+          mobileNumber: stripHtml(String(student.mobileNumber || student.mobile_number || coachMobile)).substring(0, 15),
+          residentialAddress: stripHtml(String(student.residentialAddress || student.residential_address || schoolName)).substring(0, 250),
+          events,
+          category,
+          dobProofType: stripHtml(String(student.dobProofType || 'School Bonafide')).substring(0, 50),
           photoPath: fileMap[`photo_${i}`] || fileMap[`passport_photo_${i}`] || '',
           dobProofPath: fileMap[`dob_${i}`] || fileMap[`dob_certificate_${i}`] || '',
-          chestNumber: chestNumber,
+          chestNumber,
           status: 'Submitted'
         });
-
-        await athleteDoc.save();
-        createdAthletes.push(athleteDoc);
       }
 
-      res.status(201).json({
+      const createdAthletes = await Athlete.insertMany(athleteDocs);
+
+      return res.status(201).json({
         success: true,
         count: createdAthletes.length,
         school: schoolName,
-        district: district,
+        district,
         athletes: createdAthletes
       });
     } catch (err) {
-      console.error('Bulk School Nomination Error:', err);
-      res.status(500).json({ error: 'Failed to process school nomination delegation. Please check format and try again.' });
+      console.error('Bulk school nomination error:', err.message);
+      return res.status(500).json({ success: false, error: 'Failed to process school nomination delegation. Please check format and try again.' });
     }
   }
 );
@@ -333,25 +402,50 @@ router.post(
 // ==========================================
 router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
-    const { status, remarks } = req.body;
-    let query = { _id: req.params.id };
+    const { id } = req.params;
 
+    // Validate ID format to prevent CastError crashes
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, error: 'Invalid athlete ID format.' });
+    }
+
+    const { status, remarks } = req.body || {};
+
+    // Validate status against schema enum
+    if (!status || !ALLOWED_STATUSES.has(status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid status. Must be one of: ${Array.from(ALLOWED_STATUSES).join(', ')}`
+      });
+    }
+
+    const sanitizedRemarks = stripHtml(String(remarks || '')).substring(0, 500);
+    const query = { _id: id };
+
+    // STRICT DISTRICT ISOLATION: Secretaries cannot update athletes from another district
     if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
-      const userDist = (req.user.district || '').replace(/ district/i, '').trim();
-      query.district = { $regex: new RegExp(`^${userDist}(\\s+District)?$`, 'i') };
+      if (!req.user.district || typeof req.user.district !== 'string') {
+        query.district = '__UNAUTHORIZED_NO_DISTRICT__';
+      } else {
+        const sanitized = escapeRegex(sanitizeDistrictName(req.user.district));
+        query.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
+      }
     }
 
     const updated = await Athlete.findOneAndUpdate(
       query,
-      { status, remarks },
-      { new: true }
+      { status, remarks: sanitizedRemarks },
+      { new: true, runValidators: true }
     );
 
-    if (!updated) return res.status(404).json({ error: 'Athlete not found or unauthorized' });
-    res.json(updated);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Athlete not found or unauthorized for your district.' });
+    }
+
+    return res.json(updated);
   } catch (err) {
-    console.error('Status Update Error:', err);
-    res.status(500).json({ error: 'Failed to update status' });
+    console.error('Status update error:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to update status' });
   }
 });
 

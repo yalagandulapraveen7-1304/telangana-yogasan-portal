@@ -584,60 +584,13 @@
         });
       }
 
-      // --- 3. Form Submission Handler ---
-      const form = document.getElementById('nomination-form');
+      // --- 3. Active District Setup ---
       const districtHiddenInput = document.getElementById('hidden-district');
+      const distSelect = document.getElementById('district-select');
       const activeDist = sessionStorage.getItem('current_district') || 'Hyderabad';
 
       if (districtHiddenInput) districtHiddenInput.value = activeDist;
-
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-
-          const submitBtn = form.querySelector('button[type="submit"]');
-          if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...`;
-          }
-
-          try {
-            const formData = new FormData(form);
-            const response = await fetch('/portal/athletes/nominate', {
-              method: 'POST',
-              body: formData
-            });
-
-            if (response.ok) {
-              const resData = await response.json().catch(() => ({}));
-              form.reset();
-              
-              // Restore active district
-              const distSelect = document.getElementById('district-select');
-              if (distSelect) distSelect.value = activeDist;
-              if (districtHiddenInput) districtHiddenInput.value = activeDist;
-
-              // Redirect directly to the generated Admit Card
-              if (resData && resData.athlete && resData.athlete._id) {
-                window.location.href = `admitcard.html?id=${resData.athlete._id}`;
-              } else {
-                alert('Athlete nomination saved successfully!');
-              }
-            } else {
-              const errData = await response.json().catch(() => ({}));
-              alert('Failed to save athlete: ' + (errData.details || errData.error || 'Unknown error'));
-            }
-          } catch (err) {
-            console.error('Network submission error:', err);
-            alert('Network error while saving nomination.');
-          } finally {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane text-amber-300"></i> <span>Submit Athlete Nomination</span>`;
-            }
-          }
-        });
-      }
+      if (distSelect) distSelect.value = activeDist;
     });
   </script> 
     <script>

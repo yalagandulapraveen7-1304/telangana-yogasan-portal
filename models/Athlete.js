@@ -1,3 +1,8 @@
+/**
+ * Athlete Mongoose Model
+ * Stores nominated athlete records, competition events, credentials, and verification status.
+ */
+
 const mongoose = require('mongoose');
 
 const AthleteSchema = new mongoose.Schema(
@@ -25,8 +30,22 @@ const AthleteSchema = new mongoose.Schema(
     remarks: { type: String, default: '' },
     photoPath: { type: String, default: '' },
     dobProofPath: { type: String, default: '' },
-    chestNumber: { type: String }
+    chestNumber: { type: String },
+    paymentDetails: {
+      orderId: { type: String },
+      paymentId: { type: String },
+      amount: { type: Number },
+      status: { type: String, enum: ['PENDING', 'PAID', 'FAILED'] },
+      paidAt: { type: Date }
+    }
   },
   { timestamps: true }
 );
-module.exports = mongoose.model('Athlete', AthleteSchema, 'athletes');
+
+// Indexes for query performance and fast lookup
+AthleteSchema.index({ chestNumber: 1 });
+AthleteSchema.index({ district: 1, category: 1 });
+AthleteSchema.index({ status: 1 });
+AthleteSchema.index({ createdAt: -1 });
+
+module.exports = mongoose.models.Athlete || mongoose.model('Athlete', AthleteSchema, 'athletes');

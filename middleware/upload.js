@@ -1,47 +1,69 @@
+/**
+ * File Upload Middleware
+ * Enforces dual MIME-type and extension whitelisting, random filename generation, and strict file size limits.
+ */
+
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
+const { getStorageDir } = require('../services/storage');
 
-const fs = require('fs');
-const os = require('os');
+const storageDir = getStorageDir();
 
-// Determine upload destination directory safely
-const uploadDir = process.env.VERCEL ? os.tmpdir() : path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const ALLOWED_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/pdf'
+]);
 
-// 1. Secure Storage & Renaming Strategy
+const ALLOWED_EXTENSIONS = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+  '.pdf'
+]);
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir); 
+  destination: (_req, _file, cb) => {
+    cb(null, storageDir);
   },
-  filename: function (req, file, cb) {
-    // Generate a random 16-byte hex string for the filename
+  filename: (_req, file, cb) => {
+    const rawExt = path.extname(file.originalname).toLowerCase();
+    const safeExt = ALLOWED_EXTENSIONS.has(rawExt) ? rawExt : '.bin';
     const randomName = crypto.randomBytes(16).toString('hex');
-    const extension = path.extname(file.originalname).toLowerCase();
-    cb(null, `${randomName}${extension}`);
+    cb(null, `${randomName}${safeExt}`);
   }
 });
 
-// 2. Strict File Filter (Only Images & PDFs)
-const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-  
-  if (allowedMimeTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Invalid file type. Only JPG, PNG, WEBP, and PDF are allowed.'), false);
+const fileFilter = (_req, file, cb) => {
+  const extension = path.extname(file.originalname).toLowerCase();
+
+  if (!ALLOWED_EXTENSIONS.has(extension)) {
+    const err = new Error('Invalid file extension. Only .jpg, .jpeg, .png, .webp, and .pdf files are allowed.');
+    err.code = 'INVALID_FILE_TYPE';
+    return cb(err, false);
   }
+
+  if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
+    const err = new Error('Invalid file MIME type. Only JPG, PNG, WEBP, and PDF files are allowed.');
+    err.code = 'INVALID_FILE_TYPE';
+    return cb(err, false);
+  }
+
+  return cb(null, true);
 };
 
-// 3. Size Limits & Export
 const upload = multer({
-  storage: storage,
+  storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB strict limit
+    fileSize: 5 * 1024 * 1024, // 5MB strict limit
+    files: 60 // Max 60 files per request (for bulk delegation)
   },
-  fileFilter: fileFilter
+  fileFilter
 });
 
 module.exports = upload;
+module.exports.uploadDir = storageDir;
+module.exports.ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS;
