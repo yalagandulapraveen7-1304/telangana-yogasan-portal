@@ -110,6 +110,18 @@ app.get('/uploads/:filename', (req, res) => {
   return res.status(404).json({ success: false, message: 'Identity document not found or removed.' });
 });
 
+// Database connection assurance for serverless environments (Vercel)
+app.use(async (req, _res, next) => {
+  if (req.path.startsWith('/auth') || req.path.startsWith('/portal')) {
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error('Serverless database connection error:', err.message);
+    }
+  }
+  next();
+});
+
 // 4. API Routes
 app.use('/auth', apiLimiter, authRoutes);
 app.use('/portal/athletes', apiLimiter, nominateRoutes);
