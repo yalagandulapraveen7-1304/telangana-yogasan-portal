@@ -435,7 +435,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     const updated = await Athlete.findOneAndUpdate(
       query,
       { status, remarks: sanitizedRemarks },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!updated) {
