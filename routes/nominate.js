@@ -23,6 +23,10 @@ const {
   FEE_PER_EVENT
 } = require('../utils/payment');
 const {
+  getNextChestNumber,
+  getNextChestNumbersBatch
+} = require('../utils/counter');
+const {
   isValidPhone,
   isValidAadhaarLast4,
   isValidDate,
@@ -65,7 +69,17 @@ router.get('/list', requireAuth, async (req, res) => {
       filter.status = statusFilter;
     }
 
+    let page = 1;
     let limit = 500;
+
+    if (req.query.page !== undefined) {
+      const parsedPage = parseInt(req.query.page, 10);
+      if (isNaN(parsedPage) || parsedPage < 1 || String(parsedPage) !== String(req.query.page).trim()) {
+        return res.status(400).json({ success: false, error: 'Page parameter must be a positive integer.' });
+      }
+      page = parsedPage;
+    }
+
     if (req.query.limit !== undefined) {
       const parsedLimit = parseInt(req.query.limit, 10);
       if (isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 500 || String(parsedLimit) !== String(req.query.limit).trim()) {
@@ -73,6 +87,8 @@ router.get('/list', requireAuth, async (req, res) => {
       }
       limit = parsedLimit;
     }
+
+    const skip = (page - 1) * limit;
 
     // District-level isolation: Secretaries cannot see other districts
     if (role !== 'SUPER_ADMIN' && userDistrict !== 'ALL_DISTRICTS' && userDistrict !== 'ALL') {
@@ -93,7 +109,25 @@ router.get('/list', requireAuth, async (req, res) => {
       }
     }
 
-    const athletes = await Athlete.find(filter).sort({ createdAt: -1 }).limit(limit).lean();
+    // High-performance lean projection: omits heavy paymentDetails, residentialAddress, and raw certs
+    const LIST_PROJECTION = 'firstName lastName dob gender category district chestNumber events status institutionName guardianName createdAt aadhaarLast4 photoPath';
+
+    // Execute query and total count in parallel (leverages compound index)
+    const [athletes, totalCount] = await Promise.all([
+      Athlete.find(filter, LIST_PROJECTION)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Athlete.countDocuments(filter)
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit) || 1;
+    res.set('X-Total-Count', String(totalCount));
+    res.set('X-Page', String(page));
+    res.set('X-Per-Page', String(limit));
+    res.set('X-Total-Pages', String(totalPages));
+
     return res.json(athletes);
   } catch (err) {
     console.error('Fetch error in /portal/athletes/list:', err.message);
@@ -403,12 +437,11 @@ router.post(
         }
       }
 
-      // Generate Chest Number
-      const count = await Athlete.countDocuments({
-        district: athletePayload.district,
-        category: athletePayload.category
-      });
-      athletePayload.chestNumber = formatChestNumber(athletePayload.district, athletePayload.category, count + 1);
+      // Atomically Generate Next Chest Number (Thread-safe & concurrency-safe)
+      athletePayload.chestNumber = await getNextChestNumber(
+        athletePayload.district,
+        athletePayload.category
+      );
 
       const newAthlete = new Athlete(athletePayload);
       await newAthlete.save();
@@ -546,17 +579,17 @@ router.post(
         });
       }
 
-      // Pre-calculate baseline counts per category
-      const categoriesInPayload = new Set();
+      // Pre-calculate and atomically allocate batch chest numbers per category
+      const studentsPerCategory = {};
       studentsData.forEach((student) => {
         const cat = student.category || calculateAgeCategory(student.dob);
-        categoriesInPayload.add(cat);
+        studentsPerCategory[cat] = (studentsPerCategory[cat] || 0) + 1;
       });
 
-      const categoryCounts = {};
+      const allocatedChestNumbers = {};
       await Promise.all(
-        Array.from(categoriesInPayload).map(async (cat) => {
-          categoryCounts[cat] = await Athlete.countDocuments({ district, category: cat });
+        Object.entries(studentsPerCategory).map(async ([cat, count]) => {
+          allocatedChestNumbers[cat] = await getNextChestNumbersBatch(district, cat, count);
         })
       );
 
@@ -565,9 +598,9 @@ router.post(
       for (let i = 0; i < studentsData.length; i++) {
         const student = studentsData[i];
         const category = student.category || calculateAgeCategory(student.dob);
-
-        categoryCounts[category] = (categoryCounts[category] || 0) + 1;
-        const chestNumber = formatChestNumber(district, category, categoryCounts[category]);
+        const chestNumber = allocatedChestNumbers[category] && allocatedChestNumbers[category].length > 0
+          ? allocatedChestNumbers[category].shift()
+          : await getNextChestNumber(district, category);
 
         const rawAadhaar = String(student.aadhaarLast4 || student.aadhaar_last_4).trim();
         const evCheck = validateEvents(student.events);

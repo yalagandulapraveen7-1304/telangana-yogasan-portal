@@ -42,10 +42,20 @@ const AthleteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Indexes for query performance and fast lookup
+// Indexes optimized for application query patterns:
+// 1. Fast unique lookup for admit cards and public certificates
 AthleteSchema.index({ chestNumber: 1 });
+
+// 2. High-performance compound index for District Secretary dashboard listing
+AthleteSchema.index({ district: 1, createdAt: -1 });
+
+// 3. High-performance compound index for status-filtered queries within a district
+AthleteSchema.index({ district: 1, status: 1, createdAt: -1 });
+
+// 4. District & category index for category aggregations and baseline counts
 AthleteSchema.index({ district: 1, category: 1 });
-AthleteSchema.index({ status: 1 });
+
+// 5. Global date index for Super Admin statewide chronological listing
 AthleteSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.models.Athlete || mongoose.model('Athlete', AthleteSchema, 'athletes');
