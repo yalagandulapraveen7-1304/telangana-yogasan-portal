@@ -11,12 +11,26 @@ const LoginLog = require('../models/LoginLog');
 const { JWT_SECRET, IS_PROD } = require('../config/constants');
 const { requireAuth, loginLimiter, requireRole } = require('../middleware/auth');
 const { stripHtml } = require('../middleware/sanitize');
+const { isValidEmail, isValidPassword } = require('../utils/validators');
 
 // 1. POST /auth/login
 router.post('/login', loginLimiter, async (req, res) => {
-  const { email, password } = req.body || {};
+  const body = req.body || {};
 
-  // Strict type & length checks (prevents NoSQL injection and bcrypt DoS)
+  // Reject unexpected fields to prevent parameter injection / prototype pollution
+  const allowedKeys = new Set(['email', 'password']);
+  const receivedKeys = Object.keys(body);
+  const unexpectedKeys = receivedKeys.filter((k) => !allowedKeys.has(k));
+  if (unexpectedKeys.length > 0) {
+    return res.status(400).json({
+      success: false,
+      error: `Unexpected field(s) in request: ${unexpectedKeys.join(', ')}`
+    });
+  }
+
+  const { email, password } = body;
+
+  // Strict type checks
   if (typeof email !== 'string' || typeof password !== 'string') {
     return res.status(400).json({ success: false, error: 'Email and password must be valid strings.' });
   }
@@ -26,9 +40,14 @@ router.post('/login', loginLimiter, async (req, res) => {
     return res.status(400).json({ success: false, error: 'Email and password are required.' });
   }
 
+  // Strict email format and length validation
+  if (!isValidEmail(cleanEmail)) {
+    return res.status(400).json({ success: false, error: 'Please provide a valid email address.' });
+  }
+
   // Prevent bcrypt DoS via excessively large password strings
-  if (password.length > 128 || cleanEmail.length > 150) {
-    return res.status(400).json({ success: false, error: 'Input exceeds permissible length.' });
+  if (!isValidPassword(password)) {
+    return res.status(400).json({ success: false, error: 'Password length must be between 1 and 128 characters.' });
   }
 
   const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
@@ -97,9 +116,18 @@ router.post('/login', loginLimiter, async (req, res) => {
 });
 
 // 2. GET /auth/logs (Super Admin Only)
-router.get('/logs', requireAuth, requireRole('SUPER_ADMIN'), async (_req, res) => {
+router.get('/logs', requireAuth, requireRole('SUPER_ADMIN'), async (req, res) => {
   try {
-    const logs = await LoginLog.find().sort({ loginAt: -1 }).limit(100).lean();
+    let limit = 100;
+    if (req.query.limit !== undefined) {
+      const parsed = parseInt(req.query.limit, 10);
+      if (isNaN(parsed) || parsed < 1 || parsed > 200 || String(parsed) !== String(req.query.limit).trim()) {
+        return res.status(400).json({ success: false, error: 'Limit parameter must be an integer between 1 and 200.' });
+      }
+      limit = parsed;
+    }
+
+    const logs = await LoginLog.find().sort({ loginAt: -1 }).limit(limit).lean();
     return res.json(logs);
   } catch (err) {
     console.error('Audit log fetch error:', err.message);

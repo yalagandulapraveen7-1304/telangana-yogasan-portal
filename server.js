@@ -15,6 +15,7 @@ const { resolveFilePath, fileExists } = require('./services/storage');
 const { router: authRoutes } = require('./routes/auth');
 const nominateRoutes = require('./routes/nominate');
 const { validateEnv } = require('./config/env');
+const { isValidFilename } = require('./utils/validators');
 
 validateEnv();
 
@@ -82,6 +83,11 @@ app.use('/static', express.static(path.join(__dirname, 'static')));
 // Uploaded Document Images & Certificates Route (with path traversal defense)
 app.get('/uploads/:filename', (req, res) => {
   const { filename } = req.params;
+
+  if (!filename || !isValidFilename(filename)) {
+    return res.status(400).json({ success: false, message: 'Invalid or disallowed file identifier.' });
+  }
+
   const { isValid, filePath } = resolveFilePath(filename);
 
   if (!isValid || !filePath) {
@@ -140,10 +146,19 @@ app.use((err, _req, res, next) => {
 
 // 7. Global Error Handler
 app.use((err, _req, res, next) => {
-  console.error('Unhandled server error:', err.message);
   if (res.headersSent) {
     return next(err);
   }
+
+  // Handle malformed JSON body from body-parser
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      success: false,
+      error: 'Malformed JSON payload.'
+    });
+  }
+
+  console.error('Unhandled server error:', err.message);
   return res.status(err.status || 500).json({
     success: false,
     error: 'An unexpected error occurred. Please try again later.'

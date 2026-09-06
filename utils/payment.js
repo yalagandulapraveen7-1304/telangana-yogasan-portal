@@ -25,12 +25,29 @@ async function createOrder(eventCount = 1) {
     receipt: `nom_${Date.now()}`
   };
 
-  const order = await razorpay.orders.create(options);
-  return {
-    orderId: order.id,
-    amount: options.amount / 100,
-    keyId: RAZORPAY_KEY_ID
-  };
+  // If using placeholder/test keys in development or test runs, provide simulated mock order
+  if (!RAZORPAY_KEY_SECRET || RAZORPAY_KEY_SECRET === 'YOUR_SECRET' || RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
+    const mockId = `order_mock_${Date.now()}`;
+    return {
+      orderId: mockId,
+      order_id: mockId,
+      amount: options.amount / 100,
+      keyId: RAZORPAY_KEY_ID
+    };
+  }
+
+  try {
+    const order = await razorpay.orders.create(options);
+    return {
+      orderId: order.id,
+      order_id: order.id,
+      amount: options.amount / 100,
+      keyId: RAZORPAY_KEY_ID
+    };
+  } catch (err) {
+    console.error('Razorpay live order creation failed:', err.message || err);
+    throw err;
+  }
 }
 
 /**
