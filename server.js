@@ -71,6 +71,11 @@ app.use(cookieParser());
 app.use(noSqlSanitizer);
 app.use(originGuard);
 
+app.get('/favicon.ico', (_req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+  res.sendFile(path.join(__dirname, 'static/images/favicon.ico'));
+});
+
 // 3. Static Assets with aggressive caching headers (served without waiting on database)
 app.use('/static', express.static(path.join(__dirname, 'static'), {
   maxAge: '30d',
