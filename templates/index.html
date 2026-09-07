@@ -75,23 +75,29 @@
             class="flex items-center space-x-1.5 bg-black/20 rounded px-2 py-0.5 border border-white/10"
           >
             <button
+              type="button"
               id="font-decrease"
+              aria-label="Decrease font size"
               title="Decrease font size"
-              class="hover:text-amber-400 px-1 font-bold"
+              class="touch-target-min hover:text-amber-400 px-1 font-bold focus:outline-none"
             >
               A-
             </button>
             <button
+              type="button"
               id="font-normal"
+              aria-label="Reset normal font size"
               title="Normal font size"
-              class="hover:text-amber-400 px-1 font-bold"
+              class="touch-target-min hover:text-amber-400 px-1 font-bold focus:outline-none"
             >
               A
             </button>
             <button
+              type="button"
               id="font-increase"
+              aria-label="Increase font size"
               title="Increase font size"
-              class="hover:text-amber-400 px-1 font-bold"
+              class="touch-target-min hover:text-amber-400 px-1 font-bold focus:outline-none"
             >
               A+
             </button>
@@ -119,7 +125,7 @@
               >
                 <img
                   src="/static/images/TSYSC.png"
-                  alt="Logo"
+                  alt="Telangana State Yoga Association Logo"
                   width="56"
                   height="56"
                   fetchpriority="high"
@@ -160,7 +166,7 @@
               href="/login"
               class="nav-link-login ml-3 flex items-center gap-2"
             >
-              <i class="fa-solid fa-lock text-xs"></i>
+              <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
               <span>District Login</span>
             </a>
           </nav>
@@ -171,9 +177,10 @@
             type="button"
             aria-label="Toggle navigation menu"
             aria-expanded="false"
-            class="lg:hidden text-white p-2 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-amber-300"
+            aria-controls="nav-menu"
+            class="lg:hidden text-white p-2 rounded-lg hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-amber-300 touch-target-min"
           >
-            <i class="fa-solid fa-bars text-xl"></i>
+            <i class="fa-solid fa-bars text-xl" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -212,7 +219,7 @@
               href="/login"
               class="w-full text-center bg-[#C5A059] hover:bg-[#b8893d] text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow"
             >
-              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
               <span>District Secretary Login</span>
             </a>
           </div>
@@ -223,14 +230,16 @@
     <!-- Live Marquee Ticker -->
     <div
       class="marquee-bar py-1.5 px-4 text-xs font-semibold text-slate-900 flex items-center border-b border-amber-300/50"
+      role="region"
+      aria-label="Live updates ticker"
     >
       <div
         class="bg-red-700 text-white text-[10px] font-extrabold px-2 py-0.5 rounded mr-3 tracking-wider flex items-center gap-1 uppercase flex-shrink-0"
       >
-        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping" aria-hidden="true"></span>
         Live Update
       </div>
-      <div class="overflow-hidden whitespace-nowrap w-full">
+      <div class="overflow-hidden whitespace-nowrap w-full" tabindex="0" aria-label="Announcement ticker (scrolls horizontally, pause on hover or focus)">
         <div class="marquee-content inline-block text-emerald-950">
           📢 District Secretaries: Online Athlete Nominations are now open for
           Sub-Junior, Junior &amp; Senior categories. &bull; Aadhaar-linked Date
@@ -242,7 +251,7 @@
       </div>
     </div>
 
-    <main id="main-content" class="flex-grow">
+    <main id="main-content" tabindex="-1" class="flex-grow outline-none">
       <!-- Hero Banner -->
       <section class="hero py-16 md:py-24 text-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 w-full">
@@ -251,7 +260,7 @@
               <div
                 class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-amber-300/30 text-amber-200 text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full mb-4"
               >
-                <i class="fa-solid fa-medal text-amber-300"></i>
+                <i class="fa-solid fa-medal text-amber-300" aria-hidden="true"></i>
                 <span>Official State Championship &bull; All 33 Districts</span>
               </div>
 
@@ -284,15 +293,15 @@
                   class="flex flex-wrap items-center justify-center lg:justify-start gap-4"
                 >
                   <a href="/nominate" class="btn-primary">
-                    <i class="fa-solid fa-id-badge"></i>
+                    <i class="fa-solid fa-id-badge" aria-hidden="true"></i>
                     <span>Register as New Athlete</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                    <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
                   </a>
 
                   <a href="/school-nominate" class="btn-primary">
-                    <i class="fa-solid fa-id-badge"></i>
+                    <i class="fa-solid fa-id-badge" aria-hidden="true"></i>
                     <span>School & Academy Athlete Nomination</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                    <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
                   </a>
                 </div>
 
@@ -300,9 +309,9 @@
                   class="flex flex-wrap items-center justify-center lg:justify-start gap-4"
                 >
                   <a href="#gallery" class="btn-primary">
-                    <i class="fa-solid fa-images"></i>
+                    <i class="fa-solid fa-images" aria-hidden="true"></i>
                     <span>View Gallery</span>
-                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                    <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
                   </a>
 
                   <a
@@ -310,7 +319,7 @@
                     target="_blank"
                     class="btn-outline"
                   >
-                    <i class="fa-solid fa-file-pdf text-red-400"></i>
+                    <i class="fa-solid fa-file-pdf text-red-400" aria-hidden="true"></i>
                     <span>Download Official Rulebook (PDF)</span>
                   </a>
                 </div>
@@ -366,9 +375,9 @@
                     url(&quot;/static/images/yoga-tree.jpg&quot;);
                 "
               >
-                <h3 class="text-lg font-bold text-white mb-1 relative z-10">
+                <h2 class="text-lg font-bold text-white mb-1 relative z-10">
                   State Selection Trials
-                </h3>
+                </h2>
                 <p class="text-xs text-emerald-100 mb-4 relative z-10">
                   Performance evaluated by certified National &amp; State Level
                   Judges as per National Yogasana Sports Federation protocols.
@@ -377,15 +386,15 @@
                   class="bg-emerald-950/80 rounded-lg p-3 border border-white/10 text-left space-y-1.5 text-xs text-slate-200 relative z-10"
                 >
                   <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-circle-check text-amber-400"></i>
+                    <i class="fa-solid fa-circle-check text-amber-400" aria-hidden="true"></i>
                     <span>Affiliated to Telangana Yoga Association</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-circle-check text-amber-400"></i>
+                    <i class="fa-solid fa-circle-check text-amber-400" aria-hidden="true"></i>
                     <span>Endorsed by Sports Authority (SATS)</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-circle-check text-amber-400"></i>
+                    <i class="fa-solid fa-circle-check text-amber-400" aria-hidden="true"></i>
                     <span>National Championship Pathway</span>
                   </div>
                 </div>
@@ -437,7 +446,7 @@
                     <span class="pulse-dot mr-1"></span> [NEW]
                   </span>
                   <span class="text-[11px] text-slate-500 font-medium"
-                    ><i class="fa-regular fa-clock mr-1"></i>Official
+                    ><i class="fa-regular fa-clock mr-1" aria-hidden="true"></i>Official
                     Circular</span
                   >
                 </div>
@@ -465,8 +474,7 @@
                   class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"
                 >
                   <span>View Circular</span>
-                  <i
-                    class="fa-solid fa-arrow-up-right-from-square text-[10px]"
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"
                   ></i>
                 </a>
               </div>
@@ -480,7 +488,7 @@
                 <div class="flex items-center justify-between mb-2.5">
                   <span class="notice-tag tag-circular">[CIRCULAR]</span>
                   <span class="text-[11px] text-slate-500 font-medium"
-                    ><i class="fa-regular fa-file-lines mr-1"></i>Mandatory
+                    ><i class="fa-regular fa-file-lines mr-1" aria-hidden="true"></i>Mandatory
                     Norms</span
                   >
                 </div>
@@ -507,8 +515,7 @@
                   class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"
                 >
                   <span>View Guidelines</span>
-                  <i
-                    class="fa-solid fa-arrow-up-right-from-square text-[10px]"
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"
                   ></i>
                 </a>
               </div>
@@ -522,7 +529,7 @@
                 <div class="flex items-center justify-between mb-2.5">
                   <span class="notice-tag tag-schedule">[SCHEDULE UPDATE]</span>
                   <span class="text-[11px] text-slate-500 font-medium"
-                    ><i class="fa-regular fa-calendar-check mr-1"></i>Event
+                    ><i class="fa-regular fa-calendar-check mr-1" aria-hidden="true"></i>Event
                     Notice</span
                   >
                 </div>
@@ -549,8 +556,7 @@
                   class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"
                 >
                   <span>View Specs</span>
-                  <i
-                    class="fa-solid fa-arrow-up-right-from-square text-[10px]"
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"
                   ></i>
                 </a>
               </div>
@@ -583,7 +589,7 @@
               <div
                 class="w-16 h-16 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center text-2xl mb-4"
               >
-                <i class="fa-solid fa-person-praying"></i>
+                <i class="fa-solid fa-person-praying" aria-hidden="true"></i>
               </div>
               <h3 class="font-bold text-lg text-slate-900 mb-2">
                 Traditional Yogasana
@@ -607,7 +613,7 @@
               <div
                 class="w-16 h-16 rounded-full bg-amber-100 text-[#C5A059] flex items-center justify-center text-2xl mb-4"
               >
-                <i class="fa-solid fa-spa"></i>
+                <i class="fa-solid fa-spa" aria-hidden="true"></i>
               </div>
               <h3 class="font-bold text-lg text-slate-900 mb-2">
                 Artistic Yogasana (Solo)
@@ -631,7 +637,7 @@
               <div
                 class="w-16 h-16 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center text-2xl mb-4"
               >
-                <i class="fa-solid fa-people-group"></i>
+                <i class="fa-solid fa-people-group" aria-hidden="true"></i>
               </div>
               <h3 class="font-bold text-lg text-slate-900 mb-2">
                 Artistic Yogasana (Pair)
@@ -655,7 +661,7 @@
               <div
                 class="w-16 h-16 rounded-full bg-amber-100 text-[#C5A059] flex items-center justify-center text-2xl mb-4"
               >
-                <i class="fa-solid fa-music"></i>
+                <i class="fa-solid fa-music" aria-hidden="true"></i>
               </div>
               <h3 class="font-bold text-lg text-slate-900 mb-2">
                 Rhythmic Yogasana (Pair)
@@ -679,7 +685,7 @@
               <div
                 class="w-16 h-16 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center text-2xl mb-4"
               >
-                <i class="fa-solid fa-person-praying"></i>
+                <i class="fa-solid fa-person-praying" aria-hidden="true"></i>
               </div>
               <h3 class="font-bold text-lg text-slate-900 mb-2">Free Flow</h3>
               <p class="text-xs text-slate-600 leading-relaxed mb-4">
@@ -730,8 +736,7 @@
               </div>
               <ul class="text-xs text-slate-600 text-left space-y-2 mb-4">
                 <li class="flex items-start gap-2">
-                  <i
-                    class="fa-solid fa-circle-check text-purple-600 mt-0.5"
+                  <i class="fa-solid fa-circle-check text-purple-600 mt-0.5" aria-hidden="true"
                   ></i>
                   <span
                     ><strong>Group A:</strong> 08–10 Yrs |
@@ -739,14 +744,12 @@
                   >
                 </li>
                 <li class="flex items-start gap-2">
-                  <i
-                    class="fa-solid fa-circle-check text-purple-600 mt-0.5"
+                  <i class="fa-solid fa-circle-check text-purple-600 mt-0.5" aria-hidden="true"
                   ></i>
                   <span>Must have completed 8 years of age</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <i
-                    class="fa-solid fa-circle-check text-purple-600 mt-0.5"
+                  <i class="fa-solid fa-circle-check text-purple-600 mt-0.5" aria-hidden="true"
                   ></i>
                   <span>School bonafide &amp; Municipal Birth Certificate</span>
                 </li>
@@ -775,15 +778,15 @@
               </div>
               <ul class="text-xs text-slate-600 text-left space-y-2 mb-4">
                 <li class="flex items-start gap-2">
-                  <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                  <i class="fa-solid fa-circle-check text-blue-600 mt-0.5" aria-hidden="true"></i>
                   <span>Merging of 14–16 Yrs &amp; 16–18 Yrs</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                  <i class="fa-solid fa-circle-check text-blue-600 mt-0.5" aria-hidden="true"></i>
                   <span>Must have completed 14 years of age</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <i class="fa-solid fa-circle-check text-blue-600 mt-0.5"></i>
+                  <i class="fa-solid fa-circle-check text-blue-600 mt-0.5" aria-hidden="true"></i>
                   <span>Aadhaar Card + School / College ID mandatory</span>
                 </li>
               </ul>
@@ -810,8 +813,7 @@
               </div>
               <ul class="text-xs text-slate-600 text-left space-y-2 mb-4">
                 <li class="flex items-start gap-2">
-                  <i
-                    class="fa-solid fa-circle-check text-emerald-600 mt-0.5"
+                  <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5" aria-hidden="true"
                   ></i>
                   <span
                     ><strong>Groups:</strong> 18–25 Yrs, 25–35 Yrs &amp; Above
@@ -819,14 +821,12 @@
                   >
                 </li>
                 <li class="flex items-start gap-2">
-                  <i
-                    class="fa-solid fa-circle-check text-emerald-600 mt-0.5"
+                  <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5" aria-hidden="true"
                   ></i>
                   <span>Must have completed 18 years of age</span>
                 </li>
                 <li class="flex items-start gap-2">
-                  <i
-                    class="fa-solid fa-circle-check text-emerald-600 mt-0.5"
+                  <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5" aria-hidden="true"
                   ></i>
                   <span>District residency proof + Aadhaar Card</span>
                 </li>
@@ -843,8 +843,7 @@
           <div
             class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg flex items-start gap-3"
           >
-            <i
-              class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5"
+            <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5" aria-hidden="true"
             ></i>
             <div class="text-xs sm:text-sm text-slate-700">
               <span class="font-bold text-slate-900"
@@ -1036,7 +1035,7 @@
               onclick="alert('Opening Full Championship Photo Gallery...')"
               class="inline-flex items-center gap-2 bg-[#0D5C3A] text-white hover:bg-[#0a4229] px-6 py-2.5 rounded-full text-xs font-bold shadow transition"
             >
-              <i class="fa-solid fa-images"></i>
+              <i class="fa-solid fa-images" aria-hidden="true"></i>
               <span>View Full Gallery</span>
             </a>
           </div>
@@ -1238,7 +1237,7 @@
               href="/login"
               class="inline-flex items-center gap-2 bg-[#0D5C3A] text-white hover:bg-[#0a4229] px-6 py-2.5 rounded-full text-xs font-bold shadow transition"
             >
-              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
               <span>Access District Secretary Portal</span>
             </a>
           </div>
@@ -1300,13 +1299,12 @@
               <h3
                 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2"
               >
-                <i class="fa-solid fa-circle-info"></i>
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
                 <span>Helpline &amp; Association Desk</span>
               </h3>
               <div class="space-y-4 text-xs sm:text-sm text-emerald-100">
                 <div class="flex items-start gap-3">
-                  <i
-                    class="fa-solid fa-building-columns text-amber-300 mt-1"
+                  <i class="fa-solid fa-building-columns text-amber-300 mt-1" aria-hidden="true"
                   ></i>
                   <div>
                     <div class="font-semibold text-white">
@@ -1319,7 +1317,7 @@
                   </div>
                 </div>
                 <div class="flex items-start gap-3">
-                  <i class="fa-solid fa-envelope text-amber-300 mt-1"></i>
+                  <i class="fa-solid fa-envelope text-amber-300 mt-1" aria-hidden="true"></i>
                   <div>
                     <div class="font-semibold text-white">
                       Official Championship Email
@@ -1331,7 +1329,7 @@
                   </div>
                 </div>
                 <div class="flex items-start gap-3">
-                  <i class="fa-solid fa-phone text-amber-300 mt-1"></i>
+                  <i class="fa-solid fa-phone text-amber-300 mt-1" aria-hidden="true"></i>
                   <div>
                     <div class="font-semibold text-white">
                       State Secretary Helpdesk
@@ -1374,7 +1372,7 @@
               <div
                 class="w-8 h-8 rounded-full bg-white flex items-center justify-center p-1"
               >
-                <i class="fa-solid fa-om text-emerald-900 text-sm"></i>
+                <i class="fa-solid fa-om text-emerald-900 text-sm" aria-hidden="true"></i>
               </div>
               <span class="font-bold text-white text-sm"
                 >Telangana Yoga Association</span

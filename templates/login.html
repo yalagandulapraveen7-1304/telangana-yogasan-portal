@@ -28,6 +28,9 @@
   <body
     class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between text-slate-800"
   >
+    <!-- A11y Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Header -->
     <header
       class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] py-3 px-6 shadow-sm"
@@ -45,15 +48,15 @@
               fetchpriority="high"
               decoding="sync"
               class="w-full h-full object-contain rounded-full"
-              alt="Telangana Yoga Association Logo"
+              alt="Telangana State Yoga Association Logo"
             />
           </div>
           <div>
-            <h1
-              class="font-bold text-xs sm:text-sm tracking-wider font-display uppercase leading-tight"
+            <span
+              class="block font-bold text-xs sm:text-sm tracking-wider font-display uppercase leading-tight text-white"
             >
               Telangana State Yoga Association
-            </h1>
+            </span>
             <p class="text-[11px] sm:text-xs text-amber-200 font-medium">
               State Inter-District Championship Portal
             </p>
@@ -63,13 +66,13 @@
           href="index.html"
           class="text-xs text-emerald-200 hover:text-white flex items-center gap-1"
         >
-          <i class="fa-solid fa-arrow-left"></i> Public Portal
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Public Portal
         </a>
       </div>
     </header>
 
     <!-- Main Content Form -->
-    <main class="flex-grow flex items-center justify-center px-4 py-12">
+    <main id="main-content" tabindex="-1" class="flex-grow flex items-center justify-center px-4 py-12 focus:outline-none">
       <div
         class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 p-8"
       >
@@ -77,7 +80,7 @@
           <div
             class="w-12 h-12 bg-emerald-50 border border-emerald-200 text-[#0D5C3A] rounded-xl flex items-center justify-center text-xl mx-auto mb-3 shadow-inner"
           >
-            <i class="fa-solid fa-shield-halved"></i>
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
           </div>
           <h1 class="text-xl font-bold font-display text-slate-900">
             District Secretary Portal
@@ -90,9 +93,12 @@
         <!-- Dynamic Error Banner -->
         <div
           id="login-error"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
           class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2"
         >
-          <i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+          <i class="fa-solid fa-circle-exclamation text-rose-500" aria-hidden="true"></i>
           <span id="login-error-text">Invalid email or password.</span>
         </div>
 
@@ -107,12 +113,15 @@
               <span
                 class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"
               >
-                <i class="fa-solid fa-envelope"></i>
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
               </span>
               <input
                 type="email"
                 id="email"
+                name="email"
                 required
+                autocomplete="username"
+                aria-required="true"
                 placeholder="sec_hyderabad@telanganayoga.org"
                 class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition"
               />
@@ -129,12 +138,15 @@
               <span
                 class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"
               >
-                <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
               </span>
               <input
                 type="password"
                 id="password"
+                name="password"
                 required
+                autocomplete="current-password"
+                aria-required="true"
                 placeholder="••••••••••••"
                 class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition"
               />
@@ -147,7 +159,7 @@
             class="w-full mt-2 bg-[#0D5C3A] hover:bg-[#083d26] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95"
           >
             <span>Sign In to Secretary Portal</span>
-            <i class="fa-solid fa-arrow-right"></i>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
           </button>
         </form>
       </div>
@@ -178,7 +190,7 @@
 
           errorBox.classList.add("hidden");
           submitBtn.disabled = true;
-          submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Verifying...`;
+          submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> Verifying...`;
 
           try {
             const res = await fetch("/auth/login", {
@@ -202,7 +214,7 @@
               errorText.textContent = data.error || "Invalid credentials.";
               errorBox.classList.remove("hidden");
               submitBtn.disabled = false;
-              submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1"></i>`;
+              submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
             }
           } catch (err) {
             console.error("Login request failed:", err);
@@ -210,7 +222,7 @@
               "Server connection failed. Ensure server is online.";
             errorBox.classList.remove("hidden");
             submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1"></i>`;
+            submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
           }
         });
     </script>

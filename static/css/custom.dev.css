@@ -103,16 +103,46 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   top: -9999px;
   left: 1rem;
-  background: var(--green-primary);
+  background: var(--green-dark);
   color: #fff;
-  padding: .5rem 1rem;
+  padding: .625rem 1.25rem;
   border-radius: 0 0 .5rem .5rem;
-  font-weight: 600;
-  z-index: 9999;
+  font-weight: 700;
+  font-size: .875rem;
+  z-index: 99999;
   transition: top .15s;
   text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  border: 2px solid var(--gold-accent);
 }
-.skip-link:focus { top: 0; }
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0;
+  outline: 3px solid #FCD34D;
+  outline-offset: 2px;
+}
+
+/* ── Screen Reader Only (WCAG 2.2) ───────────────────────────── */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:focus-visible {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
 
 /* ── Government Top Bar ─────────────────────────────────────── */
 .gov-topbar {
@@ -617,10 +647,61 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
-/* ── Focus visible for a11y ─────────────────────────────────── */
+/* ── Focus visible for a11y (WCAG 2.2 SC 1.4.11 & 2.4.7) ────────── */
 :focus-visible {
-  outline: 2.5px solid var(--gold-accent);
+  outline: 3px solid var(--green-primary);
   outline-offset: 2px;
+}
+
+/* High-contrast focus on dark backgrounds (>= 7:1 contrast) */
+.site-header :focus-visible,
+.gov-topbar :focus-visible,
+.site-footer :focus-visible,
+.sidebar :focus-visible,
+.hero :focus-visible,
+.btn-primary:focus-visible,
+.btn-green:focus-visible,
+.login-bg :focus-visible,
+[class*="bg-[#0D5C3A]"] :focus-visible,
+[class*="bg-[#0a4229]"] :focus-visible,
+[class*="bg-slate-900"] :focus-visible,
+[class*="bg-emerald-900"] :focus-visible {
+  outline: 3px solid #FCD34D;
+  outline-offset: 2px;
+}
+
+/* ── Touch Target Minimum Size (WCAG 2.2 SC 2.5.8 >= 24x24px) ── */
+.touch-target-min {
+  min-width: 28px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Reduced Motion (WCAG 2.2 SC 2.2.2 & 2.3.3) ──────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-content {
+    animation: none !important;
+    transform: none !important;
+    padding-left: 0 !important;
+    white-space: normal !important;
+  }
+  .emblem-glow {
+    animation: none !important;
+    filter: none !important;
+  }
+  .pulse-dot {
+    animation: none !important;
+  }
 }
 
 /* ── Utility Helper ─────────────────────────────────────────── */

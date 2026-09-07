@@ -29,7 +29,7 @@
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
   <!-- A11y Skip Link -->
-  <a href="#main-content" class="skip-link">Skip to nomination form</a>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- Top Gov & Portal Header -->
   <header class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md">
@@ -38,7 +38,7 @@
       <div class="flex items-center gap-3">
         
           <div class="w-14  h-14 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059]">
-          <a href="index.html"> <img src="/static/images/TSYSC.png" alt="Logo" width="56" height="56" fetchpriority="high" decoding="sync"></a> 
+          <a href="index.html"> <img src="/static/images/TSYSC.png" alt="Telangana State Yoga Association Logo" width="56" height="56" fetchpriority="high" decoding="sync"></a> 
           </div>
           <div class="hidden sm:block">
             <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider"><a href="index.html">Telangana Yoga Association</a></div>
@@ -47,7 +47,7 @@
         </a>
         <span class="text-emerald-500 hidden md:inline">|</span>
         <span class="bg-emerald-900/80 text-amber-300 text-xs px-2.5 py-1 rounded font-semibold border border-amber-300/30">
-          <i class="fa-solid fa-user-plus mr-1"></i> Athlete Nomination Form
+          <i class="fa-solid fa-user-plus mr-1" aria-hidden="true"></i> Athlete Nomination Form
         </span>
       </div>
 
@@ -56,7 +56,7 @@
   </header>
 
   <!-- Main Content -->
-  <main id="main-content" class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-8">
+  <main id="main-content" tabindex="-1" class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 focus:outline-none">
     
     <!-- Breadcrumb -->
     <nav class="text-xs text-slate-500 flex items-center gap-2 mb-4" aria-label="Breadcrumb">
@@ -81,7 +81,7 @@
         </div>
 
         <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-2 rounded-xl text-xs text-emerald-900">
-          <i class="fa-solid fa-id-card text-lg text-emerald-700"></i>
+          <i class="fa-solid fa-id-card text-lg text-emerald-700" aria-hidden="true"></i>
           <div>
             <div class="font-bold">Form Code: NOM-2025</div>
             <div class="text-[10px] text-emerald-700">Multi-part Upload Enabled</div>
@@ -93,12 +93,12 @@
     <!-- Switch to School Portal Banner -->
     <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
       <div class="flex items-center gap-2.5 text-emerald-950 font-medium">
-        <i class="fa-solid fa-school text-emerald-700 text-base"></i>
+        <i class="fa-solid fa-school text-emerald-700 text-base" aria-hidden="true"></i>
         <span>Registering on behalf of a School, College, or Yoga Academy?</span>
       </div>
       <a href="school-nominate.html" class="inline-flex items-center justify-center gap-1.5 bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold px-3.5 py-1.5 rounded-lg text-xs transition shadow-sm flex-shrink-0">
         <span>Open School Delegation Form</span>
-        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+        <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
       </a>
     </div>
 
@@ -134,7 +134,7 @@
               First Name <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-user input-icon"></i>
+              <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="first_name" 
@@ -152,7 +152,7 @@
               Last Name / Surname <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-user-tag input-icon"></i>
+              <i class="fa-solid fa-user-tag input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="last_name" 
@@ -174,7 +174,7 @@
                   Date of Birth (as per Aadhaar / Birth Cert) <span class="text-red-500">*</span>
                 </label>
                 <div class="input-icon-wrapper">
-                  <i class="fa-solid fa-calendar-day input-icon"></i>
+                  <i class="fa-solid fa-calendar-day input-icon" aria-hidden="true"></i>
                   <input 
                     type="date" 
                     id="dob-input" 
@@ -194,8 +194,8 @@
                   Computed Age Category (Auto-Calculated)
                 </div>
                 <div class="flex items-center gap-2">
-                  <span id="age-category-badge" class="badge badge-pending">
-                    <i class="fa-solid fa-circle-notch fa-spin text-xs mr-1"></i> Select Date of Birth Above
+                  <span id="age-category-badge" class="badge badge-pending" role="status" aria-live="polite">
+                    <i class="fa-solid fa-circle-notch fa-spin text-xs mr-1" aria-hidden="true"></i> Select Date of Birth Above
                   </span>
                 </div>
                 <div id="age-display" class="text-[11px] text-slate-600 font-semibold mt-1"></div>
@@ -205,19 +205,19 @@
           </div>
 
           <!-- Gender Radio -->
-          <div>
-            <span class="form-label">Gender <span class="text-red-500">*</span></span>
+          <fieldset class="border-0 p-0 m-0">
+            <legend class="form-label">Gender <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></legend>
             <div class="flex items-center gap-6 mt-2 pt-1">
-              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
-                <input type="radio" name="gender" value="Female" required checked class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
+              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700" for="gender-female">
+                <input type="radio" id="gender-female" name="gender" value="Female" required checked class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
                 <span>Female</span>
               </label>
-              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
-                <input type="radio" name="gender" value="Male" required class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
+              <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700" for="gender-male">
+                <input type="radio" id="gender-male" name="gender" value="Male" required class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
                 <span>Male</span>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           <!-- Aadhaar Last 4 Digits -->
           <div>
@@ -225,7 +225,7 @@
               Last 4 Digits of Aadhaar <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-fingerprint input-icon"></i>
+              <i class="fa-solid fa-fingerprint input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="aadhaar-input" 
@@ -246,7 +246,7 @@
               Father / Mother / Guardian Name <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-people-roof input-icon"></i>
+              <i class="fa-solid fa-people-roof input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="guardian_name" 
@@ -264,7 +264,7 @@
               School / College / Yoga Institution <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-school input-icon"></i>
+              <i class="fa-solid fa-school input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="institution_name" 
@@ -281,7 +281,7 @@
     Target District Association <span class="text-red-500">*</span>
   </label>
   <div class="input-icon-wrapper">
-    <i class="fa-solid fa-map-location-dot input-icon"></i>
+    <i class="fa-solid fa-map-location-dot input-icon" aria-hidden="true"></i>
     <select 
       id="district-select" 
       name="district" 
@@ -333,7 +333,7 @@
               Residential Address in Nominated District <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-house-chimney input-icon"></i>
+              <i class="fa-solid fa-house-chimney input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="residential_address" 
@@ -350,7 +350,7 @@
               Parent / Athlete Contact Mobile <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-phone input-icon"></i>
+              <i class="fa-solid fa-phone input-icon" aria-hidden="true"></i>
               <input 
                 type="tel" 
                 id="mobile_number" 
@@ -368,33 +368,33 @@
       </div>
 
       <!-- SECTION B: EVENT & DISCIPLINE SELECTION -->
-      <div id="events-section" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+      <fieldset id="events-section" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         
         <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
-          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm" aria-hidden="true">
             2
           </div>
           <div>
-            <h2 class="text-base font-bold text-slate-900 font-display">Competition Event Registration</h2>
+            <legend class="text-base font-bold text-slate-900 font-display">
+              Competition Event Registration <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (at least 1 required)</span>
+            </legend>
             <p class="text-xs text-slate-500">Select all disciplines the athlete is competing in (at least 1 required).</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           
-          <!-- Event 1: Traditional -->
+          <!-- Event 1: Free Flow -->
           <label class="relative flex items-start p-4 rounded-xl border-2 border-slate-200 hover:border-[#0D5C3A] cursor-pointer transition bg-slate-50/50 has-[:checked]:border-[#0D5C3A] has-[:checked]:bg-emerald-50/50">
             <input type="checkbox" name="events[]" value="Free Flow" checked class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
-               <div class="ml-3">
-                <div class="font-bold text-sm text-slate-900">
-                  Free Flow Yogasana
-                </div>
-                <div class="text-xs text-slate-500 leading-relaxed">
-                  Smooth, continuous yoga movements with breath .
-                </div>
+            <div class="ml-3">
+              <div class="font-bold text-sm text-slate-900">
+                Free Flow Yogasana
               </div>
-            </label>
-
+              <div class="text-xs text-slate-500 leading-relaxed">
+                Smooth, continuous yoga movements with breath.
+              </div>
+            </div>
           </label>
 
           <!-- Event 2: Artistic Solo -->
@@ -434,8 +434,7 @@
           
         </div>
 
-
-      </div>
+      </fieldset>
 
       <!-- SECTION C: DOCUMENT UPLOADS WITH IMAGE PREVIEW -->
       <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
@@ -454,15 +453,15 @@
           
           <!-- Passport Photo Upload with Live Preview -->
           <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center">
-            <span class="form-label mb-2 text-center">
-              Passport Size Photo (JPG/PNG) <span class="text-red-500">*</span>
-            </span>
-            <p class="text-[11px] text-slate-500 mb-3">Front-facing white background photo (Max 2MB)</p>
+            <label for="passport-input" class="form-label block mb-2 text-center">
+              Passport Size Photo (JPG/PNG) <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span>
+            </label>
+            <p class="text-[11px] text-slate-500 mb-3" id="passport-desc">Front-facing white background photo (Max 2MB)</p>
             
             <div class="upload-zone bg-white py-6">
-              <input type="file" name="passport_photo" id="passport-input" accept="image/*" />
+              <input type="file" name="passport_photo" id="passport-input" accept="image/*" aria-describedby="passport-desc" />
               <div class="space-y-1">
-                <i id="passport-icon" class="fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]"></i>
+                <i id="passport-icon" class="fa-solid fa-cloud-arrow-up text-2xl text-[#0D5C3A]" aria-hidden="true"></i>
                 <div id="passport-text" class="text-xs font-semibold text-slate-700">Click or drag &amp; drop photo here</div>
                 <div class="text-[10px] text-slate-400">PNG, JPG or WEBP up to 2MB</div>
               </div>
@@ -476,15 +475,15 @@
 
           <!-- DOB Proof / Certificate Upload -->
           <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center">
-            <span class="form-label mb-2 text-center">
-              DOB Proof Certificate (PDF/Image) <span class="text-red-500">*</span>
-            </span>
-            <p class="text-[11px] text-slate-500 mb-3">Birth Certificate / SSC Bonafide / School Record</p>
+            <label for="dob-cert-input" class="form-label block mb-2 text-center">
+              DOB Proof Certificate (PDF/Image) <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span>
+            </label>
+            <p class="text-[11px] text-slate-500 mb-3" id="dob-cert-desc">Birth Certificate / SSC Bonafide / School Record</p>
             
             <div class="upload-zone bg-white py-6">
-              <input type="file" name="dob_certificate" id="dob-cert-input" accept="image/*,.pdf" />
+              <input type="file" name="dob_certificate" id="dob-cert-input" accept="image/*,.pdf" aria-describedby="dob-cert-desc" />
               <div class="space-y-1">
-                <i id="dob-icon" class="fa-solid fa-file-shield text-2xl text-amber-600"></i>
+                <i id="dob-icon" class="fa-solid fa-file-shield text-2xl text-amber-600" aria-hidden="true"></i>
                 <div id="dob-text" class="text-xs font-semibold text-slate-700">Click or drag &amp; drop certificate</div>
                 <div class="text-[10px] text-slate-400">PDF, JPG, PNG up to 5MB</div>
               </div>
@@ -502,8 +501,8 @@
 
       <!-- SECTION D: DISTRICT SECRETARY DECLARATION -->
       <div class="bg-amber-50/70 rounded-2xl p-6 border border-amber-200">
-        <label class="flex items-start gap-3 cursor-pointer">
-          <input type="checkbox" name="declaration" required class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+        <label class="flex items-start gap-3 cursor-pointer" for="secretary-declaration">
+          <input type="checkbox" id="secretary-declaration" name="declaration" required aria-required="true" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
           <div class="text-xs text-slate-700 leading-relaxed">
             <strong class="text-slate-900">Official Secretary Declaration:</strong>
             I hereby certify that I am the authorized District Secretary of this District Yoga Association. I have personally scrutinized and verified the athlete's original Date of Birth certificate and Aadhaar details. All particulars entered are true and correct to the best of my official knowledge.
@@ -518,7 +517,7 @@
         </a>
         
         <button type="submit" class="w-full sm:w-auto bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-paper-plane text-amber-300"></i>
+          <i class="fa-solid fa-paper-plane text-amber-300" aria-hidden="true"></i>
           <span>Submit Athlete Nomination</span>
         </button>
       </div>

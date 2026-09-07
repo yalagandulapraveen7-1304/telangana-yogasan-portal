@@ -27,17 +27,33 @@ function initMobileNav() {
   const menu   = $('#nav-menu');
   if (!toggle || !menu) return;
 
+  function closeMenu() {
+    menu.classList.add('hidden');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
     const isHidden = menu.classList.toggle('hidden');
     toggle.setAttribute('aria-expanded', String(!isHidden));
+    if (!isHidden) {
+      const firstLink = menu.querySelector('a, button');
+      if (firstLink) firstLink.focus();
+    }
   });
 
   // Close on outside click only when menu is actually open
   document.addEventListener('click', (e) => {
     if (!menu.classList.contains('hidden') && !toggle.contains(e.target) && !menu.contains(e.target)) {
-      menu.classList.add('hidden');
-      toggle.setAttribute('aria-expanded', 'false');
+      closeMenu();
+    }
+  });
+
+  // Close on Escape key and return focus to toggle
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+      closeMenu();
+      toggle.focus();
     }
   });
 }
@@ -217,6 +233,43 @@ function initDocUpload() {
   });
 }
 
+/* ── Accessible Modal Focus Trap Helper ──────────────────── */
+function trapFocus(modalEl) {
+  const focusableEls = modalEl.querySelectorAll(
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  );
+  if (focusableEls.length === 0) return () => {};
+
+  const firstFocusable = focusableEls[0];
+  const lastFocusable = focusableEls[focusableEls.length - 1];
+
+  firstFocusable.focus();
+
+  function handleKeyDown(e) {
+    if (e.key === 'Tab') {
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else {
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    }
+  }
+
+  modalEl.addEventListener('keydown', handleKeyDown);
+  return function releaseFocus(prevActiveElement) {
+    modalEl.removeEventListener('keydown', handleKeyDown);
+    if (prevActiveElement && typeof prevActiveElement.focus === 'function') {
+      prevActiveElement.focus();
+    }
+  };
+}
+
 /* ── Nomination Form Validation & Submission ──────────────────────────── */
 function initNominationForm() {
   const form = $('#nomination-form');
@@ -230,6 +283,8 @@ function initNominationForm() {
     $$('.field-error', form).forEach(el => el.remove());
     $$('.form-input.error, .form-input.is-invalid', form).forEach(el => {
       el.classList.remove('error', 'is-invalid');
+      el.removeAttribute('aria-invalid');
+      el.removeAttribute('aria-describedby');
       el.style.borderColor = '';
     });
 
@@ -264,19 +319,25 @@ function initNominationForm() {
     if (events.length === 0) {
       const evtSection = $('#events-section');
       if (evtSection) {
-        const err = makeError('Please select at least one event/discipline');
+        const err = makeError('Please select at least one event/discipline', 'events-error');
         evtSection.appendChild(err);
       }
       valid = false;
     }
 
-    if (!valid) return;
+    if (!valid) {
+      const firstInvalid = form.querySelector('.error, [aria-invalid="true"]');
+      if (firstInvalid) {
+        firstInvalid.focus();
+      }
+      return;
+    }
 
     // Submit via Fetch API
     const submitBtn = $('#submit-btn') || form.querySelector('button[type="submit"]');
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i>Submitting...`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Submitting...`;
     }
 
     try {
@@ -322,16 +383,23 @@ function initNominationForm() {
     }
   });
 }
+
 function markInvalid(field, msg) {
   field.style.borderColor = '#ef4444';
   field.classList.add('error');
-  const err = makeError(msg);
+  field.setAttribute('aria-invalid', 'true');
+  const errId = (field.id || 'field-' + Math.random().toString(36).substring(2, 7)) + '-error';
+  field.setAttribute('aria-describedby', errId);
+  const err = makeError(msg, errId);
   field.parentNode.insertAdjacentElement('afterend', err);
 }
 
-function makeError(msg) {
+function makeError(msg, id = '') {
   const el = document.createElement('p');
   el.className = 'field-error';
+  el.setAttribute('role', 'alert');
+  el.setAttribute('aria-live', 'polite');
+  if (id) el.id = id;
   el.style.cssText = 'color:#ef4444;font-size:.78rem;margin-top:.25rem;';
   el.textContent = msg;
   return el;
@@ -339,7 +407,11 @@ function makeError(msg) {
 
 /* ── Nomination Form Success Popup with Admit Card Link ──── */
 function showSubmitSuccess(athleteId = '') {
+  const previousActive = document.activeElement;
   const overlay = document.createElement('div');
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'submit-success-title');
   overlay.style.cssText = `
     position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;
     display:flex;align-items:center;justify-content:center;padding:1rem;
@@ -356,30 +428,53 @@ function showSubmitSuccess(athleteId = '') {
         font-size:.875rem;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(13,92,58,.25);
         margin-bottom:.75rem;transition:background .2s;
       ">
-        <i class="fa-solid fa-id-card"></i> View & Print Admit Card (Hall Ticket)
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i> View & Print Admit Card (Hall Ticket)
       </a>
     `;
   }
 
   overlay.innerHTML = `
     <div style="background:#fff;border-radius:1rem;padding:2.5rem;max-width:420px;width:100%;text-align:center;
-                box-shadow:0 25px 50px rgba(0,0,0,.25);border-top:4px solid #C5A059;">
-      <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
-      <h2 style="color:#0D5C3A;font-size:1.25rem;font-weight:800;margin-bottom:.5rem;">
+                box-shadow:0 25px 50px rgba(0,0,0,.25);border-top:4px solid #C5A059;position:relative;">
+      <button type="button" id="close-success-btn" aria-label="Close confirmation dialog" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.25rem;cursor:pointer;color:#64748b;padding:.5rem;border-radius:.5rem;">✕</button>
+      <div style="font-size:3rem;margin-bottom:1rem;" aria-hidden="true">✅</div>
+      <h2 id="submit-success-title" style="color:#0D5C3A;font-size:1.25rem;font-weight:800;margin-bottom:.5rem;">
         Nomination Submitted!
       </h2>
       <p style="color:#64748b;margin-bottom:1.5rem;font-size:.9rem;">
         The payment is successful and your athlete nomination has been recorded.
       </p>
       ${admitCardButtonHTML}
-  
+      <button type="button" id="done-success-btn" style="background:#f1f5f9;color:#334155;font-weight:600;padding:.625rem 1.5rem;border-radius:.5rem;border:none;cursor:pointer;font-size:.875rem;">Close</button>
     </div>
   `;
   document.body.appendChild(overlay);
+
+  const release = trapFocus(overlay);
+
+  function closeModal() {
+    release(previousActive);
+    overlay.remove();
+    document.removeEventListener('keydown', onKeyDown);
+  }
+
+  function onKeyDown(e) {
+    if (e.key === 'Escape') closeModal();
+  }
+
+  document.addEventListener('keydown', onKeyDown);
+  const closeBtn = overlay.querySelector('#close-success-btn');
+  const doneBtn = overlay.querySelector('#done-success-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (doneBtn) doneBtn.addEventListener('click', closeModal);
 }
-/* ── Simple toast alert ──────────────────────────────────── */
+
+/* ── Simple toast alert (WCAG SC 4.1.3 Status Messages) ──── */
 function showAlert(msg, type = 'info') {
   const el = document.createElement('div');
+  el.setAttribute('role', 'alert');
+  el.setAttribute('aria-live', 'assertive');
+  el.setAttribute('aria-atomic', 'true');
   const bg = type === 'error' ? '#fee2e2' : '#dcfce7';
   const co = type === 'error' ? '#991b1b' : '#15803d';
   el.style.cssText = `

@@ -29,7 +29,7 @@
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
   <!-- A11y Skip Link -->
-  <a href="#main-content" class="skip-link">Skip to nomination form</a>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- Top Gov & Portal Header -->
   <header class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md">
@@ -37,7 +37,7 @@
       
       <div class="flex items-center gap-3">
         <div class="w-14 h-14 rounded-full bg-white p-0.5 flex items-center justify-center border border-[#C5A059] shadow-sm">
-          <a href="index.html"><img src="/static/images/TSYSC.png" alt="TSYSC Logo" width="56" height="56" fetchpriority="high" decoding="sync" class="w-full h-auto"></a> 
+          <a href="index.html"><img src="/static/images/TSYSC.png" alt="Telangana State Yoga Association Logo" width="56" height="56" fetchpriority="high" decoding="sync" class="w-full h-auto"></a> 
         </div>
         <div>
           <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">
@@ -47,16 +47,16 @@
         </div>
         <span class="text-emerald-500 hidden md:inline">|</span>
         <span class="hidden sm:inline-flex items-center gap-1.5 bg-emerald-900/80 text-amber-300 text-xs px-3 py-1 rounded-full font-semibold border border-amber-300/30">
-          <i class="fa-solid fa-school"></i> School &amp; Institution Entry
+          <i class="fa-solid fa-school" aria-hidden="true"></i> School &amp; Institution Entry
         </span>
       </div>
 
       <div class="flex items-center gap-2">
         <a href="nominate.html" class="text-xs bg-white/10 hover:bg-white/20 text-white font-semibold px-3 py-1.5 rounded-lg border border-white/20 transition flex items-center gap-1">
-          <i class="fa-solid fa-user"></i> <span class="hidden sm:inline">Individual Form</span>
+          <i class="fa-solid fa-user" aria-hidden="true"></i> <span class="hidden sm:inline">Individual Form</span>
         </a>
         <a href="index.html" class="text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1">
-          <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Portal Home</span>
+          <i class="fa-solid fa-house" aria-hidden="true"></i> <span class="hidden sm:inline">Portal Home</span>
         </a>
       </div>
 
@@ -64,7 +64,7 @@
   </header>
 
   <!-- Main Content -->
-  <main id="main-content" class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
+  <main id="main-content" tabindex="-1" class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 focus:outline-none">
     
     <!-- Breadcrumb -->
     <nav class="text-xs text-slate-500 flex items-center gap-2 mb-4" aria-label="Breadcrumb">
@@ -89,7 +89,7 @@
         </div>
 
         <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-4 py-2.5 rounded-xl text-xs text-emerald-900">
-          <i class="fa-solid fa-graduation-cap text-2xl text-emerald-700"></i>
+          <i class="fa-solid fa-graduation-cap text-2xl text-emerald-700" aria-hidden="true"></i>
           <div>
             <div class="font-bold">Form: SCH-NOM-2025</div>
             <div class="text-[10px] text-emerald-700">Bulk Delegation Upload</div>
@@ -122,7 +122,7 @@
               School / College / Institution Name <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-school input-icon"></i>
+              <i class="fa-solid fa-school input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="school_name" 
@@ -140,7 +140,7 @@
               UDISE / Affiliation / Reg No. <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-hashtag input-icon"></i>
+              <i class="fa-solid fa-hashtag input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="affiliation_code" 
@@ -158,7 +158,7 @@
               District <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-map-location-dot input-icon"></i>
+              <i class="fa-solid fa-map-location-dot input-icon" aria-hidden="true"></i>
               <select id="district" name="district" required class="form-input text-sm bg-white font-medium">
                 <option value="" disabled selected>-- Select District --</option>
                 <option value="Adilabad">Adilabad</option>
@@ -204,7 +204,7 @@
               Principal / Headmaster Name <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-user-tie input-icon"></i>
+              <i class="fa-solid fa-user-tie input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="principal_name" 
@@ -222,7 +222,7 @@
               Physical Director (PET) / Coach <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-person-chalkboard input-icon"></i>
+              <i class="fa-solid fa-person-chalkboard input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="coach_name" 
@@ -240,7 +240,7 @@
               Coach / Teacher Contact Mobile <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-phone input-icon"></i>
+              <i class="fa-solid fa-phone input-icon" aria-hidden="true"></i>
               <input 
                 type="tel" 
                 id="coach_mobile" 
@@ -259,7 +259,7 @@
               Official Email Address <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-envelope input-icon"></i>
+              <i class="fa-solid fa-envelope input-icon" aria-hidden="true"></i>
               <input 
                 type="email" 
                 id="school_email" 
@@ -277,7 +277,7 @@
               Institution Campus Address <span class="text-red-500">*</span>
             </label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-location-dot input-icon"></i>
+              <i class="fa-solid fa-location-dot input-icon" aria-hidden="true"></i>
               <input 
                 type="text" 
                 id="school_address" 
@@ -312,7 +312,7 @@
             id="add-student-btn"
             class="inline-flex items-center gap-2 bg-[#0D5C3A] hover:bg-[#0a4229] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition hover:scale-[1.02]"
           >
-            <i class="fa-solid fa-plus-circle"></i> Add Another Student
+            <i class="fa-solid fa-plus-circle" aria-hidden="true"></i> Add Another Student
           </button>
         </div>
 
@@ -361,8 +361,8 @@
 
         <!-- SECTION 4: PRINCIPAL & PET DECLARATION -->
         <div class="bg-white/10 rounded-xl p-4 border border-white/15">
-          <label class="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox" id="school-declaration" required class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+          <label class="flex items-start gap-3 cursor-pointer" for="school-declaration">
+            <input type="checkbox" id="school-declaration" required aria-required="true" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
             <div class="text-xs text-emerald-100 leading-relaxed">
               <strong>Official Institutional Certification:</strong> I hereby certify on behalf of the institution that all nominated students are bona fide enrolled students of this school/college. Their original Date of Birth certificates, School Study Bonafides, and Aadhaar cards have been verified and found genuine as per Yoga Federation regulations.
             </div>
@@ -377,7 +377,7 @@
           id="submit-school-btn"
           class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-base shadow-lg hover:shadow-xl transition transform hover:scale-[1.02] flex items-center justify-center gap-2"
         >
-          <i class="fa-solid fa-circle-check"></i> Submit School Delegation &amp; Generate Admit Cards
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit School Delegation &amp; Generate Admit Cards
         </button>
         <a 
           href="index.html" 
@@ -390,13 +390,14 @@
     </form>
 
     <!-- SUCCESS / ADMIT CARDS MODAL -->
-    <div id="success-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="success-modal-title">
+      <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto relative">
+        <button type="button" onclick="closeSuccessModal()" aria-label="Close confirmation dialog" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-lg touch-target-min">✕</button>
         <div class="text-center mb-6">
           <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-3xl mx-auto mb-3">
-            <i class="fa-solid fa-circle-check"></i>
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
           </div>
-          <h3 class="text-2xl font-bold text-slate-900 font-display">School Delegation Registered Successfully!</h3>
+          <h3 id="success-modal-title" class="text-2xl font-bold text-slate-900 font-display">School Delegation Registered Successfully!</h3>
           <p class="text-xs text-slate-600 mt-1" id="modal-subtitle">
             All student athletes have been assigned official championship chest numbers.
           </p>
@@ -426,7 +427,7 @@
             onclick="window.print()" 
             class="btn-primary text-xs flex items-center gap-2"
           >
-            <i class="fa-solid fa-print"></i> Print Delegation Summary
+            <i class="fa-solid fa-print" aria-hidden="true"></i> Print Delegation Summary
           </button>
           <a 
             href="index.html" 
@@ -499,7 +500,7 @@
           </div>
           ${index > 0 ? `
             <button type="button" onclick="removeStudent(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold flex items-center gap-1 hover:underline">
-              <i class="fa-solid fa-trash-can"></i> Remove Student
+              <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Remove Student
             </button>
           ` : ''}
         </div>
@@ -508,44 +509,45 @@
           
           <!-- First Name -->
           <div>
-            <label class="form-label text-xs">First Name <span class="text-red-500">*</span></label>
+            <label for="student_${index}_first_name" class="form-label text-xs">First Name <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-user input-icon"></i>
-              <input type="text" name="student_${index}_first_name" required placeholder="e.g. Rahul" class="form-input text-xs student-first-name" />
+              <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
+              <input type="text" id="student_${index}_first_name" name="student_${index}_first_name" required placeholder="e.g. Rahul" class="form-input text-xs student-first-name" />
             </div>
           </div>
 
           <!-- Last Name -->
           <div>
-            <label class="form-label text-xs">Last Name / Surname <span class="text-red-500">*</span></label>
+            <label for="student_${index}_last_name" class="form-label text-xs">Last Name / Surname <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-user-tag input-icon"></i>
-              <input type="text" name="student_${index}_last_name" required placeholder="e.g. Reddy" class="form-input text-xs student-last-name" />
+              <i class="fa-solid fa-user-tag input-icon" aria-hidden="true"></i>
+              <input type="text" id="student_${index}_last_name" name="student_${index}_last_name" required placeholder="e.g. Reddy" class="form-input text-xs student-last-name" />
             </div>
           </div>
 
           <!-- Gender -->
-          <div>
-            <label class="form-label text-xs">Gender <span class="text-red-500">*</span></label>
+          <fieldset class="border-0 p-0 m-0">
+            <legend class="form-label text-xs">Gender <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></legend>
             <div class="flex items-center gap-4 mt-2">
-              <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700">
-                <input type="radio" name="student_${index}_gender" value="Female" checked class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-3.5 h-3.5 student-gender" />
+              <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700" for="student_${index}_gender_female">
+                <input type="radio" id="student_${index}_gender_female" name="student_${index}_gender" value="Female" checked class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-3.5 h-3.5 student-gender" />
                 <span>Female</span>
               </label>
-              <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700">
-                <input type="radio" name="student_${index}_gender" value="Male" class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-3.5 h-3.5 student-gender" />
+              <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-700" for="student_${index}_gender_male">
+                <input type="radio" id="student_${index}_gender_male" name="student_${index}_gender" value="Male" class="text-[#0D5C3A] focus:ring-[#0D5C3A] w-3.5 h-3.5 student-gender" />
                 <span>Male</span>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           <!-- Date of Birth -->
           <div>
-            <label class="form-label text-xs">Date of Birth <span class="text-red-500">*</span></label>
+            <label for="student_${index}_dob" class="form-label text-xs">Date of Birth <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-calendar-day input-icon"></i>
+              <i class="fa-solid fa-calendar-day input-icon" aria-hidden="true"></i>
               <input 
                 type="date" 
+                id="student_${index}_dob"
                 name="student_${index}_dob" 
                 required 
                 min="1940-01-01" 
@@ -558,8 +560,8 @@
 
           <!-- Computed Age Category Badge -->
           <div>
-            <label class="form-label text-xs">Computed Division (Auto)</label>
-            <div id="student_${index}_cat_badge" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200 flex items-center gap-1.5">
+            <div class="form-label text-xs">Computed Division (Auto)</div>
+            <div id="student_${index}_cat_badge" role="status" aria-live="polite" class="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200 flex items-center gap-1.5">
               <span>Select Date of Birth</span>
             </div>
             <input type="hidden" name="student_${index}_category" id="student_${index}_cat_hidden" value="Junior" />
@@ -567,28 +569,28 @@
 
           <!-- Aadhaar Last 4 -->
           <div>
-            <label class="form-label text-xs">Aadhaar (Last 4 Digits) <span class="text-red-500">*</span></label>
+            <label for="student_${index}_aadhaar" class="form-label text-xs">Aadhaar (Last 4 Digits) <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-fingerprint input-icon"></i>
-              <input type="text" name="student_${index}_aadhaar" required maxlength="4" pattern="\\d{4}" placeholder="XXXX" class="form-input text-xs font-mono tracking-widest student-aadhaar" />
+              <i class="fa-solid fa-fingerprint input-icon" aria-hidden="true"></i>
+              <input type="text" id="student_${index}_aadhaar" name="student_${index}_aadhaar" required maxlength="4" pattern="\\d{4}" placeholder="XXXX" class="form-input text-xs font-mono tracking-widest student-aadhaar" />
             </div>
           </div>
 
           <!-- Father / Guardian Name -->
           <div>
-            <label class="form-label text-xs">Father / Guardian Name <span class="text-red-500">*</span></label>
+            <label for="student_${index}_guardian" class="form-label text-xs">Father / Guardian Name <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-people-roof input-icon"></i>
-              <input type="text" name="student_${index}_guardian" required placeholder="Parent Name" class="form-input text-xs student-guardian" />
+              <i class="fa-solid fa-people-roof input-icon" aria-hidden="true"></i>
+              <input type="text" id="student_${index}_guardian" name="student_${index}_guardian" required placeholder="Parent Name" class="form-input text-xs student-guardian" />
             </div>
           </div>
 
           <!-- Proof Document Type -->
           <div class="sm:col-span-2">
-            <label class="form-label text-xs">DOB Proof Document Type <span class="text-red-500">*</span></label>
+            <label for="student_${index}_proof_type" class="form-label text-xs">DOB Proof Document Type <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
             <div class="input-icon-wrapper">
-              <i class="fa-solid fa-file-shield input-icon"></i>
-              <select name="student_${index}_proof_type" class="form-input text-xs bg-white student-proof-type">
+              <i class="fa-solid fa-file-shield input-icon" aria-hidden="true"></i>
+              <select id="student_${index}_proof_type" name="student_${index}_proof_type" class="form-input text-xs bg-white student-proof-type">
                 <option value="School Bonafide / Study Certificate">School Bonafide / Study Certificate (Recommended for Schools)</option>
                 <option value="Municipal Birth Certificate">Municipal Birth Certificate</option>
                 <option value="SSC Marksheet / Transfer Certificate">SSC Marksheet / Transfer Certificate (T.C.)</option>
@@ -598,8 +600,8 @@
           </div>
 
           <!-- Event Disciplines -->
-          <div class="sm:col-span-2 lg:col-span-3 pt-2">
-            <label class="form-label text-xs mb-2">Competition Disciplines (Select at least 1) <span class="text-red-500">*</span></label>
+          <fieldset class="sm:col-span-2 lg:col-span-3 pt-2 border-0 p-0 m-0">
+            <legend class="form-label text-xs mb-2">Competition Disciplines (Select at least 1) <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></legend>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
               <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:border-[#0D5C3A] cursor-pointer text-xs transition">
                 <input type="checkbox" name="student_${index}_events" value="Traditional Yogasana" checked onchange="updateSummary()" class="text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-3.5 h-3.5 student-event-cb" />
@@ -622,7 +624,7 @@
                 <span class="font-medium">Rhythmic Pair</span>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           <!-- Document Uploads (Passport Photo + DOB Certificate) -->
           <div class="sm:col-span-2 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -630,11 +632,11 @@
             <!-- Photo Upload -->
             <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-3">
               <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
-                <img id="student_${index}_photo_preview" class="w-full h-full object-cover hidden" />
-                <i id="student_${index}_photo_icon" class="fa-solid fa-camera text-slate-400"></i>
+                <img id="student_${index}_photo_preview" alt="Student photo preview" class="w-full h-full object-cover hidden" />
+                <i id="student_${index}_photo_icon" class="fa-solid fa-camera text-slate-400" aria-hidden="true"></i>
               </div>
               <div class="flex-grow">
-                <div class="text-[11px] font-bold text-slate-700">Passport Photo (JPG/PNG) <span class="text-red-500">*</span></div>
+                <label for="student_${index}_photo_input" class="text-[11px] font-bold text-slate-700 block">Passport Photo (JPG/PNG) <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
                 <input 
                   type="file" 
                   name="passport_photo_${index}" 
@@ -649,10 +651,10 @@
             <!-- DOB Certificate Upload -->
             <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-3">
               <div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-amber-600 text-lg flex-shrink-0">
-                <i id="student_${index}_dob_icon" class="fa-solid fa-file-shield"></i>
+                <i id="student_${index}_dob_icon" class="fa-solid fa-file-shield" aria-hidden="true"></i>
               </div>
               <div class="flex-grow">
-                <div class="text-[11px] font-bold text-slate-700">Verified DOB Proof (PDF/JPG) <span class="text-red-500">*</span></div>
+                <label for="student_${index}_dob_input" class="text-[11px] font-bold text-slate-700 block">Verified DOB Proof (PDF/JPG) <span class="text-red-500" aria-hidden="true">*</span><span class="sr-only"> (required)</span></label>
                 <input 
                   type="file" 
                   name="dob_certificate_${index}" 
@@ -868,7 +870,7 @@
 
       const submitBtn = document.getElementById('submit-school-btn');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Registering Delegation...';
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Registering Delegation...';
 
       try {
         const response = await fetch('/portal/athletes/bulk-nominate', {
@@ -883,13 +885,13 @@
         } else {
           alert(res.error || 'Failed to submit school nomination. Please verify all fields.');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit School Delegation &amp; Generate Admit Cards';
+          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit School Delegation &amp; Generate Admit Cards';
         }
       } catch (err) {
         console.error('Submission error:', err);
         alert('Network or server error during submission. Please try again.');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit School Delegation &amp; Generate Admit Cards';
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit School Delegation &amp; Generate Admit Cards';
       }
     });
 
@@ -903,7 +905,10 @@
       })[m]);
     }
 
+    let modalPreviousActiveElement = null;
+
     function showSuccessModal(data) {
+      modalPreviousActiveElement = document.activeElement;
       const modal = document.getElementById('success-modal');
       const tableBody = document.getElementById('modal-roster-body');
       const subtitle = document.getElementById('modal-subtitle');
@@ -928,7 +933,7 @@
           <td class="p-3 text-[11px] text-slate-600">${safeEvents}</td>
           <td class="p-3 text-center">
             <a href="admitcard.html?id=${safeId}" target="_blank" class="inline-flex items-center gap-1 text-[#0D5C3A] hover:underline font-bold text-xs">
-              <i class="fa-solid fa-id-card"></i> View Card
+              <i class="fa-solid fa-id-card" aria-hidden="true"></i> View Card
             </a>
           </td>
         `;
@@ -936,6 +941,24 @@
       });
 
       modal.classList.remove('hidden');
+      const firstFocusable = modal.querySelector('button, a, input');
+      if (firstFocusable) firstFocusable.focus();
+      document.addEventListener('keydown', handleModalKeyDown);
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      modal.classList.add('hidden');
+      document.removeEventListener('keydown', handleModalKeyDown);
+      if (modalPreviousActiveElement && typeof modalPreviousActiveElement.focus === 'function') {
+        modalPreviousActiveElement.focus();
+      }
+    }
+
+    function handleModalKeyDown(e) {
+      if (e.key === 'Escape') {
+        closeSuccessModal();
+      }
     }
   </script>
 </body>
