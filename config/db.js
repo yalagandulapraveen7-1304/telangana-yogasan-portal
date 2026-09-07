@@ -19,8 +19,15 @@ const POOL_OPTIONS = {
 };
 
 async function connectDB() {
-  if (isConnected && mongoose.connection.readyState === 1) {
+  if (mongoose.connection.readyState === 1) {
+    isConnected = true;
     return mongoose.connection;
+  }
+
+  // Reset stale cache if disconnected or closed
+  if (mongoose.connection.readyState === 0) {
+    isConnected = false;
+    cachedPromise = null;
   }
 
   // Prevent connection thundering herd by reusing active connection promise
@@ -42,5 +49,15 @@ async function connectDB() {
 
   return cachedPromise;
 }
+
+// Reset cached state when connection is lost or explicitly disconnected
+mongoose.connection.on('disconnected', () => {
+  isConnected = false;
+  cachedPromise = null;
+});
+mongoose.connection.on('close', () => {
+  isConnected = false;
+  cachedPromise = null;
+});
 
 module.exports = { connectDB, POOL_OPTIONS };

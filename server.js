@@ -73,7 +73,7 @@ app.use(originGuard);
 
 app.get('/favicon.ico', (_req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
-  res.sendFile(path.join(__dirname, 'static/images/favicon.ico'));
+  res.sendFile('favicon.ico', { root: path.join(__dirname, 'static', 'images') });
 });
 
 // 3. Static Assets with aggressive caching headers (served without waiting on database)
