@@ -195,6 +195,29 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 16px rgba(197,160,89,.45);
 }
 
+/* ── Responsive Header & Navigation (Ensures Desktop Nav on Desktop >= 1024px) ── */
+@media (min-width: 1024px) {
+  #nav-toggle {
+    display: none !important;
+  }
+  #nav-menu {
+    display: none !important;
+  }
+  header nav[aria-label="Main Navigation"],
+  .site-nav-desktop {
+    display: flex !important;
+  }
+}
+@media (max-width: 1023.98px) {
+  #nav-toggle {
+    display: inline-flex !important;
+  }
+  header nav[aria-label="Main Navigation"],
+  .site-nav-desktop {
+    display: none !important;
+  }
+}
+
 /* ── Hero Banner ────────────────────────────────────────────── */
 .hero {
   background:

@@ -82,4 +82,27 @@ describe('E2E Tests: Public Homepage & Navigation Workflow', () => {
     // Technology disclosure suppression
     assert.equal(res.headers.get('x-powered-by'), null);
   });
+
+  it('guarantees responsive navigation classes and desktop visibility without burger menu', async () => {
+    const res = await fetch(`${baseUrl}/`);
+    assert.equal(res.status, 200);
+    const html = await res.text();
+
+    // Verify desktop navigation markup
+    assert.ok(html.includes('class="site-nav-desktop hidden lg:flex'), 'Desktop nav must have responsive lg:flex classes');
+    assert.ok(html.includes('id="nav-toggle"'), 'Mobile nav toggle button must exist');
+    assert.ok(html.includes('class="lg:hidden text-white'), 'Nav toggle button must have lg:hidden class');
+
+    // Verify compiled output CSS defines lg:hidden and lg:flex rules
+    const cssRes = await fetch(`${baseUrl}/static/css/output.css`);
+    const css = await cssRes.text();
+    assert.ok(css.includes('lg\\:hidden'), 'output.css must include lg:hidden utility class');
+    assert.ok(css.includes('lg\\:flex'), 'output.css must include lg:flex utility class');
+
+    // Verify custom.css has explicit media query fallback to hide nav-toggle on desktop >= 1024px
+    const customRes = await fetch(`${baseUrl}/static/css/custom.css`);
+    const customCss = await customRes.text();
+    assert.ok(customCss.includes('#nav-toggle{display:none!important}'), 'custom.css must explicitly hide nav-toggle on desktop');
+    assert.ok(customCss.includes('.site-nav-desktop{display:flex!important}'), 'custom.css must explicitly show desktop nav on desktop');
+  });
 });
