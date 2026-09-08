@@ -1,161 +1,478 @@
 {
-  "timestamp": "2026-09-07T13:56:38.146Z",
+  "timestamp": "2026-09-08T13:49:34.448Z",
   "tiers": [
     {
       "concurrency": 100,
-      "totalRequests": 303,
-      "rps": 50.6,
-      "throughputMBs": 14.38,
-      "avgLatency": 1807.54,
-      "p50": 1643.06,
-      "p95": 5222.86,
-      "p99": 5333.39,
-      "minLatency": 113.34,
-      "maxLatency": 5636.53,
-      "successfulCount": 292,
-      "failedCount": 11,
-      "rateLimitedCount": 11,
+      "totalRequests": 241,
+      "rps": 34.1,
+      "throughputMBs": 8.85,
+      "avgLatency": 2683.68,
+      "p50": 1839.05,
+      "p95": 6857.51,
+      "p99": 6875.51,
+      "minLatency": 238.83,
+      "maxLatency": 6880.33,
+      "successfulCount": 241,
+      "failedCount": 0,
+      "rateLimitedCount": 0,
       "serverErrorCount": 0,
       "networkErrors": 0,
-      "errorRate": 3.63,
-      "cpuPercent": 9,
+      "errorRate": 0,
+      "cpuPercent": 9.6,
       "rssMB": 131.5,
-      "heapUsedMB": 32,
+      "heapUsedMB": 29.4,
       "statusCounts": {
-        "200": 255,
-        "201": 37,
-        "429": 11
+        "200": 211,
+        "201": 30
+      },
+      "serverTelemetry": {
+        "eventLoop": {
+          "utilization": "99.08%",
+          "utilizationRaw": 0.9907935691782175,
+          "activeMs": "7040.7",
+          "idleMs": "65.4",
+          "lagMeanMs": "144.40",
+          "lagP50Ms": "53.35",
+          "lagP95Ms": "522.45",
+          "lagP99Ms": "674.23",
+          "lagMaxMs": "674.23"
+        },
+        "database": {
+          "activeConnections": 0,
+          "checkOutStarted": 0,
+          "checkOutCompleted": 0,
+          "checkOutFailed": 0,
+          "avgCheckoutWaitMs": "0.00",
+          "maxCheckoutWaitMs": "0.00",
+          "totalQueries": 0,
+          "avgQueryDurationMs": "0.00",
+          "slowQueriesCount": 0
+        },
+        "http": {
+          "totalRequests": 242,
+          "statusCodes": {
+            "200": 212,
+            "201": 30
+          },
+          "rateLimit429Count": 0,
+          "totalBytesSentMB": "62.53",
+          "staticAssetRequests": 64,
+          "staticAssetBytesMB": "58.16",
+          "topEndpoints": {
+            "POST /_telemetry/reset": 1,
+            "GET /portal/athletes/HYD-JR-999/public-card": 30,
+            "GET /": 57,
+            "GET /static/images/TSYSC.png": 35,
+            "GET /nominate": 23,
+            "GET /portal/athletes/list": 18,
+            "POST /auth/login": 19,
+            "POST /portal/athletes/nominate": 30,
+            "GET /static/images/Yoga%20Federation%20Rules%20%26%20Regulations.pdf": 29
+          }
+        },
+        "system": {
+          "cpuUserMs": "8000.0",
+          "cpuSystemMs": "1781.0",
+          "rssMB": "125.7",
+          "heapUsedMB": "29.0",
+          "heapTotalMB": "99.8"
+        }
       }
     },
     {
       "concurrency": 500,
-      "totalRequests": 1687,
-      "rps": 192.3,
-      "throughputMBs": 26.92,
-      "avgLatency": 1946.53,
-      "p50": 1418.26,
-      "p95": 6090.47,
-      "p99": 8259.47,
-      "minLatency": 280.39,
-      "maxLatency": 8442.8,
-      "successfulCount": 902,
-      "failedCount": 785,
-      "rateLimitedCount": 161,
+      "totalRequests": 1308,
+      "rps": 92,
+      "throughputMBs": 11.34,
+      "avgLatency": 3442.61,
+      "p50": 1226.3,
+      "p95": 11074.78,
+      "p99": 13307.26,
+      "minLatency": 254.29,
+      "maxLatency": 13658.24,
+      "successfulCount": 616,
+      "failedCount": 692,
+      "rateLimitedCount": 0,
       "serverErrorCount": 0,
-      "networkErrors": 624,
-      "errorRate": 46.53,
-      "cpuPercent": 12.6,
-      "rssMB": 219.5,
-      "heapUsedMB": 34.6,
+      "networkErrors": 692,
+      "errorRate": 52.91,
+      "cpuPercent": 10.6,
+      "rssMB": 180.4,
+      "heapUsedMB": 36.3,
       "statusCounts": {
-        "200": 879,
-        "201": 23,
-        "429": 161,
-        "ERR": 624
+        "200": 592,
+        "201": 24,
+        "ERR": 692
+      },
+      "serverTelemetry": {
+        "eventLoop": {
+          "utilization": "98.04%",
+          "utilizationRaw": 0.9803514665546256,
+          "activeMs": "13914.7",
+          "idleMs": "278.9",
+          "lagMeanMs": "177.47",
+          "lagP50Ms": "50.79",
+          "lagP95Ms": "724.57",
+          "lagP99Ms": "856.16",
+          "lagMaxMs": "943.72"
+        },
+        "database": {
+          "activeConnections": 1,
+          "checkOutStarted": 377,
+          "checkOutCompleted": 377,
+          "checkOutFailed": 0,
+          "avgCheckoutWaitMs": "2668.53",
+          "maxCheckoutWaitMs": "8066.00",
+          "totalQueries": 0,
+          "avgQueryDurationMs": "0.00",
+          "slowQueriesCount": 0
+        },
+        "http": {
+          "totalRequests": 684,
+          "statusCodes": {
+            "200": 617,
+            "201": 67
+          },
+          "rateLimit429Count": 0,
+          "totalBytesSentMB": "161.28",
+          "staticAssetRequests": 173,
+          "staticAssetBytesMB": "146.73",
+          "topEndpoints": {
+            "POST /_telemetry/reset": 1,
+            "GET /portal/athletes/HYD-JR-999/public-card": 72,
+            "GET /portal/athletes/list": 43,
+            "GET /static/images/TSYSC.png": 100,
+            "GET /nominate": 107,
+            "GET /": 177,
+            "POST /auth/login": 44,
+            "POST /portal/athletes/nominate": 67,
+            "GET /static/images/Yoga%20Federation%20Rules%20%26%20Regulations.pdf": 73
+          }
+        },
+        "system": {
+          "cpuUserMs": "23718.0",
+          "cpuSystemMs": "4359.0",
+          "rssMB": "180.4",
+          "heapUsedMB": "36.2",
+          "heapTotalMB": "174.0"
+        }
       }
     },
     {
       "concurrency": 1000,
-      "totalRequests": 3048,
-      "rps": 361.1,
-      "throughputMBs": 28.61,
-      "avgLatency": 1933.91,
-      "p50": 1083.92,
-      "p95": 5722.32,
-      "p99": 8102.57,
-      "minLatency": 477.02,
-      "maxLatency": 8380.88,
+      "totalRequests": 2006,
+      "rps": 148.5,
+      "throughputMBs": 13.67,
+      "avgLatency": 3779.25,
+      "p50": 1661.9,
+      "p95": 11134.31,
+      "p99": 13348.07,
+      "minLatency": 684.46,
+      "maxLatency": 13400.38,
       "successfulCount": 650,
-      "failedCount": 2398,
-      "rateLimitedCount": 339,
+      "failedCount": 1356,
+      "rateLimitedCount": 0,
       "serverErrorCount": 0,
-      "networkErrors": 2059,
-      "errorRate": 78.67,
-      "cpuPercent": 12.2,
-      "rssMB": 231.9,
-      "heapUsedMB": 34.7,
+      "networkErrors": 1356,
+      "errorRate": 67.6,
+      "cpuPercent": 10.2,
+      "rssMB": 221.5,
+      "heapUsedMB": 35.2,
       "statusCounts": {
-        "200": 650,
-        "429": 339,
-        "ERR": 2059
+        "200": 642,
+        "201": 8,
+        "ERR": 1356
+      },
+      "serverTelemetry": {
+        "eventLoop": {
+          "utilization": "100.00%",
+          "utilizationRaw": 1,
+          "activeMs": "13501.1",
+          "idleMs": "0.0",
+          "lagMeanMs": "221.74",
+          "lagP50Ms": "101.38",
+          "lagP95Ms": "892.34",
+          "lagP99Ms": "1215.30",
+          "lagMaxMs": "1277.17"
+        },
+        "database": {
+          "activeConnections": 0,
+          "checkOutStarted": 470,
+          "checkOutCompleted": 468,
+          "checkOutFailed": 0,
+          "avgCheckoutWaitMs": "3054.87",
+          "maxCheckoutWaitMs": "8272.00",
+          "totalQueries": 0,
+          "avgQueryDurationMs": "0.00",
+          "slowQueriesCount": 0
+        },
+        "http": {
+          "totalRequests": 789,
+          "statusCodes": {
+            "200": 711,
+            "201": 78
+          },
+          "rateLimit429Count": 0,
+          "totalBytesSentMB": "184.98",
+          "staticAssetRequests": 203,
+          "staticAssetBytesMB": "168.95",
+          "topEndpoints": {
+            "POST /_telemetry/reset": 1,
+            "GET /portal/athletes/HYD-JR-999/public-card": 82,
+            "GET /static/images/TSYSC.png": 119,
+            "GET /": 194,
+            "GET /nominate": 116,
+            "GET /portal/athletes/list": 65,
+            "POST /auth/login": 50,
+            "POST /portal/athletes/nominate": 78,
+            "GET /static/images/Yoga%20Federation%20Rules%20%26%20Regulations.pdf": 84
+          }
+        },
+        "system": {
+          "cpuUserMs": "37984.0",
+          "cpuSystemMs": "6656.0",
+          "rssMB": "221.4",
+          "heapUsedMB": "35.0",
+          "heapTotalMB": "174.8"
+        }
       }
     },
     {
       "concurrency": 2500,
-      "totalRequests": 3696,
-      "rps": 490.4,
-      "throughputMBs": 17.39,
-      "avgLatency": 3694.73,
-      "p50": 3705.93,
-      "p95": 6252.35,
-      "p99": 7419.8,
-      "minLatency": 684.43,
-      "maxLatency": 7467.33,
-      "successfulCount": 441,
-      "failedCount": 3255,
-      "rateLimitedCount": 215,
+      "totalRequests": 4211,
+      "rps": 244.7,
+      "throughputMBs": 9.08,
+      "avgLatency": 4203.88,
+      "p50": 2857.92,
+      "p95": 12102.32,
+      "p99": 17109.94,
+      "minLatency": 1324.17,
+      "maxLatency": 17140.74,
+      "successfulCount": 512,
+      "failedCount": 3699,
+      "rateLimitedCount": 0,
       "serverErrorCount": 0,
-      "networkErrors": 3040,
-      "errorRate": 88.07,
-      "cpuPercent": 10.6,
-      "rssMB": 310.4,
+      "networkErrors": 3699,
+      "errorRate": 87.84,
+      "cpuPercent": 9,
+      "rssMB": 278.1,
       "heapUsedMB": 35,
       "statusCounts": {
-        "200": 441,
-        "429": 215,
-        "ERR": 3040
+        "200": 512,
+        "ERR": 3699
+      },
+      "serverTelemetry": {
+        "eventLoop": {
+          "utilization": "100.00%",
+          "utilizationRaw": 1,
+          "activeMs": "17200.1",
+          "idleMs": "0.0",
+          "lagMeanMs": "219.82",
+          "lagP50Ms": "79.17",
+          "lagP95Ms": "1194.33",
+          "lagP99Ms": "1835.01",
+          "lagMaxMs": "1913.65"
+        },
+        "database": {
+          "activeConnections": 0,
+          "checkOutStarted": 532,
+          "checkOutCompleted": 528,
+          "checkOutFailed": 2,
+          "avgCheckoutWaitMs": "4075.47",
+          "maxCheckoutWaitMs": "8952.00",
+          "totalQueries": 0,
+          "avgQueryDurationMs": "0.00",
+          "slowQueriesCount": 0
+        },
+        "http": {
+          "totalRequests": 775,
+          "statusCodes": {
+            "200": 685,
+            "201": 88,
+            "500": 2
+          },
+          "rateLimit429Count": 0,
+          "totalBytesSentMB": "158.18",
+          "staticAssetRequests": 224,
+          "staticAssetBytesMB": "143.35",
+          "topEndpoints": {
+            "POST /_telemetry/reset": 1,
+            "GET /portal/athletes/HYD-JR-999/public-card": 72,
+            "GET /static/images/TSYSC.png": 121,
+            "GET /": 176,
+            "GET /nominate": 113,
+            "GET /portal/athletes/list": 65,
+            "POST /portal/athletes/nominate": 89,
+            "POST /auth/login": 67,
+            "GET /static/images/Yoga%20Federation%20Rules%20%26%20Regulations.pdf": 71
+          }
+        },
+        "system": {
+          "cpuUserMs": "53484.0",
+          "cpuSystemMs": "9687.0",
+          "rssMB": "279.7",
+          "heapUsedMB": "34.8",
+          "heapTotalMB": "176.8"
+        }
       }
     },
     {
       "concurrency": 5000,
-      "totalRequests": 5618,
-      "rps": 619,
-      "throughputMBs": 19.3,
-      "avgLatency": 5343.89,
-      "p50": 5698.93,
-      "p95": 7201.53,
-      "p99": 8937.8,
-      "minLatency": 1885.53,
-      "maxLatency": 9030.09,
-      "successfulCount": 475,
-      "failedCount": 5143,
-      "rateLimitedCount": 248,
+      "totalRequests": 7070,
+      "rps": 482.2,
+      "throughputMBs": 2.15,
+      "avgLatency": 4956.03,
+      "p50": 4605.39,
+      "p95": 10700.32,
+      "p99": 12912.83,
+      "minLatency": 2473.93,
+      "maxLatency": 14594.89,
+      "successfulCount": 167,
+      "failedCount": 6903,
+      "rateLimitedCount": 0,
       "serverErrorCount": 0,
-      "networkErrors": 4895,
-      "errorRate": 91.55,
-      "cpuPercent": 10.9,
-      "rssMB": 303.9,
-      "heapUsedMB": 36.8,
+      "networkErrors": 6903,
+      "errorRate": 97.64,
+      "cpuPercent": 8.9,
+      "rssMB": 334.4,
+      "heapUsedMB": 34.5,
       "statusCounts": {
-        "200": 475,
-        "429": 248,
-        "ERR": 4895
+        "200": 167,
+        "ERR": 6903
+      },
+      "serverTelemetry": {
+        "eventLoop": {
+          "utilization": "99.99%",
+          "utilizationRaw": 0.9998851436525721,
+          "activeMs": "14650.5",
+          "idleMs": "1.7",
+          "lagMeanMs": "138.73",
+          "lagP50Ms": "28.48",
+          "lagP95Ms": "614.47",
+          "lagP99Ms": "1857.03",
+          "lagMaxMs": "1859.13"
+        },
+        "database": {
+          "activeConnections": 1,
+          "checkOutStarted": 385,
+          "checkOutCompleted": 382,
+          "checkOutFailed": 2,
+          "avgCheckoutWaitMs": "2166.42",
+          "maxCheckoutWaitMs": "6646.00",
+          "totalQueries": 0,
+          "avgQueryDurationMs": "0.00",
+          "slowQueriesCount": 0
+        },
+        "http": {
+          "totalRequests": 627,
+          "statusCodes": {
+            "200": 561,
+            "201": 64,
+            "500": 2
+          },
+          "rateLimit429Count": 0,
+          "totalBytesSentMB": "45.33",
+          "staticAssetRequests": 180,
+          "staticAssetBytesMB": "30.08",
+          "topEndpoints": {
+            "POST /_telemetry/reset": 1,
+            "GET /portal/athletes/HYD-JR-999/public-card": 72,
+            "GET /nominate": 100,
+            "GET /": 191,
+            "GET /static/images/TSYSC.png": 92,
+            "GET /portal/athletes/list": 48,
+            "POST /auth/login": 44,
+            "POST /portal/athletes/nominate": 65,
+            "GET /static/images/Yoga%20Federation%20Rules%20%26%20Regulations.pdf": 14
+          }
+        },
+        "system": {
+          "cpuUserMs": "65625.0",
+          "cpuSystemMs": "13203.0",
+          "rssMB": "334.4",
+          "heapUsedMB": "34.4",
+          "heapTotalMB": "171.0"
+        }
       }
     },
     {
       "concurrency": 10000,
-      "totalRequests": 10455,
-      "rps": 528.9,
-      "throughputMBs": 0.78,
-      "avgLatency": 13146.26,
-      "p50": 14251.82,
-      "p95": 18281.99,
-      "p99": 18450.95,
-      "minLatency": 4017.67,
-      "maxLatency": 19047.88,
-      "successfulCount": 43,
-      "failedCount": 10412,
-      "rateLimitedCount": 21,
+      "totalRequests": 11872,
+      "rps": 654.3,
+      "throughputMBs": 1.3,
+      "avgLatency": 9278.06,
+      "p50": 10694.25,
+      "p95": 12866.14,
+      "p99": 14054.02,
+      "minLatency": 2843.89,
+      "maxLatency": 17486.3,
+      "successfulCount": 86,
+      "failedCount": 11786,
+      "rateLimitedCount": 0,
       "serverErrorCount": 0,
-      "networkErrors": 10391,
-      "errorRate": 99.59,
-      "cpuPercent": 8.7,
-      "rssMB": 372.8,
-      "heapUsedMB": 149.8,
+      "networkErrors": 11786,
+      "errorRate": 99.28,
+      "cpuPercent": 8.8,
+      "rssMB": 390.3,
+      "heapUsedMB": 34.7,
       "statusCounts": {
-        "200": 43,
-        "429": 21,
-        "ERR": 10391
+        "200": 79,
+        "201": 7,
+        "ERR": 11786
+      },
+      "serverTelemetry": {
+        "eventLoop": {
+          "utilization": "100.00%",
+          "utilizationRaw": 1,
+          "activeMs": "18143.5",
+          "idleMs": "0.0",
+          "lagMeanMs": "127.05",
+          "lagP50Ms": "126.03",
+          "lagP95Ms": "351.27",
+          "lagP99Ms": "625.48",
+          "lagMaxMs": "2108.69"
+        },
+        "database": {
+          "activeConnections": 0,
+          "checkOutStarted": 253,
+          "checkOutCompleted": 251,
+          "checkOutFailed": 2,
+          "avgCheckoutWaitMs": "480.67",
+          "maxCheckoutWaitMs": "5583.00",
+          "totalQueries": 0,
+          "avgQueryDurationMs": "0.00",
+          "slowQueriesCount": 0
+        },
+        "http": {
+          "totalRequests": 201,
+          "statusCodes": {
+            "200": 158,
+            "201": 41,
+            "500": 2
+          },
+          "rateLimit429Count": 0,
+          "totalBytesSentMB": "23.83",
+          "staticAssetRequests": 135,
+          "staticAssetBytesMB": "22.00",
+          "topEndpoints": {
+            "POST /_telemetry/reset": 1,
+            "GET /portal/athletes/HYD-JR-999/public-card": 42,
+            "POST /portal/athletes/nominate": 42,
+            "POST /auth/login": 37,
+            "GET /portal/athletes/list": 28,
+            "GET /": 22,
+            "GET /static/images/TSYSC.png": 11,
+            "GET /nominate": 7,
+            "GET /static/images/Yoga%20Federation%20Rules%20%26%20Regulations.pdf": 11
+          }
+        },
+        "system": {
+          "cpuUserMs": "78187.0",
+          "cpuSystemMs": "19734.0",
+          "rssMB": "390.3",
+          "heapUsedMB": "34.6",
+          "heapTotalMB": "171.3"
+        }
       }
     }
   ]

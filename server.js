@@ -10,7 +10,7 @@ const compression = require('compression');
 
 const { PORT, IS_PROD } = require('./config/constants');
 const { connectDB } = require('./config/db');
-const { requireAuth, apiLimiter } = require('./middleware/auth');
+const { requireAuth, apiLimiter, publicReadLimiter } = require('./middleware/auth');
 const { noSqlSanitizer, originGuard } = require('./middleware/sanitize');
 const { resolveFilePath, fileExists } = require('./services/storage');
 const { router: authRoutes } = require('./routes/auth');
@@ -22,8 +22,23 @@ validateEnv();
 
 const app = express();
 
+// Trust reverse proxy (Nginx, Vercel, Cloudflare) for accurate client IP rate limiting
+app.set('trust proxy', 1);
+
+const { telemetryMiddleware, getTelemetrySnapshot, resetTelemetry } = require('./utils/telemetry');
+
 // Disable technology disclosure headers
 app.disable('x-powered-by');
+
+// Diagnostic & Performance Telemetry
+app.use(telemetryMiddleware);
+app.get('/_telemetry', (_req, res) => {
+  res.json(getTelemetrySnapshot());
+});
+app.post('/_telemetry/reset', (_req, res) => {
+  resetTelemetry();
+  res.json({ success: true, message: 'Telemetry reset' });
+});
 
 // 1. Security & Core Middleware
 app.use(
@@ -59,8 +74,22 @@ app.use((_req, res, next) => {
   next();
 });
 
-// 2. HTTP Compression (Gzip/Deflate)
-app.use(compression({ threshold: 1024 }));
+// 2. HTTP Compression (Gzip/Deflate) - Filtered to prevent CPU saturation on pre-compressed binaries
+app.use(
+  compression({
+    threshold: 1024,
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) {
+        return false;
+      }
+      const rawPath = (req.path || '').toLowerCase();
+      if (rawPath.endsWith('.pdf') || rawPath.endsWith('.gz') || rawPath.endsWith('.zip') || rawPath.endsWith('.webp')) {
+        return false;
+      }
+      return compression.filter(req, res);
+    }
+  })
+);
 
 // Request body limits to prevent Denial of Service
 app.use(express.json({ limit: '2mb' }));
@@ -129,7 +158,17 @@ app.use(async (req, _res, next) => {
 
 // 4. API Routes
 app.use('/auth', apiLimiter, authRoutes);
-app.use('/portal/athletes', apiLimiter, nominateRoutes);
+app.use(
+  '/portal/athletes',
+  (req, res, next) => {
+    // Dedicated higher read limit for public admit card lookups
+    if (req.path.endsWith('/public-card')) {
+      return publicReadLimiter(req, res, next);
+    }
+    return apiLimiter(req, res, next);
+  },
+  nominateRoutes
+);
 
 // 5. Template Directory Setup & Page Routing
 const templateDir = path.join(__dirname, 'templates');
@@ -204,18 +243,22 @@ if (require.main === module && !process.env.VERCEL) {
       const hasSslCerts = fs.existsSync('localhost+2-key.pem') && fs.existsSync('localhost+2.pem');
 
       if (IS_PROD || !hasSslCerts) {
-        app.listen(PORT, () => {
+        const srv = app.listen(PORT, 2048, () => {
           console.log(`Production server running on port ${PORT}`);
         });
+        srv.keepAliveTimeout = 65000;
+        srv.headersTimeout = 66000;
       } else {
         const sslOptions = {
           key: fs.readFileSync('localhost+2-key.pem'),
           cert: fs.readFileSync('localhost+2.pem')
         };
 
-        https.createServer(sslOptions, app).listen(PORT, () => {
+        const srv = https.createServer(sslOptions, app).listen(PORT, 2048, () => {
           console.log(`Local secure server running at https://localhost:${PORT}`);
         });
+        srv.keepAliveTimeout = 65000;
+        srv.headersTimeout = 66000;
       }
     })
     .catch((err) => {

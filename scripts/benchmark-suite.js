@@ -276,6 +276,21 @@ function makeRequest(op) {
   });
 }
 
+async function getTelemetry() {
+  try {
+    const res = await fetch(`http://127.0.0.1:${serverPort}/_telemetry`);
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+async function resetServerTelemetry() {
+  try {
+    await fetch(`http://127.0.0.1:${serverPort}/_telemetry/reset`, { method: 'POST' });
+  } catch {}
+}
+
 /**
  * Runs a progressive load-test tier with C concurrent workers for durationSeconds.
  */
@@ -283,6 +298,8 @@ async function runTier(concurrency, durationSeconds = 6) {
   console.log(`\n===============================================================`);
   console.log(`>>> EXECUTING TIER: ${concurrency.toLocaleString()} CONCURRENT USERS (${durationSeconds}s duration) <<<`);
   console.log(`===============================================================`);
+
+  await resetServerTelemetry();
 
   const results = [];
   const statusCounts = {};
@@ -327,6 +344,8 @@ async function runTier(concurrency, durationSeconds = 6) {
   }
 
   await Promise.all(workers);
+
+  const serverTelemetry = await getTelemetry();
 
   const totalTimeSec = (Date.now() - benchmarkStart) / 1000;
   const finalCpu = process.cpuUsage(initialCpu);
@@ -378,6 +397,13 @@ async function runTier(concurrency, durationSeconds = 6) {
   console.log(`CPU Utilization (Process): ${cpuPercent}% of ${os.cpus().length} logical cores`);
   console.log(`Memory Usage             : RSS: ${rssMB} MB | Heap: ${heapUsedMB} MB`);
   console.log(`Database Pool State      : ${dbStatus} (Pool Bounds: ${POOL_OPTIONS.minPoolSize}-${POOL_OPTIONS.maxPoolSize})`);
+  if (serverTelemetry) {
+    console.log(`Event Loop Utilization   : ${serverTelemetry.eventLoop?.utilization || 'N/A'}`);
+    console.log(`Event Loop Lag p50/p95/max: ${serverTelemetry.eventLoop?.lagP50Ms}ms / ${serverTelemetry.eventLoop?.lagP95Ms}ms / ${serverTelemetry.eventLoop?.lagMaxMs}ms (Mean: ${serverTelemetry.eventLoop?.lagMeanMs}ms)`);
+    console.log(`DB Pool Wait Avg / Max   : ${serverTelemetry.database?.avgCheckoutWaitMs}ms / ${serverTelemetry.database?.maxCheckoutWaitMs}ms (Active: ${serverTelemetry.database?.activeConnections}, Completed: ${serverTelemetry.database?.checkOutCompleted}, Failed: ${serverTelemetry.database?.checkOutFailed})`);
+    console.log(`DB Query Latency (Avg)   : ${serverTelemetry.database?.avgQueryDurationMs}ms (${serverTelemetry.database?.totalQueries} queries, ${serverTelemetry.database?.slowQueriesCount} slow)`);
+    console.log(`Static Asset Traffic     : ${serverTelemetry.http?.staticAssetRequests} reqs (${serverTelemetry.http?.staticAssetBytesMB} MB)`);
+  }
 
   return {
     concurrency,
@@ -399,7 +425,8 @@ async function runTier(concurrency, durationSeconds = 6) {
     cpuPercent: parseFloat(cpuPercent),
     rssMB: parseFloat(rssMB),
     heapUsedMB: parseFloat(heapUsedMB),
-    statusCounts
+    statusCounts,
+    serverTelemetry
   };
 }
 
@@ -416,13 +443,15 @@ async function main() {
     await setupFixtures();
     console.log('Database fixtures and authorization tokens primed.');
 
-    // Start local server on ephemeral port
+    // Start local server on ephemeral port with high-capacity backlog
     await new Promise((resolve) => {
-      server = app.listen(0, '127.0.0.1', () => {
+      server = app.listen(0, '127.0.0.1', 2048, () => {
         serverPort = server.address().port;
         console.log(`Server listening on benchmark port http://127.0.0.1:${serverPort}`);
         resolve();
       });
+      server.keepAliveTimeout = 65000;
+      server.headersTimeout = 66000;
     });
 
     const tierReports = [];
@@ -441,17 +470,20 @@ async function main() {
     console.log('===============================================================');
     console.table(
       tierReports.map((t) => ({
-        'Concurrent Users': t.concurrency.toLocaleString(),
+        'Users': t.concurrency.toLocaleString(),
         'RPS': t.rps.toFixed(1),
         'Avg (ms)': t.avgLatency,
         'p50 (ms)': t.p50,
         'p95 (ms)': t.p95,
         'p99 (ms)': t.p99,
-        'Err Rate': `${t.errorRate}%`,
-        'HTTP 429': t.rateLimitedCount,
+        'Err %': `${t.errorRate}%`,
+        '429s': t.rateLimitedCount,
         'Socket Err': t.networkErrors,
-        'CPU %': `${t.cpuPercent}%`,
-        'Heap (MB)': t.heapUsedMB
+        'ELU': t.serverTelemetry?.eventLoop?.utilization || 'N/A',
+        'Lag p95': `${t.serverTelemetry?.eventLoop?.lagP95Ms || 0}ms`,
+        'DB Wait': `${t.serverTelemetry?.database?.avgCheckoutWaitMs || 0}ms`,
+        'DB Q (ms)': `${t.serverTelemetry?.database?.avgQueryDurationMs || 0}ms`,
+        'Static MB': t.serverTelemetry?.http?.staticAssetBytesMB || 0
       }))
     );
 

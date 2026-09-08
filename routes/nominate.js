@@ -46,6 +46,57 @@ function validateDistrict(dist) {
   return norm || 'Hyderabad';
 }
 
+/**
+ * Resolves an index-friendly district query filter.
+ * Uses exact $in with normalized district names to hit the { district: 1, ... } compound index,
+ * falling back to escaped regex only if unnormalized.
+ */
+function buildDistrictFilter(districtStr) {
+  if (!districtStr || typeof districtStr !== 'string') {
+    return '__UNAUTHORIZED_NO_DISTRICT__';
+  }
+  const norm = normalizeDistrict(districtStr);
+  if (norm) {
+    return { $in: [norm, `${norm} District`] };
+  }
+  const sanitized = escapeRegex(sanitizeDistrictName(districtStr));
+  return { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
+}
+
+// Bounded in-memory LRU/TTL cache for public admit cards
+const ADMIT_CARD_CACHE_MAX = 2000;
+const ADMIT_CARD_CACHE_TTL_MS = 60 * 1000; // 60 seconds
+const admitCardCache = new Map();
+
+function getCachedAdmitCard(key) {
+  if (!key) return null;
+  const entry = admitCardCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    admitCardCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCachedAdmitCard(key, data, extraKey = null) {
+  if (!key) return;
+  if (admitCardCache.size >= ADMIT_CARD_CACHE_MAX) {
+    const oldestKey = admitCardCache.keys().next().value;
+    if (oldestKey) admitCardCache.delete(oldestKey);
+  }
+  const entry = { data, expiresAt: Date.now() + ADMIT_CARD_CACHE_TTL_MS };
+  admitCardCache.set(key, entry);
+  if (extraKey && extraKey !== key) {
+    admitCardCache.set(extraKey, entry);
+  }
+}
+
+function evictCachedAdmitCard(key, extraKey = null) {
+  if (key) admitCardCache.delete(key);
+  if (extraKey) admitCardCache.delete(extraKey);
+}
+
 // ==========================================
 // 1. GET /portal/athletes/list
 // ==========================================
@@ -92,35 +143,33 @@ router.get('/list', requireAuth, async (req, res) => {
 
     // District-level isolation: Secretaries cannot see other districts
     if (role !== 'SUPER_ADMIN' && userDistrict !== 'ALL_DISTRICTS' && userDistrict !== 'ALL') {
-      if (!req.user.district || typeof req.user.district !== 'string') {
-        filter.district = '__UNAUTHORIZED_NO_DISTRICT__';
-      } else {
-        const sanitized = escapeRegex(sanitizeDistrictName(req.user.district));
-        filter.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
-      }
+      filter.district = buildDistrictFilter(req.user.district);
     } else if (role === 'SUPER_ADMIN' && req.query.district) {
       const qDist = String(req.query.district).trim();
       if (qDist.toUpperCase() !== 'ALL') {
         if (!isValidDistrict(qDist)) {
           return res.status(400).json({ success: false, error: 'Invalid district query filter.' });
         }
-        const sanitized = escapeRegex(sanitizeDistrictName(qDist));
-        filter.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
+        filter.district = buildDistrictFilter(qDist);
       }
     }
 
     // High-performance lean projection: omits heavy paymentDetails, residentialAddress, and raw certs
     const LIST_PROJECTION = 'firstName lastName dob gender category district chestNumber events status institutionName guardianName createdAt aadhaarLast4 photoPath';
 
-    // Execute query and total count in parallel (leverages compound index)
-    const [athletes, totalCount] = await Promise.all([
-      Athlete.find(filter, LIST_PROJECTION)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Athlete.countDocuments(filter)
-    ]);
+    // Execute query first; if page 1 has fewer items than limit, totalCount is known without a second countDocuments round-trip
+    const athletes = await Athlete.find(filter, LIST_PROJECTION)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    let totalCount;
+    if (page === 1 && athletes.length < limit) {
+      totalCount = athletes.length;
+    } else {
+      totalCount = await Athlete.countDocuments(filter);
+    }
 
     const totalPages = Math.ceil(totalCount / limit) || 1;
     res.set('X-Total-Count', String(totalCount));
@@ -150,6 +199,15 @@ router.get('/:id/public-card', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid athlete identifier format.' });
     }
 
+    // Check bounded in-memory cache first
+    const cacheKey = id.toUpperCase();
+    const cachedAthlete = getCachedAdmitCard(cacheKey);
+    if (cachedAthlete) {
+      res.setHeader('X-Cache', 'HIT');
+      res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
+      return res.json(cachedAthlete);
+    }
+
     let athlete;
     const publicFields = 'firstName lastName dob gender category district chestNumber events status guardianName institutionName aadhaarLast4 photoPath';
 
@@ -165,6 +223,13 @@ router.get('/:id/public-card', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Athlete record not found' });
     }
 
+    // Populate cache under requested key and secondary alias (Chest Number or ObjectId)
+    const docId = athlete._id ? athlete._id.toString().toUpperCase() : null;
+    const chestNum = athlete.chestNumber ? athlete.chestNumber.toUpperCase() : null;
+    setCachedAdmitCard(cacheKey, athlete, cacheKey === chestNum ? docId : chestNum);
+
+    res.setHeader('X-Cache', 'MISS');
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
     return res.json(athlete);
   } catch (err) {
     console.error('Error fetching public admit card:', err.message);
@@ -187,12 +252,7 @@ router.get('/:id', requireAuth, async (req, res) => {
     const userDistrict = (req.user.district || '').toUpperCase().trim();
 
     if (role !== 'SUPER_ADMIN' && userDistrict !== 'ALL_DISTRICTS' && userDistrict !== 'ALL') {
-      if (!req.user.district || typeof req.user.district !== 'string') {
-        query.district = '__UNAUTHORIZED_NO_DISTRICT__';
-      } else {
-        const sanitized = escapeRegex(sanitizeDistrictName(req.user.district));
-        query.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
-      }
+      query.district = buildDistrictFilter(req.user.district);
     }
 
     const athlete = await Athlete.findOne(query).lean();
@@ -688,12 +748,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
 
     // STRICT DISTRICT ISOLATION: Secretaries cannot update athletes from another district
     if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
-      if (!req.user.district || typeof req.user.district !== 'string') {
-        query.district = '__UNAUTHORIZED_NO_DISTRICT__';
-      } else {
-        const sanitized = escapeRegex(sanitizeDistrictName(req.user.district));
-        query.district = { $regex: new RegExp(`^${sanitized}(\\s+District)?$`, 'i') };
-      }
+      query.district = buildDistrictFilter(req.user.district);
     }
 
     const updated = await Athlete.findOneAndUpdate(
@@ -706,11 +761,16 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Athlete not found or unauthorized for your district.' });
     }
 
+    // Invalidate cached admit card upon status or remark mutation
+    evictCachedAdmitCard(id.toUpperCase(), updated.chestNumber ? updated.chestNumber.toUpperCase() : null);
+
     return res.json(updated);
   } catch (err) {
     console.error('Status update error:', err.message);
     return res.status(500).json({ success: false, error: 'Failed to update status' });
   }
 });
+
+router._cache = { admitCardCache, getCachedAdmitCard, setCachedAdmitCard, evictCachedAdmitCard };
 
 module.exports = router;

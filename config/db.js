@@ -10,12 +10,13 @@ let isConnected = false;
 let cachedPromise = null;
 
 const POOL_OPTIONS = {
-  maxPoolSize: 20,              // Cap concurrent sockets to prevent Atlas connection exhaustion
-  minPoolSize: 5,               // Maintain warm connections for instant response
-  serverSelectionTimeoutMS: 5000,// Fail-fast if database cluster is unreachable
-  socketTimeoutMS: 45000,       // Prune idle/stale sockets
-  connectTimeoutMS: 10000,      // Connection establishment deadline
-  family: 4                     // Prioritize IPv4 for faster DNS lookup
+  maxPoolSize: parseInt(process.env.DB_MAX_POOL_SIZE, 10) || 50, // Scaled pool capacity based on measured checkout wait time
+  minPoolSize: parseInt(process.env.DB_MIN_POOL_SIZE, 10) || 10, // Maintain warm sockets to avoid connection establishment spikes
+  serverSelectionTimeoutMS: 5000,                               // Fail-fast if database cluster is unreachable
+  socketTimeoutMS: 45000,                                       // Prune idle/stale sockets
+  connectTimeoutMS: 10000,                                      // Connection establishment deadline
+  waitQueueTimeoutMS: 10000,                                    // Max wait time to acquire connection from pool before erroring
+  family: 4                                                     // Prioritize IPv4 for faster DNS lookup
 };
 
 async function connectDB() {

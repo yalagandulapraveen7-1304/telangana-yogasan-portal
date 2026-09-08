@@ -10,7 +10,7 @@ const { JWT_SECRET } = require('../config/constants');
 // Rate limiter for authentication attempts (brute-force defense)
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15-minute window
-  max: 10,
+  max: parseInt(process.env.RATE_LIMIT_LOGIN_MAX, 10) || 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'Too many login attempts from this IP. Please try again after 15 minutes.' }
@@ -19,16 +19,25 @@ const loginLimiter = rateLimit({
 // General rate limiter for API endpoints
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 500,
+  max: parseInt(process.env.RATE_LIMIT_API_MAX, 10) || 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'Too many requests from this IP, please try again later.' }
 });
 
+// Rate limiter for public read operations (e.g. admit card lookups, QR code validation)
+const publicReadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_PUBLIC_READ_MAX, 10) || 2000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: 'Too many admit card requests from this IP, please try again later.' }
+});
+
 // Rate limiter for nomination submissions
 const nominationLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 60,
+  max: parseInt(process.env.RATE_LIMIT_NOMINATION_MAX, 10) || 60,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, error: 'Too many nomination requests. Please try again after 15 minutes.' }
@@ -120,5 +129,6 @@ module.exports = {
   requireRole,
   loginLimiter,
   apiLimiter,
+  publicReadLimiter,
   nominationLimiter
 };

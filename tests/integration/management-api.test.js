@@ -139,11 +139,25 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
       const res = await fetch(`${baseUrl}/portal/athletes/HYD-JR-71/public-card`);
 
       assert.equal(res.status, 200);
+      assert.ok(res.headers.get('cache-control')?.includes('public'));
       const card = await res.json();
       assert.equal(card.firstName, 'ManageOne');
       assert.equal(card.chestNumber, 'HYD-JR-71');
       // Public projection must omit residentialAddress
       assert.equal(card.residentialAddress, undefined);
+    });
+
+    it('serves subsequent public card requests from in-memory cache with X-Cache: HIT', async () => {
+      // First request primes the cache (MISS)
+      const res1 = await fetch(`${baseUrl}/portal/athletes/HYD-JR-72/public-card`);
+      assert.equal(res1.status, 200);
+
+      // Second request must be served from cache (HIT)
+      const res2 = await fetch(`${baseUrl}/portal/athletes/HYD-JR-72/public-card`);
+      assert.equal(res2.status, 200);
+      assert.equal(res2.headers.get('x-cache'), 'HIT');
+      const card = await res2.json();
+      assert.equal(card.chestNumber, 'HYD-JR-72');
     });
 
     it('returns 404 for non-existent athlete ID or chest number', async () => {
@@ -175,6 +189,13 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
       const updated = await Athlete.findById(testAthlete1._id).lean();
       assert.equal(updated.status, 'Clarification');
       assert.equal(updated.remarks, 'Original DOB certificate needs clearer scan');
+
+      // Verify cache invalidation: fetch public card again; must return updated status and X-Cache: MISS
+      const resCard = await fetch(`${baseUrl}/portal/athletes/${testAthlete1.chestNumber}/public-card`);
+      assert.equal(resCard.status, 200);
+      assert.equal(resCard.headers.get('x-cache'), 'MISS');
+      const cardData = await resCard.json();
+      assert.equal(cardData.status, 'Clarification');
     });
 
     it('rejects invalid status or unexpected fields', async () => {
