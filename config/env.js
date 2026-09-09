@@ -22,16 +22,17 @@ function validateEnv() {
   }
 
   // JWT Secret validation
-  if (IS_PROD) {
-    if (!process.env.JWT_SECRET || JWT_SECRET === 'tya_secure_jwt_secret_key_2026') {
-      warnings.push('Default or placeholder JWT_SECRET in use in production! Set a custom JWT_SECRET.');
-    }
+  if (!JWT_SECRET || JWT_SECRET.length < 32) {
+    errors.push('JWT_SECRET must be configured with at least 32 characters.');
   }
 
   // Razorpay keys validation
   if (IS_PROD) {
-    if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.startsWith('rzp_test')) {
-      warnings.push('Razorpay is running in test/placeholder mode in production.');
+    if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
+      errors.push('RAZORPAY_KEY_ID must be set to a valid live key in production.');
+    }
+    if (!process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET.includes('YOUR_SECRET')) {
+      errors.push('RAZORPAY_KEY_SECRET must be set to a valid secret in production.');
     }
   }
 

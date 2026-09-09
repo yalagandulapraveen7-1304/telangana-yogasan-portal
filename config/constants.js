@@ -3,17 +3,40 @@
  * Centralized settings for environment variables, defaults, and business rules.
  */
 
+require('dotenv').config();
+
 const PORT = parseInt(process.env.PORT, 10) || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/telangana_yoga';
-const JWT_SECRET = process.env.JWT_SECRET || 'tya_secure_jwt_secret_key_2026';
 const IS_PROD = process.env.NODE_ENV === 'production';
+
+// JWT Secret Validation & Fail-Fast Enforcement
+const rawJwtSecret = process.env.JWT_SECRET;
+if (!rawJwtSecret) {
+  throw new Error('FATAL: JWT_SECRET environment variable is required and not set');
+}
+if (typeof rawJwtSecret !== 'string' || rawJwtSecret.trim().length < 32) {
+  throw new Error('FATAL: JWT_SECRET must be at least 32 characters long to ensure adequate entropy');
+}
+const JWT_SECRET = rawJwtSecret.trim();
 
 // Championship Business Rules
 const FEE_PER_EVENT = 260; // ₹260 per event registration
 
-// Razorpay Credentials
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_test_YOUR_KEY';
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'YOUR_SECRET';
+// Razorpay Credentials & Production Fail-Fast Audit
+const rawRazorpayKeyId = process.env.RAZORPAY_KEY_ID;
+const rawRazorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
+
+if (IS_PROD) {
+  if (!rawRazorpayKeyId || rawRazorpayKeyId === 'rzp_test_YOUR_KEY' || rawRazorpayKeyId.includes('YOUR_KEY')) {
+    throw new Error('FATAL: RAZORPAY_KEY_ID environment variable is required in production and cannot use placeholder values');
+  }
+  if (!rawRazorpayKeySecret || rawRazorpayKeySecret === 'YOUR_SECRET' || rawRazorpayKeySecret.includes('YOUR_SECRET')) {
+    throw new Error('FATAL: RAZORPAY_KEY_SECRET environment variable is required in production and cannot use placeholder values');
+  }
+}
+
+const RAZORPAY_KEY_ID = rawRazorpayKeyId || 'rzp_test_YOUR_KEY';
+const RAZORPAY_KEY_SECRET = rawRazorpayKeySecret || 'YOUR_SECRET';
 
 // 33 Administrative Districts of Telangana
 const TELANGANA_DISTRICTS = [

@@ -7,8 +7,14 @@
 
 const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const path = require('node:path');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  process.env.JWT_SECRET = 'test_jwt_secret_must_be_at_least_32_characters_long_for_security_suite';
+}
 
 const app = require('../../server');
 const { JWT_SECRET } = require('../../config/constants');
@@ -152,5 +158,56 @@ describe('Security Tests: Authentication Tokens & JWT Defense', () => {
     });
 
     assert.equal(res.status, 200);
+  });
+
+  describe('Startup Fail-Fast & Secret Validation', () => {
+    const rootDir = path.resolve(__dirname, '../../');
+
+    it('fails fast at startup if JWT_SECRET is not set in environment', () => {
+      const result = spawnSync(process.execPath, [
+        '-e',
+        'require("dotenv").config = () => {}; delete process.env.JWT_SECRET; require("./config/constants");'
+      ], {
+        cwd: rootDir,
+        env: { ...process.env, JWT_SECRET: '' },
+        encoding: 'utf8'
+      });
+
+      assert.equal(result.status, 1);
+      assert.ok(result.stderr.includes('FATAL: JWT_SECRET environment variable is required and not set'));
+    });
+
+    it('fails fast at startup if JWT_SECRET is under 32 characters', () => {
+      const result = spawnSync(process.execPath, [
+        '-e',
+        'require("./config/constants");'
+      ], {
+        cwd: rootDir,
+        env: { ...process.env, JWT_SECRET: 'too_short_secret_under_32' },
+        encoding: 'utf8'
+      });
+
+      assert.equal(result.status, 1);
+      assert.ok(result.stderr.includes('FATAL: JWT_SECRET must be at least 32 characters long to ensure adequate entropy'));
+    });
+
+    it('fails fast in production if RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET use placeholder values', () => {
+      const result = spawnSync(process.execPath, [
+        '-e',
+        'require("./config/constants");'
+      ], {
+        cwd: rootDir,
+        env: {
+          ...process.env,
+          NODE_ENV: 'production',
+          JWT_SECRET: 'valid_strong_secret_key_exceeding_32_characters_length',
+          RAZORPAY_KEY_ID: 'rzp_test_YOUR_KEY'
+        },
+        encoding: 'utf8'
+      });
+
+      assert.equal(result.status, 1);
+      assert.ok(result.stderr.includes('FATAL: RAZORPAY_KEY_ID environment variable is required in production'));
+    });
   });
 });
