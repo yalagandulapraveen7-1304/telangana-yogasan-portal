@@ -12,11 +12,12 @@ const { PORT, IS_PROD } = require('./config/constants');
 const { connectDB } = require('./config/db');
 const { requireAuth, apiLimiter, publicReadLimiter } = require('./middleware/auth');
 const { noSqlSanitizer, originGuard } = require('./middleware/sanitize');
-const { resolveFilePath, fileExists } = require('./services/storage');
+const { resolveFilePath, fileExists, getStorageDir } = require('./services/storage');
 const { router: authRoutes } = require('./routes/auth');
 const nominateRoutes = require('./routes/nominate');
+const Athlete = require('./models/Athlete');
 const { validateEnv } = require('./config/env');
-const { isValidFilename } = require('./utils/validators');
+const { isValidFilename, normalizeDistrict } = require('./utils/validators');
 
 validateEnv();
 
@@ -123,8 +124,8 @@ app.use(async (_req, _res, next) => {
   }
 });
 
-// Uploaded Document Images & Certificates Route (with path traversal defense)
-app.get('/uploads/:filename', (req, res) => {
+// Uploaded Document Images & Certificates Route (with path traversal and IDOR authorization defense)
+app.get('/uploads/:filename', requireAuth, async (req, res) => {
   const { filename } = req.params;
 
   if (!filename || !isValidFilename(filename)) {
@@ -137,16 +138,48 @@ app.get('/uploads/:filename', (req, res) => {
     return res.status(403).json({ success: false, message: 'Forbidden path execution.' });
   }
 
-  if (fileExists(filename)) {
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    return res.sendFile(filePath);
+  if (!fileExists(filename)) {
+    return res.status(404).json({ success: false, message: 'Identity document not found or removed.' });
   }
-  return res.status(404).json({ success: false, message: 'Identity document not found or removed.' });
+
+  try {
+    const cleanFilename = path.basename(filename);
+    const athlete = await Athlete.findOne({
+      $or: [
+        { photoPath: `/uploads/${cleanFilename}` },
+        { photoPath: cleanFilename },
+        { dobProofPath: `/uploads/${cleanFilename}` },
+        { dobProofPath: cleanFilename }
+      ]
+    }).select('district').lean();
+
+    if (!athlete) {
+      return res.status(404).json({ success: false, message: 'Identity document not found or unlinked.' });
+    }
+
+    const isSuperAdmin = req.user && req.user.role === 'SUPER_ADMIN';
+    const userDistrict = req.user?.district ? normalizeDistrict(req.user.district) : null;
+    const athleteDistrict = athlete.district ? normalizeDistrict(athlete.district) : null;
+    const isDistrictSecretary = req.user && req.user.role === 'SECRETARY' && (
+      req.user.district === 'ALL_DISTRICTS' ||
+      (userDistrict && athleteDistrict && userDistrict.toLowerCase() === athleteDistrict.toLowerCase())
+    );
+
+    if (!isSuperAdmin && !isDistrictSecretary) {
+      return res.status(403).json({ success: false, message: 'Forbidden: Insufficient privileges to access this document.' });
+    }
+
+    res.setHeader('Cache-Control', 'private, no-store');
+    return res.sendFile(cleanFilename, { root: getStorageDir() });
+  } catch (err) {
+    console.error('Error serving uploaded document:', err.message);
+    return res.status(500).json({ success: false, message: 'Internal server error processing document request.' });
+  }
 });
 
 // Database connection assurance for serverless environments (Vercel)
 app.use(async (req, _res, next) => {
-  if (req.path.startsWith('/auth') || req.path.startsWith('/portal')) {
+  if (req.path.startsWith('/auth') || req.path.startsWith('/portal') || req.path.startsWith('/uploads')) {
     try {
       await connectDB();
     } catch (err) {

@@ -86,7 +86,9 @@ function requireAuth(req, res, next) {
     (req.headers.accept && req.headers.accept.includes('application/json')) ||
     req.path.startsWith('/auth/logs') ||
     req.baseUrl.startsWith('/portal') ||
-    req.path.startsWith('/portal');
+    req.path.startsWith('/portal') ||
+    req.baseUrl.startsWith('/uploads') ||
+    req.path.startsWith('/uploads');
 
   if (!token) {
     if (isApiRequest) {

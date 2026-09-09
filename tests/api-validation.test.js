@@ -637,15 +637,21 @@ test.describe('Endpoint Input Validation & Rejection Tests', () => {
   // --- Endpoint: GET /uploads/:filename ---
   test('GET /uploads/:filename blocks path traversal and disallowed extensions', async () => {
     // Path traversal attempt
-    const res1 = await fetch(`${baseUrl}/uploads/..%2f..%2fpackage.json`);
+    const res1 = await fetch(`${baseUrl}/uploads/..%2f..%2fpackage.json`, {
+      headers: { Authorization: `Bearer ${secretaryToken}` }
+    });
     assert.equal(res1.status, 400);
 
     // Disallowed extension
-    const res2 = await fetch(`${baseUrl}/uploads/malicious_payload.exe`);
+    const res2 = await fetch(`${baseUrl}/uploads/malicious_payload.exe`, {
+      headers: { Authorization: `Bearer ${secretaryToken}` }
+    });
     assert.equal(res2.status, 400);
 
     // Valid safe filename format (returns 404 because file doesn't exist on disk, but passes validation without 400)
-    const res3 = await fetch(`${baseUrl}/uploads/nonexistent_sample_doc.jpg`);
+    const res3 = await fetch(`${baseUrl}/uploads/nonexistent_sample_doc.jpg`, {
+      headers: { Authorization: `Bearer ${secretaryToken}` }
+    });
     assert.equal(res3.status, 404);
   });
 });

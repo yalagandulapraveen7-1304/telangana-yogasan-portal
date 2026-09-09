@@ -7,6 +7,8 @@
 
 const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
@@ -14,12 +16,15 @@ const app = require('../../server');
 const Athlete = require('../../models/Athlete');
 const { JWT_SECRET } = require('../../config/constants');
 const { connectDB } = require('../../config/db');
+const { getStorageDir } = require('../../services/storage');
 
 let server;
 let baseUrl;
 
 const districtA = 'Hyderabad';
 const districtB = 'Karimnagar';
+const testDocA = 'athleteA_doc.jpg';
+const testDocB = 'athleteB_doc.jpg';
 
 const tokenDistrictA = jwt.sign(
   { id: 'sec_hyd_sec', email: 'hyd@example.com', role: 'SECRETARY', district: districtA },
@@ -47,6 +52,11 @@ describe('Security Tests: IDOR & Cross-District Tenant Isolation', () => {
   before(async () => {
     await connectDB();
 
+    // Seed dummy files in storage
+    const storageDir = getStorageDir();
+    fs.writeFileSync(path.join(storageDir, testDocA), 'athlete-a-image-binary-content');
+    fs.writeFileSync(path.join(storageDir, testDocB), 'athlete-b-image-binary-content');
+
     // Create test athlete in District A (Hyderabad)
     athleteA = await Athlete.create({
       firstName: 'AthleteA',
@@ -56,6 +66,7 @@ describe('Security Tests: IDOR & Cross-District Tenant Isolation', () => {
       district: districtA,
       category: 'Junior',
       chestNumber: 'HYD-JR-88',
+      photoPath: `/uploads/${testDocA}`,
       status: 'Submitted'
     });
 
@@ -68,6 +79,7 @@ describe('Security Tests: IDOR & Cross-District Tenant Isolation', () => {
       district: districtB,
       category: 'Junior',
       chestNumber: 'KAR-JR-88',
+      photoPath: `/uploads/${testDocB}`,
       status: 'Submitted'
     });
 
@@ -81,6 +93,10 @@ describe('Security Tests: IDOR & Cross-District Tenant Isolation', () => {
   });
 
   after(async () => {
+    const storageDir = getStorageDir();
+    try { fs.unlinkSync(path.join(storageDir, testDocA)); } catch {}
+    try { fs.unlinkSync(path.join(storageDir, testDocB)); } catch {}
+
     if (athleteA?._id) await Athlete.deleteOne({ _id: athleteA._id });
     if (athleteB?._id) await Athlete.deleteOne({ _id: athleteB._id });
     if (server) {
@@ -152,5 +168,45 @@ describe('Security Tests: IDOR & Cross-District Tenant Isolation', () => {
     assert.equal(res.status, 200);
     const logs = await res.json();
     assert.ok(Array.isArray(logs));
+  });
+
+  describe('Document Upload Authorization (/uploads/:filename)', () => {
+    it('Unauthenticated requests to /uploads/:filename are rejected (401)', async () => {
+      const res = await fetch(`${baseUrl}/uploads/${testDocA}`);
+      assert.equal(res.status, 401);
+      const data = await res.json();
+      assert.equal(data.success, false);
+      assert.ok(data.error.toLowerCase().includes('authentication required'));
+    });
+
+    it('A Secretary from District A cannot access a document belonging to an athlete in District B (403)', async () => {
+      const res = await fetch(`${baseUrl}/uploads/${testDocB}`, {
+        headers: { Authorization: `Bearer ${tokenDistrictA}` }
+      });
+      assert.equal(res.status, 403);
+      const data = await res.json();
+      assert.equal(data.success, false);
+      assert.ok(data.message.toLowerCase().includes('forbidden') || data.message.toLowerCase().includes('privilege'));
+    });
+
+    it('A Secretary from District A CAN access their own district\'s documents (200 with private no-store)', async () => {
+      const res = await fetch(`${baseUrl}/uploads/${testDocA}`, {
+        headers: { Authorization: `Bearer ${tokenDistrictA}` }
+      });
+      assert.equal(res.status, 200);
+      assert.equal(res.headers.get('cache-control'), 'private, no-store');
+      const text = await res.text();
+      assert.equal(text, 'athlete-a-image-binary-content');
+    });
+
+    it('Super Admin CAN access documents from any district (200 with private no-store)', async () => {
+      const res = await fetch(`${baseUrl}/uploads/${testDocB}`, {
+        headers: { Authorization: `Bearer ${tokenSuperAdmin}` }
+      });
+      assert.equal(res.status, 200);
+      assert.equal(res.headers.get('cache-control'), 'private, no-store');
+      const text = await res.text();
+      assert.equal(text, 'athlete-b-image-binary-content');
+    });
   });
 });

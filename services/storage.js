@@ -76,8 +76,9 @@ function deleteFile(filename) {
 }
 
 /**
- * Returns public URL for accessing the file.
- * Extensible for external CDN / S3 bucket URLs via STORAGE_BASE_URL.
+ * Returns endpoint URL for accessing the file.
+ * Extensible for external CDN / S3 bucket pre-signed URLs via STORAGE_BASE_URL.
+ * Note: Local endpoints (/uploads/:filename) require an authenticated session and district authorization.
  */
 function getFileUrl(filename) {
   if (!filename) return '';

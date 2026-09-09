@@ -8,12 +8,20 @@
 const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const app = require('../../server');
 const { connectDB } = require('../../config/db');
+const { JWT_SECRET } = require('../../config/constants');
 
 let server;
 let baseUrl;
+
+const authToken = jwt.sign(
+  { id: 'sec_test', email: 'sec@test.org', role: 'SECRETARY', district: 'Hyderabad' },
+  JWT_SECRET,
+  { algorithm: 'HS256', expiresIn: '1h' }
+);
 
 describe('Security Tests: Input Guards & Traversal Defense', () => {
 
@@ -37,24 +45,32 @@ describe('Security Tests: Input Guards & Traversal Defense', () => {
 
   describe('1. File Upload Route & Path Traversal (/uploads/:filename)', () => {
     it('blocks directory traversal attempts using .. sequences', async () => {
-      const res = await fetch(`${baseUrl}/uploads/..%2f..%2fpackage.json`);
+      const res = await fetch(`${baseUrl}/uploads/..%2f..%2fpackage.json`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
       // Rejection status must be 400 or 403 or 404 (never 200 with file content)
       assert.notEqual(res.status, 200);
       assert.ok(res.status === 400 || res.status === 403 || res.status === 404);
     });
 
     it('blocks traversal with encoded slashes or null-byte characters', async () => {
-      const res1 = await fetch(`${baseUrl}/uploads/%2e%2e%2fserver.js`);
+      const res1 = await fetch(`${baseUrl}/uploads/%2e%2e%2fserver.js`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
       assert.notEqual(res1.status, 200);
 
-      const res2 = await fetch(`${baseUrl}/uploads/test.jpg%00.pdf`);
+      const res2 = await fetch(`${baseUrl}/uploads/test.jpg%00.pdf`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      });
       assert.notEqual(res2.status, 200);
     });
 
     it('rejects disallowed file extensions on file download route', async () => {
       const disallowed = ['shell.php', 'exploit.sh', 'binary.exe', 'server.js'];
       for (const file of disallowed) {
-        const res = await fetch(`${baseUrl}/uploads/${file}`);
+        const res = await fetch(`${baseUrl}/uploads/${file}`, {
+          headers: { Authorization: `Bearer ${authToken}` }
+        });
         assert.equal(res.status, 400);
         const data = await res.json();
         assert.equal(data.success, false);

@@ -10,6 +10,7 @@ const router = express.Router();
 const Athlete = require('../models/Athlete');
 const { requireAuth, optionalAuth, nominationLimiter } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { getFileUrl } = require('../services/storage');
 const { escapeRegex, stripHtml } = require('../middleware/sanitize');
 const { TELANGANA_DISTRICTS } = require('../config/constants');
 const {
@@ -486,14 +487,14 @@ router.post(
           if (!isValidFilename(photo.filename)) {
             return res.status(400).json({ success: false, error: 'Invalid photo filename.' });
           }
-          athletePayload.photoPath = `/uploads/${photo.filename}`;
+          athletePayload.photoPath = getFileUrl(photo.filename);
         }
         if (req.files.dob_certificate?.[0]) {
           const cert = req.files.dob_certificate[0];
           if (!isValidFilename(cert.filename)) {
             return res.status(400).json({ success: false, error: 'Invalid certificate filename.' });
           }
-          athletePayload.dobProofPath = `/uploads/${cert.filename}`;
+          athletePayload.dobProofPath = getFileUrl(cert.filename);
         }
       }
 
@@ -634,7 +635,7 @@ router.post(
       if (req.files && Array.isArray(req.files)) {
         req.files.forEach((file) => {
           if (isValidFilename(file.filename)) {
-            fileMap[file.fieldname] = `/uploads/${file.filename}`;
+            fileMap[file.fieldname] = getFileUrl(file.filename);
           }
         });
       }
