@@ -874,171 +874,357 @@
           </div>
 
           <div
-            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+            class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6"
           >
-            <div class="card overflow-hidden group cursor-pointer bg-white">
+            <!-- Card 1 -->
+            <div
+              class="card overflow-hidden group cursor-pointer bg-white"
+              onclick="openGalleryModal(0)"
+              role="button"
+              tabindex="0"
+              aria-label="View photo: Inaugural Address - 13th State Championship"
+              onkeydown="if(event.key==='Enter'||event.key===' ')openGalleryModal(0)"
+            >
               <div
-                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center relative"
               >
                 <img
                   src="/static/images/gallery/gallery-01.jpg"
-                  alt="Traditional Yogasana performance at District Selection Trials"
-                  width="280"
-                  height="280"
+                  alt="Dignitaries inaugural address on stage at 13th State Level Yogasana Sports Championship 2026"
+                  width="400"
+                  height="400"
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="bg-black/60 text-white rounded-full p-2 text-xs">
+                    <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                  </span>
+                </div>
               </div>
               <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Traditional Yogasana &bull; District Trials
+                Inaugural Address &bull; 13th State Championship
               </div>
             </div>
 
-            <div class="card overflow-hidden group cursor-pointer bg-white">
+            <!-- Card 2 -->
+            <div
+              class="card overflow-hidden group cursor-pointer bg-white"
+              onclick="openGalleryModal(1)"
+              role="button"
+              tabindex="0"
+              aria-label="View photo: Jyothi Prajwalana - Ceremonial Inauguration"
+              onkeydown="if(event.key==='Enter'||event.key===' ')openGalleryModal(1)"
+            >
               <div
-                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center relative"
               >
                 <img
                   src="/static/images/gallery/gallery-02.jpg"
-                  alt="Artistic Yogasana solo performance"
-                  width="280"
-                  height="280"
+                  alt="Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) before Goddess Saraswati"
+                  width="400"
+                  height="400"
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="bg-black/60 text-white rounded-full p-2 text-xs">
+                    <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                  </span>
+                </div>
               </div>
               <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Artistic Yogasana &bull; Solo Round
+                Jyothi Prajwalana &bull; Ceremonial Inauguration
               </div>
             </div>
 
-            <div class="card overflow-hidden group cursor-pointer bg-white">
+            <!-- Card 3 -->
+            <div
+              class="card overflow-hidden group cursor-pointer bg-white"
+              onclick="openGalleryModal(2)"
+              role="button"
+              tabindex="0"
+              aria-label="View photo: Artistic Group Formation - Girls Championship Round"
+              onkeydown="if(event.key==='Enter'||event.key===' ')openGalleryModal(2)"
+            >
               <div
-                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center relative"
               >
                 <img
                   src="/static/images/gallery/gallery-03.jpg"
-                  alt="Artistic Yogasana pair performance with synchronized posture"
-                  width="280"
-                  height="280"
+                  alt="Young athletes performing synchronized artistic yogasana pyramid formation on stage"
+                  width="400"
+                  height="400"
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="bg-black/60 text-white rounded-full p-2 text-xs">
+                    <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                  </span>
+                </div>
               </div>
               <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Artistic Pair &bull; State Finals
+                Artistic Group Formation &bull; Girls Championship Round
               </div>
             </div>
 
-            <div class="card overflow-hidden group cursor-pointer bg-white">
+            <!-- Card 4 -->
+            <div
+              class="card overflow-hidden group cursor-pointer bg-white"
+              onclick="openGalleryModal(3)"
+              role="button"
+              tabindex="0"
+              aria-label="View photo: Association Dignitaries - Inaugural Assembly"
+              onkeydown="if(event.key==='Enter'||event.key===' ')openGalleryModal(3)"
+            >
               <div
-                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center relative"
               >
                 <img
                   src="/static/images/gallery/gallery-04.jpg"
-                  alt="Rhythmic Yogasana pair performance with music"
-                  width="280"
-                  height="280"
+                  alt="Telangana Yoga Association officials and dignitaries group photo at championship venue"
+                  width="400"
+                  height="400"
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="bg-black/60 text-white rounded-full p-2 text-xs">
+                    <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                  </span>
+                </div>
               </div>
               <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Rhythmic Pair &bull; Championship Round
+                Association Dignitaries &bull; Inaugural Assembly
               </div>
             </div>
 
-            <div class="card overflow-hidden group cursor-pointer bg-white">
+            <!-- Card 5 -->
+            <div
+              class="card overflow-hidden group cursor-pointer bg-white"
+              onclick="openGalleryModal(4)"
+              role="button"
+              tabindex="0"
+              aria-label="View photo: Artistic Group Formation - Boys Demonstration"
+              onkeydown="if(event.key==='Enter'||event.key===' ')openGalleryModal(4)"
+            >
               <div
-                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
+                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center relative"
               >
                 <img
                   src="/static/images/gallery/gallery-05.jpg"
-                  alt="Certified judges panel evaluating performance"
-                  width="280"
-                  height="280"
+                  alt="Young boys team performing multi-tier standing split and balance yogasana formation"
+                  width="400"
+                  height="400"
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="bg-black/60 text-white rounded-full p-2 text-xs">
+                    <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                  </span>
+                </div>
               </div>
               <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Judges Panel &bull; Technical Scrutiny
+                Artistic Group Formation &bull; Boys Demonstration
               </div>
             </div>
 
-            <div class="card overflow-hidden group cursor-pointer bg-white">
+            <!-- Card 6 -->
+            <div
+              class="card overflow-hidden group cursor-pointer bg-white"
+              onclick="openGalleryModal(5)"
+              role="button"
+              tabindex="0"
+              aria-label="View photo: Artistic Solo Performance - Standing Vertical Split"
+              onkeydown="if(event.key==='Enter'||event.key===' ')openGalleryModal(5)"
+            >
               <div
-                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
+                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center relative"
               >
                 <img
                   src="/static/images/gallery/gallery-06.jpg"
-                  alt="Medal ceremony and felicitation of winning athletes"
-                  width="280"
-                  height="280"
+                  alt="Solo yogasana athlete performing standing vertical split (Trivikramasana) on stage"
+                  width="400"
+                  height="400"
                   decoding="async"
                   class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="bg-black/60 text-white rounded-full p-2 text-xs">
+                    <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+                  </span>
+                </div>
               </div>
               <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Medal Ceremony &bull; Felicitation
-              </div>
-            </div>
-
-            <div class="card overflow-hidden group cursor-pointer bg-white">
-              <div
-                class="aspect-square w-full overflow-hidden bg-emerald-100 flex items-center justify-center"
-              >
-                <img
-                  src="/static/images/gallery/gallery-07.jpg"
-                  alt="District Secretaries at the nomination and registration desk"
-                  width="280"
-                  height="280"
-                  decoding="async"
-                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  loading="lazy"
-                />
-              </div>
-              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Registration Desk &bull; District Secretaries
-              </div>
-            </div>
-
-            <div class="card overflow-hidden group cursor-pointer bg-white">
-              <div
-                class="aspect-square w-full overflow-hidden bg-amber-100 flex items-center justify-center"
-              >
-                <img
-                  src="/static/images/gallery/gallery-08.jpg"
-                  alt="Indoor championship stage and mat layout"
-                  width="280"
-                  height="280"
-                  decoding="async"
-                  class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  loading="lazy"
-                />
-              </div>
-              <div class="p-2.5 text-[11px] font-semibold text-slate-700">
-                Championship Stage &bull; Venue Setup
+                Artistic Solo Performance &bull; Standing Vertical Split
               </div>
             </div>
           </div>
 
           <div class="mt-8 text-center">
-            <a
-              href="javascript:void(0)"
-              onclick="alert('Opening Full Championship Photo Gallery...')"
-              class="inline-flex items-center gap-2 bg-[#0D5C3A] text-white hover:bg-[#0a4229] px-6 py-2.5 rounded-full text-xs font-bold shadow transition"
+            <button
+              type="button"
+              onclick="openGalleryModal(0)"
+              class="inline-flex items-center gap-2 bg-[#0D5C3A] text-white hover:bg-[#0a4229] px-6 py-2.5 rounded-full text-xs font-bold shadow transition focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
             >
               <i class="fa-solid fa-images" aria-hidden="true"></i>
               <span>View Full Gallery</span>
-            </a>
+            </button>
           </div>
+
+          <!-- Interactive Lightbox Modal -->
+          <div
+            id="gallery-modal"
+            class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Photo Gallery Lightbox"
+          >
+            <div class="relative max-w-5xl w-full max-h-[95vh] flex flex-col items-center justify-center">
+              <!-- Close Button -->
+              <button
+                type="button"
+                id="gallery-modal-close"
+                aria-label="Close image preview"
+                class="absolute -top-10 right-0 sm:right-2 text-white/80 hover:text-white text-2xl p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+
+              <!-- Image Container -->
+              <div class="relative w-full flex items-center justify-center overflow-hidden rounded-xl bg-black/60 shadow-2xl">
+                <img
+                  id="gallery-modal-img"
+                  src="/static/images/gallery/gallery-01.jpg"
+                  alt="Enlarged championship gallery photo preview"
+                  class="max-h-[75vh] sm:max-h-[80vh] w-auto max-w-full object-contain rounded-lg transition-opacity duration-200"
+                />
+
+                <!-- Nav Prev -->
+                <button
+                  type="button"
+                  id="gallery-modal-prev"
+                  aria-label="Previous photo"
+                  class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white w-10 h-10 rounded-full flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+                >
+                  <i class="fa-solid fa-chevron-left text-sm" aria-hidden="true"></i>
+                </button>
+
+                <!-- Nav Next -->
+                <button
+                  type="button"
+                  id="gallery-modal-next"
+                  aria-label="Next photo"
+                  class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/90 text-white w-10 h-10 rounded-full flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+                >
+                  <i class="fa-solid fa-chevron-right text-sm" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <!-- Caption Bar -->
+              <div class="w-full flex items-center justify-between text-white/90 px-3 pt-3 text-xs sm:text-sm font-medium">
+                <span id="gallery-modal-caption" class="truncate pr-4"></span>
+                <span id="gallery-modal-counter" class="text-white/60 text-xs shrink-0 font-mono"></span>
+              </div>
+            </div>
+          </div>
+
+          <script>
+            (function () {
+              const galleryItems = [
+                {
+                  src: '/static/images/gallery/gallery-01.jpg',
+                  title: 'Inaugural Address \u2022 13th State Championship',
+                  alt: 'Dignitaries inaugural address on stage at 13th State Level Yogasana Sports Championship 2026'
+                },
+                {
+                  src: '/static/images/gallery/gallery-02.jpg',
+                  title: 'Jyothi Prajwalana \u2022 Ceremonial Inauguration',
+                  alt: 'Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) before Goddess Saraswati'
+                },
+                {
+                  src: '/static/images/gallery/gallery-03.jpg',
+                  title: 'Artistic Group Formation \u2022 Girls Championship Round',
+                  alt: 'Young athletes performing synchronized artistic yogasana pyramid formation on stage'
+                },
+                {
+                  src: '/static/images/gallery/gallery-04.jpg',
+                  title: 'Association Dignitaries \u2022 Inaugural Assembly',
+                  alt: 'Telangana Yoga Association officials and dignitaries group photo at championship venue'
+                },
+                {
+                  src: '/static/images/gallery/gallery-05.jpg',
+                  title: 'Artistic Group Formation \u2022 Boys Demonstration',
+                  alt: 'Young boys team performing multi-tier standing split and balance yogasana formation'
+                },
+                {
+                  src: '/static/images/gallery/gallery-06.jpg',
+                  title: 'Artistic Solo Performance \u2022 Standing Vertical Split',
+                  alt: 'Solo yogasana athlete performing standing vertical split (Trivikramasana) on stage'
+                }
+              ];
+
+              let currentIndex = 0;
+              const modal = document.getElementById('gallery-modal');
+              const modalImg = document.getElementById('gallery-modal-img');
+              const modalCaption = document.getElementById('gallery-modal-caption');
+              const modalCounter = document.getElementById('gallery-modal-counter');
+              const prevBtn = document.getElementById('gallery-modal-prev');
+              const nextBtn = document.getElementById('gallery-modal-next');
+              const closeBtn = document.getElementById('gallery-modal-close');
+
+              function showImage(index) {
+                if (index < 0) index = galleryItems.length - 1;
+                if (index >= galleryItems.length) index = 0;
+                currentIndex = index;
+                const item = galleryItems[currentIndex];
+                modalImg.src = item.src;
+                modalImg.alt = item.alt;
+                modalCaption.textContent = item.title;
+                modalCounter.textContent = (currentIndex + 1) + ' / ' + galleryItems.length;
+              }
+
+              window.openGalleryModal = function (index) {
+                showImage(index);
+                if (modal) {
+                  modal.classList.remove('hidden');
+                  document.body.style.overflow = 'hidden';
+                }
+              };
+
+              function closeGalleryModal() {
+                if (modal) {
+                  modal.classList.add('hidden');
+                  document.body.style.overflow = '';
+                }
+              }
+
+              if (closeBtn) closeBtn.addEventListener('click', closeGalleryModal);
+              if (prevBtn) prevBtn.addEventListener('click', () => showImage(currentIndex - 1));
+              if (nextBtn) nextBtn.addEventListener('click', () => showImage(currentIndex + 1));
+
+              if (modal) {
+                modal.addEventListener('click', (e) => {
+                  if (e.target === modal) closeGalleryModal();
+                });
+              }
+
+              document.addEventListener('keydown', (e) => {
+                if (!modal || modal.classList.contains('hidden')) return;
+                if (e.key === 'Escape') closeGalleryModal();
+                else if (e.key === 'ArrowLeft') showImage(currentIndex - 1);
+                else if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+              });
+            })();
+          </script>
         </div>
       </section>
 
