@@ -286,9 +286,10 @@ const metadataMap = {
 
 // Scan files directly from static/images/gallery
 const rawFiles = fs.readdirSync(galleryDir).filter((f) => f.match(/\.(jpe?g|png|webp)$/i));
+rawFiles.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 console.log(`Found ${rawFiles.length} images directly in static/images/gallery.`);
 
-// Build gallery cards directly into the HTML
+// Build gallery cards directly into the HTML with strict vertical and horizontal alignment
 let cardsHtml = '';
 rawFiles.forEach((file, index) => {
   const meta = metadataMap[file] || {
@@ -300,8 +301,8 @@ rawFiles.forEach((file, index) => {
 
   cardsHtml += `
           <!-- Photo Card ${index + 1}: ${file} -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="${meta.cat}">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="${meta.cat}">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/${file}"
                 alt="${meta.alt}"
@@ -311,17 +312,23 @@ rawFiles.forEach((file, index) => {
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 ${meta.catLabel}
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                ${meta.title}
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                ${meta.alt}
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  ${meta.title}
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  ${meta.alt}
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #${index + 1}</span>
+                <span class="font-mono text-slate-400">${file}</span>
+              </div>
             </div>
           </div>`;
 });
@@ -353,6 +360,123 @@ const galleryPageHtml = `<!doctype html>
     <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="/static/css/output.css" />
     <link rel="stylesheet" href="/static/css/custom.css" />
+
+    <style>
+      /* Strict Grid & Alignment Rules for All Gallery Images */
+      #gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 1.25rem;
+        align-items: stretch;
+      }
+      @media (min-width: 640px) {
+        #gallery-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1.5rem;
+        }
+      }
+      @media (min-width: 1024px) {
+        #gallery-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1.5rem;
+        }
+      }
+      @media (min-width: 1280px) {
+        #gallery-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 1.5rem;
+        }
+      }
+
+      /* Uniform Card Box */
+      .gallery-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+      }
+      .gallery-card:hover {
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+      }
+      .gallery-card[style*="display: none"] {
+        display: none !important;
+      }
+
+      /* Fixed 3:2 Aspect Ratio Frame for Perfect Alignment Across All Images */
+      .gallery-img-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 2;
+        min-height: 180px;
+        background-color: #0f172a;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      @supports (aspect-ratio: 3 / 2) {
+        .gallery-img-wrap {
+          min-height: unset;
+          aspect-ratio: 3 / 2;
+        }
+      }
+      .gallery-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 25%;
+        display: block;
+        transform: none !important;
+        transition: none !important;
+      }
+
+      /* Uniform Card Body & Text Alignment Across Columns */
+      .gallery-card-body {
+        padding: 0.875rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        justify-content: space-between;
+        background-color: #ffffff;
+      }
+      .gallery-card-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.35;
+        min-height: 2.1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .gallery-card-desc {
+        font-size: 0.6875rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin-top: 0.25rem;
+        min-height: 1.95rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .gallery-card-footer {
+        margin-top: 0.75rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.625rem;
+      }
+    </style>
   </head>
   <body class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between text-slate-800">
     <!-- A11y Skip Link -->
@@ -447,10 +571,9 @@ const galleryPageHtml = `<!doctype html>
           </button>
         </div>
 
-        <!-- Clean Static Photo Grid (All Images, No Zoom, No Slideshow) -->
+        <!-- Clean Static Photo Grid (All Images Aligned, No Zoom, No Slideshow) -->
         <div
           id="gallery-grid"
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
         >
 ${cardsHtml}
         </div>
@@ -492,7 +615,7 @@ ${cardsHtml}
 fs.writeFileSync(path.join(root, 'templates', 'gallery.html'), galleryPageHtml, 'utf8');
 console.log('Successfully wrote templates/gallery.html containing all images directly in HTML!');
 
-// Also ensure templates/index.html uses direct path /static/images/gallery/<file> for its 6 cards
+// Also ensure templates/index.html uses direct path /static/images/gallery/<file> for its 6 cards with identical aligned layout
 const featuredFiles = ['DSC_8586.jpg', 'DSC_8583.jpg', 'DSC_8730.jpg', 'DSC_8934.jpg', 'DSC_8767.jpg', 'DSC_9320.jpg'];
 
 let featuredCardsHtml = '';
@@ -500,8 +623,8 @@ featuredFiles.forEach((file) => {
   const meta = metadataMap[file] || { title: file, catLabel: 'Championship', alt: file };
   featuredCardsHtml += `
             <!-- Gallery Card: ${file} -->
-            <div class="card overflow-hidden bg-white border border-slate-200 rounded-xl shadow-xs">
-              <div class="aspect-[4/3] w-full overflow-hidden bg-slate-900 relative">
+            <div class="gallery-card bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs flex flex-col h-full">
+              <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
                 <img
                   src="/static/images/gallery/${file}"
                   alt="${meta.alt}"
@@ -511,11 +634,11 @@ featuredFiles.forEach((file) => {
                   loading="lazy"
                   class="w-full h-full object-cover"
                 />
-                <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                   ${meta.catLabel}
                 </span>
               </div>
-              <div class="p-3 text-[11px] sm:text-xs font-semibold text-slate-800 line-clamp-1">
+              <div class="p-3 text-[11px] sm:text-xs font-semibold text-slate-800 line-clamp-1 bg-white flex-grow">
                 ${meta.title}
               </div>
             </div>`;

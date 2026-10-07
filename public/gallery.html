@@ -24,6 +24,123 @@
     <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="/static/css/output.css" />
     <link rel="stylesheet" href="/static/css/custom.css" />
+
+    <style>
+      /* Strict Grid & Alignment Rules for All Gallery Images */
+      #gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 1.25rem;
+        align-items: stretch;
+      }
+      @media (min-width: 640px) {
+        #gallery-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1.5rem;
+        }
+      }
+      @media (min-width: 1024px) {
+        #gallery-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1.5rem;
+        }
+      }
+      @media (min-width: 1280px) {
+        #gallery-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 1.5rem;
+        }
+      }
+
+      /* Uniform Card Box */
+      .gallery-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+      }
+      .gallery-card:hover {
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+      }
+      .gallery-card[style*="display: none"] {
+        display: none !important;
+      }
+
+      /* Fixed 3:2 Aspect Ratio Frame for Perfect Alignment Across All Images */
+      .gallery-img-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 2;
+        min-height: 180px;
+        background-color: #0f172a;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      @supports (aspect-ratio: 3 / 2) {
+        .gallery-img-wrap {
+          min-height: unset;
+          aspect-ratio: 3 / 2;
+        }
+      }
+      .gallery-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 25%;
+        display: block;
+        transform: none !important;
+        transition: none !important;
+      }
+
+      /* Uniform Card Body & Text Alignment Across Columns */
+      .gallery-card-body {
+        padding: 0.875rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        justify-content: space-between;
+        background-color: #ffffff;
+      }
+      .gallery-card-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.35;
+        min-height: 2.1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .gallery-card-desc {
+        font-size: 0.6875rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin-top: 0.25rem;
+        min-height: 1.95rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .gallery-card-footer {
+        margin-top: 0.75rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.625rem;
+      }
+    </style>
   </head>
   <body class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between text-slate-800">
     <!-- A11y Skip Link -->
@@ -118,15 +235,14 @@
           </button>
         </div>
 
-        <!-- Clean Static Photo Grid (All Images, No Zoom, No Slideshow) -->
+        <!-- Clean Static Photo Grid (All Images Aligned, No Zoom, No Slideshow) -->
         <div
           id="gallery-grid"
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
         >
 
           <!-- Photo Card 1: DSC_8583.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8583.jpg"
                 alt="Officials and dignitaries assembled on stage for the championship inaugural ceremony"
@@ -136,22 +252,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Championship Inaugural Stage • Official Assembly
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Officials and dignitaries assembled on stage for the championship inaugural ceremony
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Championship Inaugural Stage • Official Assembly
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Officials and dignitaries assembled on stage for the championship inaugural ceremony
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #1</span>
+                <span class="font-mono text-slate-400">DSC_8583.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 2: DSC_8586.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8586.jpg"
                 alt="Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) to inaugurate the 13th Telangana State Yogasana Championship"
@@ -161,22 +283,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Lamp Lighting (Jyothi Prajwalana) • Auspicious Inauguration
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) to inaugurate the 13th Telangana State Yogasana Championship
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Lamp Lighting (Jyothi Prajwalana) • Auspicious Inauguration
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) to inaugurate the 13th Telangana State Yogasana Championship
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #2</span>
+                <span class="font-mono text-slate-400">DSC_8586.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 3: DSC_8592.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8592.jpg"
                 alt="Welcome address on stage before athletes and district contingents"
@@ -186,22 +314,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Welcome Address & Stage Gathering
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Welcome address on stage before athletes and district contingents
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Welcome Address & Stage Gathering
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Welcome address on stage before athletes and district contingents
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #3</span>
+                <span class="font-mono text-slate-400">DSC_8592.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 4: DSC_8602.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8602.jpg"
                 alt="Referees, judges, and technical scrutiny panel at the championship dais"
@@ -211,22 +345,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Officials
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Technical Scrutiny & Judging Panel
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Referees, judges, and technical scrutiny panel at the championship dais
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Technical Scrutiny & Judging Panel
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Referees, judges, and technical scrutiny panel at the championship dais
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #4</span>
+                <span class="font-mono text-slate-400">DSC_8602.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 5: DSC_8604.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8604.jpg"
                 alt="Chief guest delivering inspirational opening address to participants"
@@ -236,22 +376,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Chief Guest Address to Competitors
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Chief guest delivering inspirational opening address to participants
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Chief Guest Address to Competitors
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Chief guest delivering inspirational opening address to participants
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #5</span>
+                <span class="font-mono text-slate-400">DSC_8604.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 6: DSC_8605.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8605.jpg"
                 alt="Telangana Yoga Association executive committee members assembled on stage"
@@ -261,22 +407,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Officials
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Association Executive Committee on Dais
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Telangana Yoga Association executive committee members assembled on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Association Executive Committee on Dais
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Telangana Yoga Association executive committee members assembled on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #6</span>
+                <span class="font-mono text-slate-400">DSC_8605.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 7: DSC_8617.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8617.jpg"
                 alt="Presenting honorary mementos and traditional shawls to championship patrons"
@@ -286,22 +438,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Memento Presentation to Association Patrons
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Presenting honorary mementos and traditional shawls to championship patrons
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Memento Presentation to Association Patrons
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Presenting honorary mementos and traditional shawls to championship patrons
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #7</span>
+                <span class="font-mono text-slate-400">DSC_8617.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 8: DSC_8619.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8619.jpg"
                 alt="Honoring key contributors and patrons of yoga sports in Telangana"
@@ -311,22 +469,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Dignitary Felicitation & Honors
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Honoring key contributors and patrons of yoga sports in Telangana
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Dignitary Felicitation & Honors
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Honoring key contributors and patrons of yoga sports in Telangana
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #8</span>
+                <span class="font-mono text-slate-400">DSC_8619.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 9: DSC_8631.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8631.jpg"
                 alt="Keynote address outlining national championship pathway and sporting ethics"
@@ -336,22 +500,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Championship Keynote & Athlete Briefing
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Keynote address outlining national championship pathway and sporting ethics
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Championship Keynote & Athlete Briefing
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Keynote address outlining national championship pathway and sporting ethics
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #9</span>
+                <span class="font-mono text-slate-400">DSC_8631.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 10: DSC_8646.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8646.jpg"
                 alt="Felicitation of special guests supporting the state inter-district championship"
@@ -361,22 +531,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Honorary Memento Distribution
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Felicitation of special guests supporting the state inter-district championship
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Honorary Memento Distribution
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Felicitation of special guests supporting the state inter-district championship
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #10</span>
+                <span class="font-mono text-slate-400">DSC_8646.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 11: DSC_8664.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8664.jpg"
                 alt="Executive committee and chief guests assembling on the championship stage"
@@ -386,22 +562,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Officials
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Inauguration Dignitaries Stage Assembly
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Executive committee and chief guests assembling on the championship stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Inauguration Dignitaries Stage Assembly
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Executive committee and chief guests assembling on the championship stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #11</span>
+                <span class="font-mono text-slate-400">DSC_8664.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 12: DSC_8730.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8730.jpg"
                 alt="State Championship competition arena with official judging table and athletes"
@@ -411,22 +593,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Competition
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                State Championship Arena • Competition Stage
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                State Championship competition arena with official judging table and athletes
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  State Championship Arena • Competition Stage
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  State Championship competition arena with official judging table and athletes
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #12</span>
+                <span class="font-mono text-slate-400">DSC_8730.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 13: DSC_8734.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8734.jpg"
                 alt="Official jury panel evaluating form, balance, and breathing precision"
@@ -436,22 +624,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Competition
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Jury Panel in Scrutiny Session
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Official jury panel evaluating form, balance, and breathing precision
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Jury Panel in Scrutiny Session
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Official jury panel evaluating form, balance, and breathing precision
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #13</span>
+                <span class="font-mono text-slate-400">DSC_8734.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 14: DSC_8740.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8740.jpg"
                 alt="Athlete performing traditional posture with strict technical adherence"
@@ -461,22 +655,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Traditional Yogasana Stage Demonstration
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Athlete performing traditional posture with strict technical adherence
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Traditional Yogasana Stage Demonstration
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Athlete performing traditional posture with strict technical adherence
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #14</span>
+                <span class="font-mono text-slate-400">DSC_8740.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 15: DSC_8752.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8752.jpg"
                 alt="Jury scorekeeping and timekeeping during competitive asana holds"
@@ -486,22 +686,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Competition
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Competition Stage • Technical Scrutiny
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Jury scorekeeping and timekeeping during competitive asana holds
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Competition Stage • Technical Scrutiny
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Jury scorekeeping and timekeeping during competitive asana holds
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #15</span>
+                <span class="font-mono text-slate-400">DSC_8752.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 16: DSC_8767.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8767.jpg"
                 alt="Athlete performing high-precision standing balance posture during state selection trials"
@@ -511,22 +717,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Precision Standing Balance • Championship Round
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Athlete performing high-precision standing balance posture during state selection trials
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Precision Standing Balance • Championship Round
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Athlete performing high-precision standing balance posture during state selection trials
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #16</span>
+                <span class="font-mono text-slate-400">DSC_8767.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 17: DSC_8769.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8769.jpg"
                 alt="Junior athlete holding deep flexibility posture before the judge panel"
@@ -536,22 +748,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Advanced Flexibility Asana Execution
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Junior athlete holding deep flexibility posture before the judge panel
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Advanced Flexibility Asana Execution
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Junior athlete holding deep flexibility posture before the judge panel
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #17</span>
+                <span class="font-mono text-slate-400">DSC_8769.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 18: DSC_8771.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8771.jpg"
                 alt="Young athlete demonstrating intense focus and limb alignment on stage"
@@ -561,22 +779,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Sub-Junior Division Competitive Round
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Young athlete demonstrating intense focus and limb alignment on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Sub-Junior Division Competitive Round
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Young athlete demonstrating intense focus and limb alignment on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #18</span>
+                <span class="font-mono text-slate-400">DSC_8771.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 19: DSC_8777.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8777.jpg"
                 alt="Contestant executing textbook precision during compulsory asana set"
@@ -586,22 +810,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Junior Championship Asana Performance
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Contestant executing textbook precision during compulsory asana set
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Junior Championship Asana Performance
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Contestant executing textbook precision during compulsory asana set
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #19</span>
+                <span class="font-mono text-slate-400">DSC_8777.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 20: DSC_8782.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8782.jpg"
                 alt="Championship competitor demonstrating core strength and spinal mobility"
@@ -611,22 +841,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Backward Bending & Core Balance Hold
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Championship competitor demonstrating core strength and spinal mobility
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Backward Bending & Core Balance Hold
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Championship competitor demonstrating core strength and spinal mobility
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #20</span>
+                <span class="font-mono text-slate-400">DSC_8782.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 21: DSC_8822.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8822.jpg"
                 alt="Athlete executing advanced arm balance with steady concentration"
@@ -636,22 +872,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Arm Balance & Inversion Precision
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Athlete executing advanced arm balance with steady concentration
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Arm Balance & Inversion Precision
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Athlete executing advanced arm balance with steady concentration
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #21</span>
+                <span class="font-mono text-slate-400">DSC_8822.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 22: DSC_8824.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8824.jpg"
                 alt="Demonstrating traditional yogasana sequences according to NYSF standards"
@@ -661,22 +903,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Traditional Asana Routine • Stage Heats
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Demonstrating traditional yogasana sequences according to NYSF standards
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Traditional Asana Routine • Stage Heats
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Demonstrating traditional yogasana sequences according to NYSF standards
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #22</span>
+                <span class="font-mono text-slate-400">DSC_8824.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 23: DSC_8857.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8857.jpg"
                 alt="Participant holding seated twisting and hip-opener postures"
@@ -686,22 +934,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Competitive Floor Asana Execution
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Participant holding seated twisting and hip-opener postures
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Competitive Floor Asana Execution
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Participant holding seated twisting and hip-opener postures
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #23</span>
+                <span class="font-mono text-slate-400">DSC_8857.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 24: DSC_8859.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8859.jpg"
                 alt="Athletes from Telangana districts competing in synchronized heats"
@@ -711,22 +965,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Competition
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Competition Arena • District Athletes
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Athletes from Telangana districts competing in synchronized heats
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Competition Arena • District Athletes
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Athletes from Telangana districts competing in synchronized heats
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #24</span>
+                <span class="font-mono text-slate-400">DSC_8859.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 25: DSC_8867.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8867.jpg"
                 alt="Scored demonstration of posture holding duration and breath control"
@@ -736,22 +996,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Precision Asana Alignment Round
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Scored demonstration of posture holding duration and breath control
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Precision Asana Alignment Round
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Scored demonstration of posture holding duration and breath control
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #25</span>
+                <span class="font-mono text-slate-400">DSC_8867.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 26: DSC_8871.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="asanas">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="asanas">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8871.jpg"
                 alt="Senior division athlete presenting flawless posture stability"
@@ -761,22 +1027,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Asanas
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Advanced Asana Mastery • Senior Division
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Senior division athlete presenting flawless posture stability
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Advanced Asana Mastery • Senior Division
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Senior division athlete presenting flawless posture stability
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #26</span>
+                <span class="font-mono text-slate-400">DSC_8871.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 27: DSC_8934.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8934.jpg"
                 alt="Synchronized artistic yogasana multi-tier pyramid formation on stage"
@@ -786,22 +1058,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Artistic Group Pyramid • Synchronized Formation
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Synchronized artistic yogasana multi-tier pyramid formation on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Artistic Group Pyramid • Synchronized Formation
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Synchronized artistic yogasana multi-tier pyramid formation on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #27</span>
+                <span class="font-mono text-slate-400">DSC_8934.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 28: DSC_8951.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8951.jpg"
                 alt="Flowing artistic movements combining traditional yogic postures and music"
@@ -811,22 +1089,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Artistic Yogasana Demonstration
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Flowing artistic movements combining traditional yogic postures and music
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Artistic Yogasana Demonstration
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Flowing artistic movements combining traditional yogic postures and music
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #28</span>
+                <span class="font-mono text-slate-400">DSC_8951.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 29: DSC_8956.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8956.jpg"
                 alt="Dynamic standing split and balance holds in artistic yogasana competitive category"
@@ -836,22 +1120,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Artistic Yogasana Routine • Dynamic Split Holds
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Dynamic standing split and balance holds in artistic yogasana competitive category
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Artistic Yogasana Routine • Dynamic Split Holds
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Dynamic standing split and balance holds in artistic yogasana competitive category
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #29</span>
+                <span class="font-mono text-slate-400">DSC_8956.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 30: DSC_8957.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8957.jpg"
                 alt="Rhythmic yogasana routine exhibiting team harmony and flexibility"
@@ -861,22 +1151,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Team Choreography & Graceful Holds
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Rhythmic yogasana routine exhibiting team harmony and flexibility
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Team Choreography & Graceful Holds
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Rhythmic yogasana routine exhibiting team harmony and flexibility
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #30</span>
+                <span class="font-mono text-slate-400">DSC_8957.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 31: DSC_8990.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_8990.jpg"
                 alt="Spectacular multi-tier standing split and artistic formation on stage"
@@ -886,22 +1182,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Acrobatic & Group Balance Feat
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Spectacular multi-tier standing split and artistic formation on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Acrobatic & Group Balance Feat
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Spectacular multi-tier standing split and artistic formation on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #31</span>
+                <span class="font-mono text-slate-400">DSC_8990.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 32: DSC_9162.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9162.jpg"
                 alt="Awarding gold, silver, and bronze championship medals to winners"
@@ -911,22 +1213,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Medal Distribution • State Champions
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Awarding gold, silver, and bronze championship medals to winners
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Medal Distribution • State Champions
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Awarding gold, silver, and bronze championship medals to winners
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #32</span>
+                <span class="font-mono text-slate-400">DSC_9162.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 33: DSC_9320.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9320.jpg"
                 alt="Gold medalist athletes on the podium receiving state ranking awards and honors"
@@ -936,22 +1244,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Victory Podium • Gold Medalist Honors
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Gold medalist athletes on the podium receiving state ranking awards and honors
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Victory Podium • Gold Medalist Honors
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Gold medalist athletes on the podium receiving state ranking awards and honors
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #33</span>
+                <span class="font-mono text-slate-400">DSC_9320.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 34: DSC_9352.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9352.jpg"
                 alt="Dignitaries presenting state ranking trophies to district winners"
@@ -961,22 +1275,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Merit Certificates & Trophies Presentation
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Dignitaries presenting state ranking trophies to district winners
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Merit Certificates & Trophies Presentation
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Dignitaries presenting state ranking trophies to district winners
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #34</span>
+                <span class="font-mono text-slate-400">DSC_9352.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 35: DSC_9383.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9383.jpg"
                 alt="Team championship trophy presentation to overall district winners"
@@ -986,22 +1306,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Championship Trophy Felicitation
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Team championship trophy presentation to overall district winners
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Championship Trophy Felicitation
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Team championship trophy presentation to overall district winners
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #35</span>
+                <span class="font-mono text-slate-400">DSC_9383.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 36: DSC_9388.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9388.jpg"
                 alt="Honoring top district delegations and team managers on stage"
@@ -1011,22 +1337,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                District Contingent Felicitation
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Honoring top district delegations and team managers on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  District Contingent Felicitation
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Honoring top district delegations and team managers on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #36</span>
+                <span class="font-mono text-slate-400">DSC_9388.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 37: DSC_9401.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9401.jpg"
                 alt="Awarding certificates and medals to sub-junior and junior champions"
@@ -1036,22 +1368,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Merit Honors on Championship Dais
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Awarding certificates and medals to sub-junior and junior champions
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Merit Honors on Championship Dais
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Awarding certificates and medals to sub-junior and junior champions
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #37</span>
+                <span class="font-mono text-slate-400">DSC_9401.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 38: DSC_9403.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9403.jpg"
                 alt="Proud medallists posed with association leaders and tournament patrons"
@@ -1061,22 +1399,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Awards
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                State Winners with Association Officials
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Proud medallists posed with association leaders and tournament patrons
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  State Winners with Association Officials
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Proud medallists posed with association leaders and tournament patrons
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #38</span>
+                <span class="font-mono text-slate-400">DSC_9403.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 39: DSC_9427.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9427.jpg"
                 alt="Celebratory stage assembly of medal winners and organizers"
@@ -1086,22 +1430,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Officials
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Grand Assembly of Winners & Officials
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Celebratory stage assembly of medal winners and organizers
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Grand Assembly of Winners & Officials
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Celebratory stage assembly of medal winners and organizers
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #39</span>
+                <span class="font-mono text-slate-400">DSC_9427.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 40: DSC_9466.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/DSC_9466.jpg"
                 alt="Closing valedictory ceremony and assembly celebrating Telangana state yoga athletes"
@@ -1111,22 +1461,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Grand Closing Ceremony & Valedictory Assembly
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Closing valedictory ceremony and assembly celebrating Telangana state yoga athletes
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Grand Closing Ceremony & Valedictory Assembly
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Closing valedictory ceremony and assembly celebrating Telangana state yoga athletes
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #40</span>
+                <span class="font-mono text-slate-400">DSC_9466.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 41: gallery-01.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/gallery-01.jpg"
                 alt="Dignitaries inaugural address on stage at 13th State Level Yogasana Sports Championship 2026"
@@ -1136,22 +1492,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Inaugural Address • 13th State Championship
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Dignitaries inaugural address on stage at 13th State Level Yogasana Sports Championship 2026
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Inaugural Address • 13th State Championship
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Dignitaries inaugural address on stage at 13th State Level Yogasana Sports Championship 2026
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #41</span>
+                <span class="font-mono text-slate-400">gallery-01.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 42: gallery-02.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/gallery-02.jpg"
                 alt="Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) before Goddess Saraswati"
@@ -1161,22 +1523,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Ceremonies
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Jyothi Prajwalana • Ceremonial Inauguration
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) before Goddess Saraswati
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Jyothi Prajwalana • Ceremonial Inauguration
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) before Goddess Saraswati
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #42</span>
+                <span class="font-mono text-slate-400">gallery-02.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 43: gallery-03.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/gallery-03.jpg"
                 alt="Young athletes performing synchronized artistic yogasana pyramid formation on stage"
@@ -1186,22 +1554,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Artistic Group Formation • Girls Championship Round
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Young athletes performing synchronized artistic yogasana pyramid formation on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Artistic Group Formation • Girls Championship Round
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Young athletes performing synchronized artistic yogasana pyramid formation on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #43</span>
+                <span class="font-mono text-slate-400">gallery-03.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 44: gallery-04.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="ceremonies">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="ceremonies">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/gallery-04.jpg"
                 alt="Telangana Yoga Association officials and dignitaries group photo at championship venue"
@@ -1211,22 +1585,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Officials
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Association Dignitaries • Inaugural Assembly
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Telangana Yoga Association officials and dignitaries group photo at championship venue
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Association Dignitaries • Inaugural Assembly
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Telangana Yoga Association officials and dignitaries group photo at championship venue
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #44</span>
+                <span class="font-mono text-slate-400">gallery-04.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 45: gallery-05.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/gallery-05.jpg"
                 alt="Young boys team performing multi-tier standing split and balance yogasana formation"
@@ -1236,22 +1616,28 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Artistic Group Formation • Boys Demonstration
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Young boys team performing multi-tier standing split and balance yogasana formation
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Artistic Group Formation • Boys Demonstration
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Young boys team performing multi-tier standing split and balance yogasana formation
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #45</span>
+                <span class="font-mono text-slate-400">gallery-05.jpg</span>
+              </div>
             </div>
           </div>
           <!-- Photo Card 46: gallery-06.jpg -->
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col" data-cat="artistic">
-            <div class="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
+          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="artistic">
+            <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <img
                 src="/static/images/gallery/gallery-06.jpg"
                 alt="Solo yogasana athlete performing standing vertical split (Trivikramasana) on stage"
@@ -1261,17 +1647,23 @@
                 decoding="async"
                 class="w-full h-full object-cover"
               />
-              <span class="absolute top-2 left-2 bg-black/65 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
                 Artistic
               </span>
             </div>
-            <div class="p-3 bg-white flex flex-col flex-grow justify-between">
-              <h2 class="text-xs font-bold text-slate-800 line-clamp-2">
-                Artistic Solo Performance • Standing Vertical Split
-              </h2>
-              <p class="text-[11px] text-slate-500 mt-1 line-clamp-2">
-                Solo yogasana athlete performing standing vertical split (Trivikramasana) on stage
-              </p>
+            <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+              <div>
+                <h2 class="gallery-card-title text-xs font-bold text-slate-800 leading-snug line-clamp-2">
+                  Artistic Solo Performance • Standing Vertical Split
+                </h2>
+                <p class="gallery-card-desc text-[11px] text-slate-500 mt-1 leading-normal line-clamp-2">
+                  Solo yogasana athlete performing standing vertical split (Trivikramasana) on stage
+                </p>
+              </div>
+              <div class="gallery-card-footer mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                <span class="font-semibold text-emerald-700">Photo #46</span>
+                <span class="font-mono text-slate-400">gallery-06.jpg</span>
+              </div>
             </div>
           </div>
         </div>
