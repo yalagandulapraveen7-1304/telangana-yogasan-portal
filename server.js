@@ -115,13 +115,16 @@ app.use('/static', express.static(path.join(__dirname, 'static'), {
 }));
 
 // 4. Ensure Database Connection before handling dynamic routes
-app.use(async (_req, _res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (err) {
-    next(err);
+app.use(async (req, _res, next) => {
+  if (req.path.startsWith('/auth') || req.path.startsWith('/portal') || req.path.startsWith('/uploads')) {
+    try {
+      await connectDB();
+      return next();
+    } catch (err) {
+      return next(err);
+    }
   }
+  next();
 });
 
 // Uploaded Document Images & Certificates Route (with path traversal and IDOR authorization defense)

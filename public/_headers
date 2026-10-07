@@ -1,0 +1,6 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+/static/*
+  Cache-Control: public, max-age=2592000, immutable

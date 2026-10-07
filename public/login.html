@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secretary Portal Login | Telangana Yoga Association</title>
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="any" href="/static/images/favicon.png" />
+    <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png" />
+
+    <!-- Preload Critical Web Fonts -->
+    <link rel="preload" href="/static/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/static/fonts/plus-jakarta-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Google Fonts CDN Fallback & Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" />
+
+    <!-- Local Offline Assets -->
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/output.css" />
+    <link rel="stylesheet" href="/static/css/custom.css" />
+  </head>
+  <body
+    class="bg-slate-100 font-sans min-h-screen flex flex-col justify-between text-slate-800"
+  >
+    <!-- A11y Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header
+      class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] py-3 px-6 shadow-sm"
+    >
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <!-- Logo and Title Group -->
+        <div class="flex items-center gap-3.5">
+          <div
+            class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white p-0.5 flex items-center justify-center border-2 border-[#C5A059] shadow-sm overflow-hidden flex-shrink-0"
+          >
+            <img
+              src="/static/images/TSYSC.png"
+              width="56"
+              height="56"
+              fetchpriority="high"
+              decoding="sync"
+              class="w-full h-full object-contain rounded-full"
+              alt="Telangana State Yoga Association Logo"
+            />
+          </div>
+          <div>
+            <span
+              class="block font-bold text-xs sm:text-sm tracking-wider font-display uppercase leading-tight text-white"
+            >
+              Telangana State Yoga Association
+            </span>
+            <p class="text-[11px] sm:text-xs text-amber-200 font-medium">
+              State Inter-District Championship Portal
+            </p>
+          </div>
+        </div>
+        <a
+          href="index.html"
+          class="text-xs text-emerald-200 hover:text-white flex items-center gap-1"
+        >
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Public Portal
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Content Form -->
+    <main id="main-content" tabindex="-1" class="flex-grow flex items-center justify-center px-4 py-12 focus:outline-none">
+      <div
+        class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 p-8"
+      >
+        <div class="text-center mb-6">
+          <div
+            class="w-12 h-12 bg-emerald-50 border border-emerald-200 text-[#0D5C3A] rounded-xl flex items-center justify-center text-xl mx-auto mb-3 shadow-inner"
+          >
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          </div>
+          <h1 class="text-xl font-bold font-display text-slate-900">
+            District Secretary Portal
+          </h1>
+          <p class="text-xs text-slate-500 mt-1">
+            Authenticate to manage athlete nominations
+          </p>
+        </div>
+
+        <!-- Dynamic Error Banner -->
+        <div
+          id="login-error"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2"
+        >
+          <i class="fa-solid fa-circle-exclamation text-rose-500" aria-hidden="true"></i>
+          <span id="login-error-text">Invalid email or password.</span>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label
+              for="email"
+              class="block text-xs font-semibold text-slate-700 mb-1"
+              >Registered Secretary Email</label
+            >
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"
+              >
+                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+              </span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="username"
+                aria-required="true"
+                placeholder="sec_hyderabad@telanganayoga.org"
+                class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="password"
+              class="block text-xs font-semibold text-slate-700 mb-1"
+              >Password</label
+            >
+            <div class="relative">
+              <span
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs"
+              >
+                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              </span>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                autocomplete="current-password"
+                aria-required="true"
+                placeholder="••••••••••••"
+                class="w-full pl-9 pr-3 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            id="login-btn"
+            class="w-full mt-2 bg-[#0D5C3A] hover:bg-[#083d26] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95"
+          >
+            <span>Sign In to Secretary Portal</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800"
+    >
+      <div>
+        Telangana Yoga Association &bull; Sports Authority of Telangana State
+        (SATS)
+      </div>
+    </footer>
+
+    <!-- Form Handler Script -->
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          const errorBox = document.getElementById("login-error");
+          const errorText = document.getElementById("login-error-text");
+          const submitBtn = document.getElementById("login-btn");
+
+          errorBox.classList.add("hidden");
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> Verifying...`;
+
+          try {
+            const res = await fetch("/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+              // FIX: store the token so dashboard.html's Authorization header is real
+              sessionStorage.setItem("token", data.token || "");
+              sessionStorage.setItem("current_role", data.role || "SECRETARY");
+              sessionStorage.setItem(
+                "current_district",
+                data.district || "Hyderabad",
+              );
+              window.location.href = "/dashboard.html";
+            } else {
+              errorText.textContent = data.error || "Invalid credentials.";
+              errorBox.classList.remove("hidden");
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
+            }
+          } catch (err) {
+            console.error("Login request failed:", err);
+            errorText.textContent =
+              "Server connection failed. Ensure server is online.";
+            errorBox.classList.remove("hidden");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
+          }
+        });
+    </script>
+  </body>
+</html>
