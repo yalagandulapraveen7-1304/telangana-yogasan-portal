@@ -236,6 +236,10 @@ app.get(['/login', '/login.html'], (_req, res) => {
   sendHtmlPage(res, 'login.html');
 });
 
+app.get(['/gallery', '/gallery.html'], (_req, res) => {
+  sendHtmlPage(res, 'gallery.html');
+});
+
 app.get(['/', '/index', '/index.html'], (_req, res) => {
   sendHtmlPage(res, 'index.html');
 });

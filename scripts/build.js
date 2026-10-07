@@ -46,6 +46,7 @@ if (fs.existsSync(srcTemplatesDir)) {
 
 // 3. Create Cloudflare Pages _redirects file for clean URL handling
 const redirectsContent = `/index.html / 200
+/gallery /gallery.html 200
 /login /login.html 200
 /nominate /nominate.html 200
 /school-nominate /school-nominate.html 200

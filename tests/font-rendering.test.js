@@ -10,7 +10,8 @@ const TEMPLATES = [
   'nominate.html',
   'school-nominate.html',
   'dashboard.html',
-  'admitcard.html'
+  'admitcard.html',
+  'gallery.html'
 ];
 
 describe('Font Rendering & Mobile Compatibility Audit', () => {

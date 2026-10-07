@@ -10,7 +10,8 @@ const TEMPLATES = [
   'nominate.html',
   'school-nominate.html',
   'dashboard.html',
-  'admitcard.html'
+  'admitcard.html',
+  'gallery.html'
 ];
 
 describe('WCAG 2.2 AA Accessibility Test Suite', () => {
@@ -96,7 +97,7 @@ describe('WCAG 2.2 AA Accessibility Test Suite', () => {
     });
 
     it('verifies government / association logo has a descriptive alt text', () => {
-      const templatesWithLogo = ['index.html', 'login.html', 'nominate.html', 'school-nominate.html', 'dashboard.html'];
+      const templatesWithLogo = ['index.html', 'login.html', 'nominate.html', 'school-nominate.html', 'dashboard.html', 'gallery.html'];
       templatesWithLogo.forEach((tpl) => {
         const filePath = path.join(ROOT_DIR, 'templates', tpl);
         const html = fs.readFileSync(filePath, 'utf8');
