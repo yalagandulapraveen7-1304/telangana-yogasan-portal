@@ -27,33 +27,50 @@ function initMobileNav() {
   const menu   = $('#nav-menu');
   if (!toggle || !menu) return;
 
-  function closeMenu() {
-    menu.classList.add('hidden');
+  function openMenu() {
+    menu.classList.add('is-open');
+    menu.removeAttribute('aria-hidden');
+    toggle.setAttribute('aria-expanded', 'true');
+    const firstLink = menu.querySelector('a, button');
+    if (firstLink) firstLink.focus();
+  }
+
+  function closeMenu(focusToggle = false) {
+    menu.classList.remove('is-open');
+    menu.setAttribute('aria-hidden', 'true');
     toggle.setAttribute('aria-expanded', 'false');
+    if (focusToggle) toggle.focus();
   }
 
   toggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isHidden = menu.classList.toggle('hidden');
-    toggle.setAttribute('aria-expanded', String(!isHidden));
-    if (!isHidden) {
-      const firstLink = menu.querySelector('a, button');
-      if (firstLink) firstLink.focus();
+    const isOpen = menu.classList.contains('is-open');
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
     }
+  });
+
+  // Smoothly close when any link in drawer is tapped (e.g. anchor scrolling)
+  const links = menu.querySelectorAll('a');
+  links.forEach((link) => {
+    link.addEventListener('click', () => {
+      closeMenu();
+    });
   });
 
   // Close on outside click only when menu is actually open
   document.addEventListener('click', (e) => {
-    if (!menu.classList.contains('hidden') && !toggle.contains(e.target) && !menu.contains(e.target)) {
+    if (menu.classList.contains('is-open') && !toggle.contains(e.target) && !menu.contains(e.target)) {
       closeMenu();
     }
   });
 
   // Close on Escape key and return focus to toggle
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
-      closeMenu();
-      toggle.focus();
+    if (e.key === 'Escape' && menu.classList.contains('is-open')) {
+      closeMenu(true);
     }
   });
 }

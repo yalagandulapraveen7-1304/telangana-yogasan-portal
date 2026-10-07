@@ -1,0 +1,424 @@
+const fs = require('fs');
+
+const items = [
+  // 1. Recent Highlights & Ceremonies
+  {
+    src: '/static/images/gallery/web/DSC_8586.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8586.jpg',
+    hd: '/static/images/gallery/DSC_8586.JPG',
+    title: 'Lamp Lighting (Jyothi Prajwalana) • Auspicious Inauguration',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) to inaugurate the 13th Telangana State Yogasana Championship'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8583.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8583.jpg',
+    hd: '/static/images/gallery/DSC_8583.JPG',
+    title: 'Championship Inaugural Stage • Official Assembly',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Officials and dignitaries assembled on stage for the championship inaugural ceremony'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8730.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8730.jpg',
+    hd: '/static/images/gallery/DSC_8730.JPG',
+    title: 'State Championship Arena • Competition Stage',
+    category: 'asanas',
+    categoryLabel: 'Competition',
+    alt: 'State Championship competition arena with official judging table and athletes'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8934.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8934.jpg',
+    hd: '/static/images/gallery/DSC_8934.JPG',
+    title: 'Artistic Group Pyramid • Synchronized Formation',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Synchronized artistic yogasana multi-tier pyramid formation on stage'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8767.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8767.jpg',
+    hd: '/static/images/gallery/DSC_8767.JPG',
+    title: 'Precision Standing Balance • Championship Round',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Athlete performing high-precision standing balance posture during state selection trials'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9320.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9320.jpg',
+    hd: '/static/images/gallery/DSC_9320.JPG',
+    title: 'Victory Podium • Gold Medalist Honors',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Gold medalist athletes on the podium receiving state ranking awards and honors'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8956.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8956.jpg',
+    hd: '/static/images/gallery/DSC_8956.JPG',
+    title: 'Artistic Yogasana Routine • Dynamic Split Holds',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Dynamic standing split and balance holds in artistic yogasana competitive category'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9466.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9466.jpg',
+    hd: '/static/images/gallery/DSC_9466.JPG',
+    title: 'Grand Closing Ceremony & Valedictory Assembly',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Closing valedictory ceremony and assembly celebrating Telangana state yoga athletes'
+  },
+
+  // Remaining Items
+  {
+    src: '/static/images/gallery/web/DSC_8592.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8592.jpg',
+    hd: '/static/images/gallery/DSC_8592.JPG',
+    title: 'Welcome Address & Stage Gathering',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Welcome address on stage before athletes and district contingents'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8602.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8602.jpg',
+    hd: '/static/images/gallery/DSC_8602.JPG',
+    title: 'Technical Scrutiny & Judging Panel',
+    category: 'ceremonies',
+    categoryLabel: 'Officials',
+    alt: 'Referees, judges, and technical scrutiny panel at the championship dais'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8604.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8604.jpg',
+    hd: '/static/images/gallery/DSC_8604.JPG',
+    title: 'Chief Guest Address to Competitors',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Chief guest delivering inspirational opening address to participants'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8605.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8605.jpg',
+    hd: '/static/images/gallery/DSC_8605.JPG',
+    title: 'Association Executive Committee on Dais',
+    category: 'ceremonies',
+    categoryLabel: 'Officials',
+    alt: 'Telangana Yoga Association executive committee members assembled on stage'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8617.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8617.jpg',
+    hd: '/static/images/gallery/DSC_8617.JPG',
+    title: 'Memento Presentation to Association Patrons',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Presenting honorary mementos and traditional shawls to championship patrons'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8619.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8619.jpg',
+    hd: '/static/images/gallery/DSC_8619.JPG',
+    title: 'Dignitary Felicitation & Honors',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Honoring key contributors and patrons of yoga sports in Telangana'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8631.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8631.jpg',
+    hd: '/static/images/gallery/DSC_8631.JPG',
+    title: 'Championship Keynote & Athlete Briefing',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Keynote address outlining national championship pathway and sporting ethics'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8646.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8646.jpg',
+    hd: '/static/images/gallery/DSC_8646.JPG',
+    title: 'Honorary Memento Distribution',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Felicitation of special guests supporting the state inter-district championship'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8664.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8664.jpg',
+    hd: '/static/images/gallery/DSC_8664.JPG',
+    title: 'Inauguration Dignitaries Stage Assembly',
+    category: 'ceremonies',
+    categoryLabel: 'Officials',
+    alt: 'Executive committee and chief guests assembling on the championship stage'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8734.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8734.jpg',
+    hd: '/static/images/gallery/DSC_8734.JPG',
+    title: 'Jury Panel in Scrutiny Session',
+    category: 'asanas',
+    categoryLabel: 'Competition',
+    alt: 'Official jury panel evaluating form, balance, and breathing precision'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8740.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8740.jpg',
+    hd: '/static/images/gallery/DSC_8740.JPG',
+    title: 'Traditional Yogasana Stage Demonstration',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Athlete performing traditional posture with strict technical adherence'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8752.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8752.jpg',
+    hd: '/static/images/gallery/DSC_8752.JPG',
+    title: 'Competition Stage • Technical Scrutiny',
+    category: 'asanas',
+    categoryLabel: 'Competition',
+    alt: 'Jury scorekeeping and timekeeping during competitive asana holds'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8769.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8769.jpg',
+    hd: '/static/images/gallery/DSC_8769.JPG',
+    title: 'Advanced Flexibility Asana Execution',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Junior athlete holding deep flexibility posture before the judge panel'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8771.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8771.jpg',
+    hd: '/static/images/gallery/DSC_8771.JPG',
+    title: 'Sub-Junior Division Competitive Round',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Young athlete demonstrating intense focus and limb alignment on stage'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8777.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8777.jpg',
+    hd: '/static/images/gallery/DSC_8777.JPG',
+    title: 'Junior Championship Asana Performance',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Contestant executing textbook precision during compulsory asana set'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8782.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8782.jpg',
+    hd: '/static/images/gallery/DSC_8782.JPG',
+    title: 'Backward Bending & Core Balance Hold',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Championship competitor demonstrating core strength and spinal mobility'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8822.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8822.jpg',
+    hd: '/static/images/gallery/DSC_8822.JPG',
+    title: 'Arm Balance & Inversion Precision',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Athlete executing advanced arm balance with steady concentration'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8824.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8824.jpg',
+    hd: '/static/images/gallery/DSC_8824.JPG',
+    title: 'Traditional Asana Routine • Stage Heats',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Demonstrating traditional yogasana sequences according to NYSF standards'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8857.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8857.jpg',
+    hd: '/static/images/gallery/DSC_8857.JPG',
+    title: 'Competitive Floor Asana Execution',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Participant holding seated twisting and hip-opener postures'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8859.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8859.jpg',
+    hd: '/static/images/gallery/DSC_8859.JPG',
+    title: 'Competition Arena • District Athletes',
+    category: 'asanas',
+    categoryLabel: 'Competition',
+    alt: 'Athletes from Telangana districts competing in synchronized heats'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8867.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8867.jpg',
+    hd: '/static/images/gallery/DSC_8867.JPG',
+    title: 'Precision Asana Alignment Round',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Scored demonstration of posture holding duration and breath control'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8871.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8871.jpg',
+    hd: '/static/images/gallery/DSC_8871.JPG',
+    title: 'Advanced Asana Mastery • Senior Division',
+    category: 'asanas',
+    categoryLabel: 'Asanas',
+    alt: 'Senior division athlete presenting flawless posture stability'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8951.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8951.jpg',
+    hd: '/static/images/gallery/DSC_8951.JPG',
+    title: 'Artistic Yogasana Demonstration',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Flowing artistic movements combining traditional yogic postures and music'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8957.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8957.jpg',
+    hd: '/static/images/gallery/DSC_8957.JPG',
+    title: 'Team Choreography & Graceful Holds',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Rhythmic yogasana routine exhibiting team harmony and flexibility'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_8990.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_8990.jpg',
+    hd: '/static/images/gallery/DSC_8990.JPG',
+    title: 'Acrobatic & Group Balance Feat',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Spectacular multi-tier standing split and artistic formation on stage'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9162.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9162.jpg',
+    hd: '/static/images/gallery/DSC_9162.JPG',
+    title: 'Medal Distribution • State Champions',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Awarding gold, silver, and bronze championship medals to winners'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9352.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9352.jpg',
+    hd: '/static/images/gallery/DSC_9352.JPG',
+    title: 'Merit Certificates & Trophies Presentation',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Dignitaries presenting state ranking trophies to district winners'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9383.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9383.jpg',
+    hd: '/static/images/gallery/DSC_9383.JPG',
+    title: 'Championship Trophy Felicitation',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Team championship trophy presentation to overall district winners'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9388.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9388.jpg',
+    hd: '/static/images/gallery/DSC_9388.JPG',
+    title: 'District Contingent Felicitation',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Honoring top district delegations and team managers on stage'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9401.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9401.jpg',
+    hd: '/static/images/gallery/DSC_9401.JPG',
+    title: 'Merit Honors on Championship Dais',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Awarding certificates and medals to sub-junior and junior champions'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9403.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9403.jpg',
+    hd: '/static/images/gallery/DSC_9403.JPG',
+    title: 'State Winners with Association Officials',
+    category: 'ceremonies',
+    categoryLabel: 'Awards',
+    alt: 'Proud medallists posed with association leaders and tournament patrons'
+  },
+  {
+    src: '/static/images/gallery/web/DSC_9427.jpg',
+    thumb: '/static/images/gallery/thumbs/DSC_9427.jpg',
+    hd: '/static/images/gallery/DSC_9427.JPG',
+    title: 'Grand Assembly of Winners & Officials',
+    category: 'ceremonies',
+    categoryLabel: 'Officials',
+    alt: 'Celebratory stage assembly of medal winners and organizers'
+  },
+  {
+    src: '/static/images/gallery/web/gallery-01.jpg',
+    thumb: '/static/images/gallery/thumbs/gallery-01.jpg',
+    hd: '/static/images/gallery/gallery-01.jpg',
+    title: 'Inaugural Address • 13th State Championship',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Dignitaries inaugural address on stage at 13th State Level Yogasana Sports Championship 2026'
+  },
+  {
+    src: '/static/images/gallery/web/gallery-02.jpg',
+    thumb: '/static/images/gallery/thumbs/gallery-02.jpg',
+    hd: '/static/images/gallery/gallery-02.jpg',
+    title: 'Jyothi Prajwalana • Ceremonial Inauguration',
+    category: 'ceremonies',
+    categoryLabel: 'Ceremonies',
+    alt: 'Dignitaries lighting the ceremonial lamp (Jyothi Prajwalana) before Goddess Saraswati'
+  },
+  {
+    src: '/static/images/gallery/web/gallery-03.jpg',
+    thumb: '/static/images/gallery/thumbs/gallery-03.jpg',
+    hd: '/static/images/gallery/gallery-03.jpg',
+    title: 'Artistic Group Formation • Girls Championship Round',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Young athletes performing synchronized artistic yogasana pyramid formation on stage'
+  },
+  {
+    src: '/static/images/gallery/web/gallery-04.jpg',
+    thumb: '/static/images/gallery/thumbs/gallery-04.jpg',
+    hd: '/static/images/gallery/gallery-04.jpg',
+    title: 'Association Dignitaries • Inaugural Assembly',
+    category: 'ceremonies',
+    categoryLabel: 'Officials',
+    alt: 'Telangana Yoga Association officials and dignitaries group photo at championship venue'
+  },
+  {
+    src: '/static/images/gallery/web/gallery-05.jpg',
+    thumb: '/static/images/gallery/thumbs/gallery-05.jpg',
+    hd: '/static/images/gallery/gallery-05.jpg',
+    title: 'Artistic Group Formation • Boys Demonstration',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Young boys team performing multi-tier standing split and balance yogasana formation'
+  },
+  {
+    src: '/static/images/gallery/web/gallery-06.jpg',
+    thumb: '/static/images/gallery/thumbs/gallery-06.jpg',
+    hd: '/static/images/gallery/gallery-06.jpg',
+    title: 'Artistic Solo Performance • Standing Vertical Split',
+    category: 'artistic',
+    categoryLabel: 'Artistic',
+    alt: 'Solo yogasana athlete performing standing vertical split (Trivikramasana) on stage'
+  }
+];
+
+fs.writeFileSync('scripts/gallery-items.json', JSON.stringify(items, null, 2));
+console.log('Saved', items.length, 'gallery items to scripts/gallery-items.json');
