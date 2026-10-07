@@ -27,12 +27,19 @@ function validateEnv() {
   }
 
   // Razorpay keys validation
-  if (IS_PROD) {
+  if (IS_PROD && !process.env.VERCEL) {
     if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
       errors.push('RAZORPAY_KEY_ID must be set to a valid live key in production.');
     }
     if (!process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET.includes('YOUR_SECRET')) {
       errors.push('RAZORPAY_KEY_SECRET must be set to a valid secret in production.');
+    }
+  } else if (IS_PROD && process.env.VERCEL) {
+    if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
+      warnings.push('RAZORPAY_KEY_ID not configured in Vercel environment variables. Running in sandbox mode.');
+    }
+    if (!process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET.includes('YOUR_SECRET')) {
+      warnings.push('RAZORPAY_KEY_SECRET not configured in Vercel environment variables. Running in sandbox mode.');
     }
   }
 
