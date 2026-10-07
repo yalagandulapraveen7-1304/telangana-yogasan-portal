@@ -1,0 +1,7 @@
+.git
+.github
+tests/
+docs/
+README.md
+localhost*.pem
+scripts/optimize-gallery.ps1

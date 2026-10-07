@@ -5,7 +5,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8586.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8586.jpg',
-    hd: '/static/images/gallery/DSC_8586.JPG',
+    hd: '/static/images/gallery/web/DSC_8586.jpg',
     title: 'Lamp Lighting (Jyothi Prajwalana) • Auspicious Inauguration',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -14,7 +14,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8583.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8583.jpg',
-    hd: '/static/images/gallery/DSC_8583.JPG',
+    hd: '/static/images/gallery/web/DSC_8583.jpg',
     title: 'Championship Inaugural Stage • Official Assembly',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -23,7 +23,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8730.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8730.jpg',
-    hd: '/static/images/gallery/DSC_8730.JPG',
+    hd: '/static/images/gallery/web/DSC_8730.jpg',
     title: 'State Championship Arena • Competition Stage',
     category: 'asanas',
     categoryLabel: 'Competition',
@@ -32,7 +32,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8934.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8934.jpg',
-    hd: '/static/images/gallery/DSC_8934.JPG',
+    hd: '/static/images/gallery/web/DSC_8934.jpg',
     title: 'Artistic Group Pyramid • Synchronized Formation',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -41,7 +41,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8767.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8767.jpg',
-    hd: '/static/images/gallery/DSC_8767.JPG',
+    hd: '/static/images/gallery/web/DSC_8767.jpg',
     title: 'Precision Standing Balance • Championship Round',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -50,7 +50,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9320.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9320.jpg',
-    hd: '/static/images/gallery/DSC_9320.JPG',
+    hd: '/static/images/gallery/web/DSC_9320.jpg',
     title: 'Victory Podium • Gold Medalist Honors',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -59,7 +59,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8956.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8956.jpg',
-    hd: '/static/images/gallery/DSC_8956.JPG',
+    hd: '/static/images/gallery/web/DSC_8956.jpg',
     title: 'Artistic Yogasana Routine • Dynamic Split Holds',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -68,7 +68,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9466.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9466.jpg',
-    hd: '/static/images/gallery/DSC_9466.JPG',
+    hd: '/static/images/gallery/web/DSC_9466.jpg',
     title: 'Grand Closing Ceremony & Valedictory Assembly',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -79,7 +79,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8592.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8592.jpg',
-    hd: '/static/images/gallery/DSC_8592.JPG',
+    hd: '/static/images/gallery/web/DSC_8592.jpg',
     title: 'Welcome Address & Stage Gathering',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -88,7 +88,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8602.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8602.jpg',
-    hd: '/static/images/gallery/DSC_8602.JPG',
+    hd: '/static/images/gallery/web/DSC_8602.jpg',
     title: 'Technical Scrutiny & Judging Panel',
     category: 'ceremonies',
     categoryLabel: 'Officials',
@@ -97,7 +97,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8604.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8604.jpg',
-    hd: '/static/images/gallery/DSC_8604.JPG',
+    hd: '/static/images/gallery/web/DSC_8604.jpg',
     title: 'Chief Guest Address to Competitors',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -106,7 +106,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8605.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8605.jpg',
-    hd: '/static/images/gallery/DSC_8605.JPG',
+    hd: '/static/images/gallery/web/DSC_8605.jpg',
     title: 'Association Executive Committee on Dais',
     category: 'ceremonies',
     categoryLabel: 'Officials',
@@ -115,7 +115,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8617.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8617.jpg',
-    hd: '/static/images/gallery/DSC_8617.JPG',
+    hd: '/static/images/gallery/web/DSC_8617.jpg',
     title: 'Memento Presentation to Association Patrons',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -124,7 +124,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8619.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8619.jpg',
-    hd: '/static/images/gallery/DSC_8619.JPG',
+    hd: '/static/images/gallery/web/DSC_8619.jpg',
     title: 'Dignitary Felicitation & Honors',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -133,7 +133,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8631.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8631.jpg',
-    hd: '/static/images/gallery/DSC_8631.JPG',
+    hd: '/static/images/gallery/web/DSC_8631.jpg',
     title: 'Championship Keynote & Athlete Briefing',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -142,7 +142,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8646.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8646.jpg',
-    hd: '/static/images/gallery/DSC_8646.JPG',
+    hd: '/static/images/gallery/web/DSC_8646.jpg',
     title: 'Honorary Memento Distribution',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -151,7 +151,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8664.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8664.jpg',
-    hd: '/static/images/gallery/DSC_8664.JPG',
+    hd: '/static/images/gallery/web/DSC_8664.jpg',
     title: 'Inauguration Dignitaries Stage Assembly',
     category: 'ceremonies',
     categoryLabel: 'Officials',
@@ -160,7 +160,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8734.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8734.jpg',
-    hd: '/static/images/gallery/DSC_8734.JPG',
+    hd: '/static/images/gallery/web/DSC_8734.jpg',
     title: 'Jury Panel in Scrutiny Session',
     category: 'asanas',
     categoryLabel: 'Competition',
@@ -169,7 +169,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8740.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8740.jpg',
-    hd: '/static/images/gallery/DSC_8740.JPG',
+    hd: '/static/images/gallery/web/DSC_8740.jpg',
     title: 'Traditional Yogasana Stage Demonstration',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -178,7 +178,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8752.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8752.jpg',
-    hd: '/static/images/gallery/DSC_8752.JPG',
+    hd: '/static/images/gallery/web/DSC_8752.jpg',
     title: 'Competition Stage • Technical Scrutiny',
     category: 'asanas',
     categoryLabel: 'Competition',
@@ -187,7 +187,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8769.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8769.jpg',
-    hd: '/static/images/gallery/DSC_8769.JPG',
+    hd: '/static/images/gallery/web/DSC_8769.jpg',
     title: 'Advanced Flexibility Asana Execution',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -196,7 +196,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8771.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8771.jpg',
-    hd: '/static/images/gallery/DSC_8771.JPG',
+    hd: '/static/images/gallery/web/DSC_8771.jpg',
     title: 'Sub-Junior Division Competitive Round',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -205,7 +205,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8777.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8777.jpg',
-    hd: '/static/images/gallery/DSC_8777.JPG',
+    hd: '/static/images/gallery/web/DSC_8777.jpg',
     title: 'Junior Championship Asana Performance',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -214,7 +214,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8782.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8782.jpg',
-    hd: '/static/images/gallery/DSC_8782.JPG',
+    hd: '/static/images/gallery/web/DSC_8782.jpg',
     title: 'Backward Bending & Core Balance Hold',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -223,7 +223,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8822.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8822.jpg',
-    hd: '/static/images/gallery/DSC_8822.JPG',
+    hd: '/static/images/gallery/web/DSC_8822.jpg',
     title: 'Arm Balance & Inversion Precision',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -232,7 +232,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8824.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8824.jpg',
-    hd: '/static/images/gallery/DSC_8824.JPG',
+    hd: '/static/images/gallery/web/DSC_8824.jpg',
     title: 'Traditional Asana Routine • Stage Heats',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -241,7 +241,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8857.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8857.jpg',
-    hd: '/static/images/gallery/DSC_8857.JPG',
+    hd: '/static/images/gallery/web/DSC_8857.jpg',
     title: 'Competitive Floor Asana Execution',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -250,7 +250,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8859.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8859.jpg',
-    hd: '/static/images/gallery/DSC_8859.JPG',
+    hd: '/static/images/gallery/web/DSC_8859.jpg',
     title: 'Competition Arena • District Athletes',
     category: 'asanas',
     categoryLabel: 'Competition',
@@ -259,7 +259,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8867.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8867.jpg',
-    hd: '/static/images/gallery/DSC_8867.JPG',
+    hd: '/static/images/gallery/web/DSC_8867.jpg',
     title: 'Precision Asana Alignment Round',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -268,7 +268,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8871.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8871.jpg',
-    hd: '/static/images/gallery/DSC_8871.JPG',
+    hd: '/static/images/gallery/web/DSC_8871.jpg',
     title: 'Advanced Asana Mastery • Senior Division',
     category: 'asanas',
     categoryLabel: 'Asanas',
@@ -277,7 +277,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8951.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8951.jpg',
-    hd: '/static/images/gallery/DSC_8951.JPG',
+    hd: '/static/images/gallery/web/DSC_8951.jpg',
     title: 'Artistic Yogasana Demonstration',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -286,7 +286,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8957.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8957.jpg',
-    hd: '/static/images/gallery/DSC_8957.JPG',
+    hd: '/static/images/gallery/web/DSC_8957.jpg',
     title: 'Team Choreography & Graceful Holds',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -295,7 +295,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_8990.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_8990.jpg',
-    hd: '/static/images/gallery/DSC_8990.JPG',
+    hd: '/static/images/gallery/web/DSC_8990.jpg',
     title: 'Acrobatic & Group Balance Feat',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -304,7 +304,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9162.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9162.jpg',
-    hd: '/static/images/gallery/DSC_9162.JPG',
+    hd: '/static/images/gallery/web/DSC_9162.jpg',
     title: 'Medal Distribution • State Champions',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -313,7 +313,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9352.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9352.jpg',
-    hd: '/static/images/gallery/DSC_9352.JPG',
+    hd: '/static/images/gallery/web/DSC_9352.jpg',
     title: 'Merit Certificates & Trophies Presentation',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -322,7 +322,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9383.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9383.jpg',
-    hd: '/static/images/gallery/DSC_9383.JPG',
+    hd: '/static/images/gallery/web/DSC_9383.jpg',
     title: 'Championship Trophy Felicitation',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -331,7 +331,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9388.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9388.jpg',
-    hd: '/static/images/gallery/DSC_9388.JPG',
+    hd: '/static/images/gallery/web/DSC_9388.jpg',
     title: 'District Contingent Felicitation',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -340,7 +340,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9401.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9401.jpg',
-    hd: '/static/images/gallery/DSC_9401.JPG',
+    hd: '/static/images/gallery/web/DSC_9401.jpg',
     title: 'Merit Honors on Championship Dais',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -349,7 +349,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9403.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9403.jpg',
-    hd: '/static/images/gallery/DSC_9403.JPG',
+    hd: '/static/images/gallery/web/DSC_9403.jpg',
     title: 'State Winners with Association Officials',
     category: 'ceremonies',
     categoryLabel: 'Awards',
@@ -358,7 +358,7 @@ const items = [
   {
     src: '/static/images/gallery/web/DSC_9427.jpg',
     thumb: '/static/images/gallery/thumbs/DSC_9427.jpg',
-    hd: '/static/images/gallery/DSC_9427.JPG',
+    hd: '/static/images/gallery/web/DSC_9427.jpg',
     title: 'Grand Assembly of Winners & Officials',
     category: 'ceremonies',
     categoryLabel: 'Officials',
@@ -367,7 +367,7 @@ const items = [
   {
     src: '/static/images/gallery/web/gallery-01.jpg',
     thumb: '/static/images/gallery/thumbs/gallery-01.jpg',
-    hd: '/static/images/gallery/gallery-01.jpg',
+    hd: '/static/images/gallery/web/gallery-01.jpg',
     title: 'Inaugural Address • 13th State Championship',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -376,7 +376,7 @@ const items = [
   {
     src: '/static/images/gallery/web/gallery-02.jpg',
     thumb: '/static/images/gallery/thumbs/gallery-02.jpg',
-    hd: '/static/images/gallery/gallery-02.jpg',
+    hd: '/static/images/gallery/web/gallery-02.jpg',
     title: 'Jyothi Prajwalana • Ceremonial Inauguration',
     category: 'ceremonies',
     categoryLabel: 'Ceremonies',
@@ -385,7 +385,7 @@ const items = [
   {
     src: '/static/images/gallery/web/gallery-03.jpg',
     thumb: '/static/images/gallery/thumbs/gallery-03.jpg',
-    hd: '/static/images/gallery/gallery-03.jpg',
+    hd: '/static/images/gallery/web/gallery-03.jpg',
     title: 'Artistic Group Formation • Girls Championship Round',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -394,7 +394,7 @@ const items = [
   {
     src: '/static/images/gallery/web/gallery-04.jpg',
     thumb: '/static/images/gallery/thumbs/gallery-04.jpg',
-    hd: '/static/images/gallery/gallery-04.jpg',
+    hd: '/static/images/gallery/web/gallery-04.jpg',
     title: 'Association Dignitaries • Inaugural Assembly',
     category: 'ceremonies',
     categoryLabel: 'Officials',
@@ -403,7 +403,7 @@ const items = [
   {
     src: '/static/images/gallery/web/gallery-05.jpg',
     thumb: '/static/images/gallery/thumbs/gallery-05.jpg',
-    hd: '/static/images/gallery/gallery-05.jpg',
+    hd: '/static/images/gallery/web/gallery-05.jpg',
     title: 'Artistic Group Formation • Boys Demonstration',
     category: 'artistic',
     categoryLabel: 'Artistic',
@@ -412,7 +412,7 @@ const items = [
   {
     src: '/static/images/gallery/web/gallery-06.jpg',
     thumb: '/static/images/gallery/thumbs/gallery-06.jpg',
-    hd: '/static/images/gallery/gallery-06.jpg',
+    hd: '/static/images/gallery/web/gallery-06.jpg',
     title: 'Artistic Solo Performance • Standing Vertical Split',
     category: 'artistic',
     categoryLabel: 'Artistic',
