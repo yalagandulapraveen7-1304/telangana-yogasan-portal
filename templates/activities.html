@@ -91,17 +91,17 @@
 
     <!-- Main Navigation Header -->
     <header class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5">
-        <div class="flex items-center justify-between gap-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 sm:py-2.5">
+        <div class="flex items-center justify-between gap-3 sm:gap-4">
           <!-- Brand Identity -->
-          <a href="/" class="flex items-center gap-3.5 group text-decoration-none">
-            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0 border-2 border-[#C5A059]">
+          <a href="/" class="flex items-center gap-2.5 sm:gap-3 group text-decoration-none">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0 border-2 border-[#C5A059]">
               <div class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center text-center overflow-hidden">
                 <img
                   src="/static/images/TSYSC.png"
                   alt="Telangana State Yoga Association Logo"
-                  width="56"
-                  height="56"
+                  width="44"
+                  height="44"
                   fetchpriority="high"
                   decoding="sync"
                   class="w-full h-auto"
@@ -110,13 +110,13 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-[8px] sm:text-xs font-semibold uppercase tracking-wider text-amber-300">
+              <span class="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-amber-300 leading-tight">
                 Affiliated to Yoga Federation of India
               </span>
-              <span class="text-base sm:text-xl md:text-2xl font-bold tracking-tight font-display text-white leading-tight">
+              <span class="text-sm sm:text-base md:text-lg font-bold tracking-tight font-display text-white leading-tight">
                 Telangana Yoga Association
               </span>
-              <span class="text-[10px] sm:text-xs text-emerald-100/80">
+              <span class="text-[9px] sm:text-[11px] text-emerald-100/80 leading-none hidden sm:block">
                 Independent State Sports Association &bull; Telangana
               </span>
             </div>
@@ -125,16 +125,73 @@
           <!-- Desktop Navigation -->
           <nav class="site-nav-desktop hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
             <a href="/" class="nav-link">Home</a>
-            <a href="/about" class="nav-link">About Us</a>
-            <a href="/activities" class="nav-link active">Yoga Activities</a>
-            <a href="/events" class="nav-link">Events</a>
-            <a href="/districts" class="nav-link">Districts</a>
+
+            <!-- Dropdown: About & Contact -->
+            <div class="relative nav-dropdown-group">
+              <button
+                type="button"
+                id="nav-about-contact-btn"
+                class="nav-link nav-dropdown-btn flex items-center gap-1.5 focus:outline-none"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="nav-about-contact-menu"
+              >
+                <span>About &amp; Contact</span>
+                <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200" aria-hidden="true"></i>
+              </button>
+              <div
+                id="nav-about-contact-menu"
+                class="nav-dropdown-menu hidden absolute left-0 mt-1.5 w-48 bg-[#0a4229] border border-[#C5A059]/40 rounded-lg shadow-xl py-1 z-50"
+                role="menu"
+                aria-labelledby="nav-about-contact-btn"
+              >
+                <a href="/about" class="dropdown-item" role="menuitem">
+                  <i class="fa-solid fa-circle-info text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
+                  <span>About Us</span>
+                </a>
+                <a href="/contact" class="dropdown-item" role="menuitem">
+                  <i class="fa-solid fa-envelope text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
+                  <span>Contact Secretariat</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Dropdown: Activities & Events (Active) -->
+            <div class="relative nav-dropdown-group">
+              <button
+                type="button"
+                id="nav-activities-events-btn"
+                class="nav-link active nav-dropdown-btn flex items-center gap-1.5 focus:outline-none"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="nav-activities-events-menu"
+              >
+                <span>Activities &amp; Events</span>
+                <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200" aria-hidden="true"></i>
+              </button>
+              <div
+                id="nav-activities-events-menu"
+                class="nav-dropdown-menu hidden absolute left-0 mt-1.5 w-52 bg-[#0a4229] border border-[#C5A059]/40 rounded-lg shadow-xl py-1 z-50"
+                role="menu"
+                aria-labelledby="nav-activities-events-btn"
+              >
+                <a href="/activities" class="dropdown-item bg-emerald-800 text-white font-semibold" role="menuitem">
+                  <i class="fa-solid fa-spa text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
+                  <span>Yoga Activities</span>
+                </a>
+                <a href="/events" class="dropdown-item" role="menuitem">
+                  <i class="fa-solid fa-trophy text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
+                  <span>Events &amp; Championships</span>
+                </a>
+              </div>
+            </div>
+
             <a href="/membership" class="nav-link">Membership</a>
             <a href="/results" class="nav-link">Results</a>
             <a href="/downloads" class="nav-link">Downloads</a>
             <a href="/gallery" class="nav-link">Gallery</a>
-            <a href="/contact" class="nav-link">Contact</a>
-            <a href="/login" class="nav-link-login ml-2 flex items-center gap-2">
+
+            <a href="/login" class="nav-link-login ml-1.5 flex items-center gap-1.5">
               <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
               <span>Portal Login</span>
             </a>
@@ -158,54 +215,84 @@
 
         <!-- Mobile Navigation Drawer -->
         <div id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-hidden="true">
-          <div class="nav-menu-inner min-h-0 pt-3 pb-3 space-y-1">
-            <a href="/" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+          <div class="nav-menu-inner min-h-0 pt-2.5 pb-3 space-y-1">
+            <a href="/" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Home</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
-            <a href="/about" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
-              <span>About Us</span>
-              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
-            </a>
-            <a href="/activities" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium bg-emerald-800/90 transition flex items-center justify-between">
-              <span>Yoga Activities</span>
-              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
-            </a>
-            <a href="/events" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
-              <span>Events &amp; Championships</span>
-              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
-            </a>
-            <a href="/districts" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
-              <span>Districts Network</span>
-              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
-            </a>
-            <a href="/membership" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+
+            <!-- Mobile Submenu: About & Contact -->
+            <div class="mobile-nav-group rounded-lg overflow-hidden bg-emerald-900/60 border border-emerald-700/50">
+              <button
+                type="button"
+                class="mobile-nav-group-btn w-full px-3 py-2 text-left text-white font-medium flex items-center justify-between hover:bg-emerald-800/80 transition focus:outline-none"
+                aria-expanded="false"
+                aria-controls="mobile-submenu-about"
+              >
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid fa-circle-info text-amber-300 text-xs" aria-hidden="true"></i>
+                  <span>About &amp; Contact</span>
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-amber-300/80 transition-transform duration-200" aria-hidden="true"></i>
+              </button>
+              <div id="mobile-submenu-about" class="mobile-submenu hidden px-2 py-1 space-y-0.5 bg-emerald-950/60 border-t border-emerald-800/60">
+                <a href="/about" class="mobile-nav-link block px-3 py-1.5 rounded-md text-xs font-medium text-emerald-100 hover:text-white hover:bg-emerald-800/80 transition flex items-center justify-between">
+                  <span>About Us</span>
+                  <i class="fa-solid fa-arrow-right text-[10px] text-amber-300/70" aria-hidden="true"></i>
+                </a>
+                <a href="/contact" class="mobile-nav-link block px-3 py-1.5 rounded-md text-xs font-medium text-emerald-100 hover:text-white hover:bg-emerald-800/80 transition flex items-center justify-between">
+                  <span>Contact Secretariat</span>
+                  <i class="fa-solid fa-arrow-right text-[10px] text-amber-300/70" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Mobile Submenu: Activities & Events -->
+            <div class="mobile-nav-group rounded-lg overflow-hidden bg-emerald-900/60 border border-emerald-700/50">
+              <button
+                type="button"
+                class="mobile-nav-group-btn w-full px-3 py-2 text-left text-white font-medium flex items-center justify-between bg-emerald-800/80 transition focus:outline-none"
+                aria-expanded="true"
+                aria-controls="mobile-submenu-activities"
+              >
+                <span class="flex items-center gap-2">
+                  <i class="fa-solid fa-spa text-amber-300 text-xs" aria-hidden="true"></i>
+                  <span>Activities &amp; Events</span>
+                </span>
+                <i class="fa-solid fa-chevron-down text-xs text-amber-300/80 transition-transform duration-200" aria-hidden="true"></i>
+              </button>
+              <div id="mobile-submenu-activities" class="mobile-submenu px-2 py-1 space-y-0.5 bg-emerald-950/60 border-t border-emerald-800/60">
+                <a href="/activities" class="mobile-nav-link block px-3 py-1.5 rounded-md text-xs font-semibold text-amber-300 bg-emerald-800/90 transition flex items-center justify-between">
+                  <span>Yoga Activities</span>
+                  <i class="fa-solid fa-check text-[10px] text-amber-300" aria-hidden="true"></i>
+                </a>
+                <a href="/events" class="mobile-nav-link block px-3 py-1.5 rounded-md text-xs font-medium text-emerald-100 hover:text-white hover:bg-emerald-800/80 transition flex items-center justify-between">
+                  <span>Events &amp; Championships</span>
+                  <i class="fa-solid fa-arrow-right text-[10px] text-amber-300/70" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+
+            <a href="/membership" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Membership</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
-            <a href="/results" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+            <a href="/results" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Results &amp; Archives</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
-            <a href="/downloads" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+            <a href="/downloads" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Downloads &amp; Circulars</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
-            <a href="/gallery" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+            <a href="/gallery" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Photo Gallery</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
-            <a href="/contact" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
-              <span>Contact Us</span>
-              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
-            </a>
             <div class="pt-2 px-1">
-              <a
-                href="/login"
-                class="mobile-nav-link w-full text-center bg-[#C5A059] hover:bg-[#b8893d] text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition"
-              >
+              <a href="/login" class="mobile-nav-link w-full text-center bg-[#C5A059] hover:bg-[#b8893d] text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition">
                 <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
-                <span>District Secretary Login</span>
+                <span>Portal Login</span>
               </a>
             </div>
           </div>
