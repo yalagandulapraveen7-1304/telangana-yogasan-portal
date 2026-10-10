@@ -18,7 +18,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   const body = req.body || {};
 
   // Reject unexpected fields to prevent parameter injection / prototype pollution
-  const allowedKeys = new Set(['email', 'password']);
+  const allowedKeys = new Set(['email', 'password', 'recaptchaToken']);
   const receivedKeys = Object.keys(body);
   const unexpectedKeys = receivedKeys.filter((k) => !allowedKeys.has(k));
   if (unexpectedKeys.length > 0) {

@@ -14,7 +14,11 @@
       href="/static/images/favicon.png"
     />
     <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png" />
-
+    <script
+      src="https://www.google.com/recaptcha/enterprise.js"
+      async
+      defer
+    ></script>
     <!-- Preload Critical Web Fonts -->
     <link
       rel="preload"
@@ -180,6 +184,15 @@
             </div>
           </div>
 
+          <!-- Google reCAPTCHA Enterprise Widget -->
+          <div class="flex justify-center my-2 min-h-[78px]">
+            <div
+              class="g-recaptcha"
+              data-sitekey="6Ld84ugtAAAAAOo_agUOzrCfeCrZq6W2RbSeLP28"
+              data-action="LOGIN"
+            ></div>
+          </div>
+
           <button
             type="submit"
             id="login-btn"
@@ -247,11 +260,23 @@
           submitBtn.disabled = true;
           submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> Authenticating...`;
 
+          let recaptchaToken = "";
+          if (window.grecaptcha && window.grecaptcha.enterprise && typeof window.grecaptcha.enterprise.getResponse === "function") {
+            recaptchaToken = window.grecaptcha.enterprise.getResponse();
+          } else if (window.grecaptcha && typeof window.grecaptcha.getResponse === "function") {
+            recaptchaToken = window.grecaptcha.getResponse();
+          }
+
+          const payload = { email, password };
+          if (recaptchaToken) {
+            payload.recaptchaToken = recaptchaToken;
+          }
+
           try {
             const res = await fetch("/auth/login", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email, password }),
+              body: JSON.stringify(payload),
             });
 
             const data = await res.json();
@@ -270,6 +295,12 @@
               errorBox.classList.remove("hidden");
               submitBtn.disabled = false;
               submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
+
+              if (window.grecaptcha && window.grecaptcha.enterprise && typeof window.grecaptcha.enterprise.reset === "function") {
+                window.grecaptcha.enterprise.reset();
+              } else if (window.grecaptcha && typeof window.grecaptcha.reset === "function") {
+                window.grecaptcha.reset();
+              }
             }
           } catch (err) {
             console.error("Login request failed:", err);
