@@ -45,10 +45,7 @@
     <div class="gov-topbar py-1.5 px-4 sm:px-6 bg-[#0a4229] text-slate-200 border-b border-[#C5A059]/40 text-xs">
       <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center space-x-3">
-          <span class="inline-flex items-center gap-1.5 font-medium tracking-wide">
-            <i class="fa-solid fa-om text-amber-300" aria-hidden="true"></i>
-            TELANGANA YOGA ASSOCIATION
-          </span>
+          <span class="inline-flex items-center gap-1.5 font-medium tracking-wide"><i class="fa-solid fa-om text-amber-300" aria-hidden="true"></i> <span data-i18n="org_title">TELANGANA YOGA ASSOCIATION</span></span>
           <span class="text-slate-400">|</span>
           <span class="hidden md:inline font-normal text-slate-300">
             Affiliated to Yoga Federation of India
@@ -56,6 +53,19 @@
         </div>
 
         <div class="flex items-center space-x-4 ml-auto text-xs">
+          <div class="flex items-center bg-black/20 rounded px-1.5 py-0.5 border border-white/10 text-[11px]">
+            <button
+              type="button"
+              id="lang-toggle"
+              aria-label="భాషను తెలుగులోకి మార్చండి / Switch language to Telugu"
+              aria-pressed="false"
+              title="Switch language between English and Telugu"
+              class="touch-target-min font-semibold px-1.5 py-0.5 rounded text-amber-300 hover:text-amber-200 hover:bg-white/10 transition flex items-center gap-1 focus:outline-none focus:ring-1 focus:ring-amber-300"
+            >
+              <i class="fa-solid fa-language text-xs" aria-hidden="true"></i>
+              <span id="lang-label">తెలుగు</span>
+            </button>
+          </div>
           <div class="flex items-center space-x-1.5 bg-black/20 rounded px-2 py-0.5 border border-white/10">
             <button
               type="button"
@@ -110,12 +120,8 @@
             </div>
 
             <div class="flex flex-col">
-              <span class="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-amber-300 leading-tight">
-                Affiliated to Yoga Federation of India
-              </span>
-              <span class="text-sm sm:text-base md:text-lg font-bold tracking-tight font-display text-white leading-tight">
-                Telangana Yoga Association
-              </span>
+              <span class="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-amber-300 leading-tight"><span data-i18n="org_tagline_top">Affiliated to Yoga Federation of India</span></span>
+              <span class="text-sm sm:text-base md:text-lg font-bold tracking-tight font-display text-white leading-tight"><span data-i18n="org_brand">Telangana Yoga Association</span></span>
               <span class="text-[9px] sm:text-[11px] text-emerald-100/80 leading-none hidden sm:block">
                 State Sports Association &bull; Telangana
               </span>
@@ -124,7 +130,7 @@
 
           <!-- Desktop Navigation -->
           <nav class="site-nav-desktop hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
-            <a href="/" class="nav-link">Home</a>
+            <a href="/" class="nav-link"><span data-i18n="nav_home">Home</span></a>
 
             <!-- Dropdown: About & Contact -->
             <div class="relative nav-dropdown-group">
@@ -136,7 +142,7 @@
                 aria-haspopup="true"
                 aria-controls="nav-about-contact-menu"
               >
-                <span>About &amp; Contact</span>
+                <span data-i18n="nav_about_contact">About &amp; Contact</span>
                 <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200" aria-hidden="true"></i>
               </button>
               <div
@@ -147,11 +153,11 @@
               >
                 <a href="/about" class="dropdown-item" role="menuitem">
                   <i class="fa-solid fa-circle-info text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
-                  <span>About Us</span>
+                  <span data-i18n="nav_about">About Us</span>
                 </a>
                 <a href="/contact" class="dropdown-item" role="menuitem">
                   <i class="fa-solid fa-envelope text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
-                  <span>Contact Secretariat</span>
+                  <span data-i18n="nav_contact">Contact Secretariat</span>
                 </a>
               </div>
             </div>
@@ -166,7 +172,7 @@
                 aria-haspopup="true"
                 aria-controls="nav-activities-events-menu"
               >
-                <span>Activities &amp; Events</span>
+                <span data-i18n="nav_activities_events">Activities &amp; Events</span>
                 <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200" aria-hidden="true"></i>
               </button>
               <div
@@ -177,23 +183,23 @@
               >
                 <a href="/activities" class="dropdown-item" role="menuitem">
                   <i class="fa-solid fa-spa text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
-                  <span>Yoga Activities</span>
+                  <span data-i18n="nav_activities">Yoga Activities</span>
                 </a>
                 <a href="/events" class="dropdown-item" role="menuitem">
                   <i class="fa-solid fa-trophy text-amber-300 text-xs w-4 text-center" aria-hidden="true"></i>
-                  <span>Events &amp; Championships</span>
+                  <span data-i18n="nav_events">Events &amp; Championships</span>
                 </a>
               </div>
             </div>
 
-            <a href="/membership" class="nav-link">Membership</a>
-            <a href="/results" class="nav-link active">Results</a>
-            <a href="/downloads" class="nav-link">Downloads</a>
-            <a href="/gallery" class="nav-link">Gallery</a>
+            <a href="/membership" class="nav-link"><span data-i18n="nav_membership">Membership</span></a>
+            <a href="/results" class="nav-link active"><span data-i18n="nav_results">Results</span></a>
+            <a href="/downloads" class="nav-link"><span data-i18n="nav_downloads">Downloads</span></a>
+            <a href="/gallery" class="nav-link"><span data-i18n="nav_gallery">Gallery</span></a>
 
             <a href="/login" class="nav-link-login ml-1.5 flex items-center gap-1.5">
               <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
-              <span>Portal Login</span>
+              <span data-i18n="nav_login">Portal Login</span>
             </a>
           </nav>
 

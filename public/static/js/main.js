@@ -607,6 +607,122 @@ function initDragZones() {
   });
 }
 
+/* ── Bilingual Telugu / English Language Switcher (GIGW 3.0 Guideline 5.1.13) ── */
+const I18N_DICTIONARY = {
+  en: {
+    org_title: 'TELANGANA YOGA ASSOCIATION',
+    org_brand: 'Telangana Yoga Association',
+    org_tagline: 'Affiliated to Yoga Federation of India • State Sports Body',
+    org_tagline_top: 'Affiliated to Yoga Federation of India',
+    org_brand_sub: 'State Sports Association • Telangana',
+    nav_home: 'Home',
+    nav_about_contact: 'About & Contact',
+    nav_about: 'About Us',
+    nav_contact: 'Contact Secretariat',
+    nav_help: 'Help & FAQ',
+    nav_activities_events: 'Activities & Events',
+    nav_activities: 'Yoga Activities',
+    nav_events: 'Events & Championships',
+    nav_membership: 'Membership',
+    nav_results: 'Results',
+    nav_downloads: 'Downloads',
+    nav_gallery: 'Gallery',
+    nav_login: 'Portal Login',
+    quick_nav: 'Quick Navigation',
+    championship_portal: 'Championship & Portal',
+    affiliation_contacts: 'Affiliation & Contacts',
+    switch_to: 'తెలుగు'
+  },
+  te: {
+    org_title: 'తెలంగాణ యోగా అసోసియేషన్',
+    org_brand: 'తెలంగాణ యోగా అసోసియేషన్',
+    org_tagline: 'యోగా ఫెడరేషన్ ఆఫ్ ఇండియా అనుబంధం • రాష్ట్ర క్రీడా సంస్థ',
+    org_tagline_top: 'యోగా ఫెడరేషన్ ఆఫ్ ఇండియా అనుబంధం',
+    org_brand_sub: 'రాష్ట్ర క్రీడా సంస్థ • తెలంగాణ',
+    nav_home: 'హోమ్',
+    nav_about_contact: 'మా గురించి & సంప్రదించండి',
+    nav_about: 'మా గురించి',
+    nav_contact: 'కార్యాలయ సంప్రదింపులు',
+    nav_help: 'సహాయం & తరచుగా అడిగే ప్రశ్నలు',
+    nav_activities_events: 'కార్యక్రమాలు & పోటీలు',
+    nav_activities: 'యోగా కార్యక్రమాలు',
+    nav_events: 'పోటీలు & ఈవెంట్‌లు',
+    nav_membership: 'సభ్యత్వం',
+    nav_results: 'ఫలితాలు',
+    nav_downloads: 'డౌన్‌లోడ్‌లు',
+    nav_gallery: 'ఫోటో గ్యాలరీ',
+    nav_login: 'పోర్టల్ లాగిన్',
+    quick_nav: 'త్వరిత లింకులు',
+    championship_portal: 'ఛాంపియన్‌షిప్ & పోర్టల్',
+    affiliation_contacts: 'అనుబంధం & సంప్రదింపులు',
+    switch_to: 'English'
+  }
+};
+
+function initLanguageSwitcher() {
+  const toggleBtn = $('#lang-toggle');
+  const langLabel = $('#lang-label');
+
+  let currentLang = 'en';
+  try {
+    currentLang = localStorage.getItem('tya_lang') || 'en';
+  } catch (e) {
+    currentLang = 'en';
+  }
+
+  function applyLanguage(lang) {
+    document.documentElement.lang = lang;
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-pressed', lang === 'te' ? 'true' : 'false');
+      toggleBtn.setAttribute(
+        'aria-label',
+        lang === 'te' ? 'Switch language to English' : 'భాషను తెలుగులోకి మార్చండి / Switch language to Telugu'
+      );
+    }
+    if (langLabel) {
+      langLabel.textContent = lang === 'te' ? 'English' : 'తెలుగు';
+    }
+
+    const dict = I18N_DICTIONARY[lang] || I18N_DICTIONARY.en;
+
+    // 1. Update elements with explicit [data-i18n]
+    $$('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) {
+        el.textContent = dict[key];
+      }
+    });
+
+    // 2. Announce to screen readers
+    let announcer = $('#lang-announcer');
+    if (!announcer) {
+      announcer = document.createElement('div');
+      announcer.id = 'lang-announcer';
+      announcer.setAttribute('role', 'status');
+      announcer.setAttribute('aria-live', 'polite');
+      announcer.className = 'sr-only';
+      document.body.appendChild(announcer);
+    }
+    announcer.textContent = lang === 'te' ? 'భాష తెలుగులోకి మార్చబడింది' : 'Language switched to English';
+  }
+
+  // Initialize on page load
+  if (currentLang === 'te') {
+    applyLanguage('te');
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      currentLang = currentLang === 'en' ? 'te' : 'en';
+      try {
+        localStorage.setItem('tya_lang', currentLang);
+      } catch (err) {}
+      applyLanguage(currentLang);
+    });
+  }
+}
+
 /* ── Init all on DOM ready ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
@@ -617,4 +733,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initTableSearch();
   initDragZones();
+  initLanguageSwitcher();
 });
