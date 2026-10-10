@@ -49,6 +49,11 @@ const TELANGANA_DISTRICTS = [
   'Vikarabad', 'Wanaparthy', 'Warangal', 'Hanamkonda', 'Yadadri Bhuvanagiri'
 ];
 
+// Google reCAPTCHA Enterprise Settings
+const RECAPTCHA_PROJECT_ID = process.env.RECAPTCHA_PROJECT_ID || 'telangana-yogasa-1791657494164';
+const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || '6Ld84ugtAAAAAOo_agUOzrCfeCrZq6W2RbSeLP28';
+const RECAPTCHA_API_KEY = process.env.RECAPTCHA_API_KEY || '';
+
 module.exports = {
   PORT,
   MONGO_URI,
@@ -57,5 +62,8 @@ module.exports = {
   FEE_PER_EVENT,
   RAZORPAY_KEY_ID,
   RAZORPAY_KEY_SECRET,
+  RECAPTCHA_PROJECT_ID,
+  RECAPTCHA_SITE_KEY,
+  RECAPTCHA_API_KEY,
   TELANGANA_DISTRICTS
 };

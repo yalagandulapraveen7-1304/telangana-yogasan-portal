@@ -12,6 +12,7 @@ const { JWT_SECRET, IS_PROD } = require('../config/constants');
 const { requireAuth, loginLimiter, requireRole } = require('../middleware/auth');
 const { stripHtml } = require('../middleware/sanitize');
 const { isValidEmail, isValidPassword } = require('../utils/validators');
+const { verifyEnterpriseRecaptcha } = require('../services/recaptchaEnterprise');
 
 // 1. POST /auth/login
 router.post('/login', loginLimiter, async (req, res) => {
@@ -28,11 +29,20 @@ router.post('/login', loginLimiter, async (req, res) => {
     });
   }
 
-  const { email, password } = body;
+  const { email, password, recaptchaToken } = body;
 
   const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
   const clientIp = stripHtml(String(Array.isArray(rawIp) ? rawIp[0] : rawIp)).substring(0, 45);
   const userAgent = stripHtml(String(req.headers['user-agent'] || 'Unknown Device')).substring(0, 200);
+
+  // Validate Google reCAPTCHA Enterprise Assessment
+  const recaptchaVerification = await verifyEnterpriseRecaptcha(recaptchaToken, 'LOGIN');
+  if (!recaptchaVerification.success) {
+    return res.status(400).json({
+      success: false,
+      error: recaptchaVerification.error || 'reCAPTCHA verification failed. Please check the checkbox.'
+    });
+  }
 
   // Strict type checks
   if (typeof email !== 'string' || typeof password !== 'string') {
