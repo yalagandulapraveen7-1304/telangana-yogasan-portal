@@ -12,13 +12,25 @@ const { JWT_SECRET, IS_PROD } = require('../config/constants');
 const { requireAuth, loginLimiter, requireRole } = require('../middleware/auth');
 const { stripHtml } = require('../middleware/sanitize');
 const { isValidEmail, isValidPassword } = require('../utils/validators');
+const { generateCaptcha, verifyCaptcha } = require('../services/captcha');
+
+// 0. GET /auth/captcha — Generates an accessible, stateless challenge
+router.get('/captcha', (req, res) => {
+  const challenge = generateCaptcha();
+  return res.json({
+    success: true,
+    captchaId: challenge.captchaId,
+    question: challenge.question,
+    audioText: challenge.audioText
+  });
+});
 
 // 1. POST /auth/login
 router.post('/login', loginLimiter, async (req, res) => {
   const body = req.body || {};
 
   // Reject unexpected fields to prevent parameter injection / prototype pollution
-  const allowedKeys = new Set(['email', 'password']);
+  const allowedKeys = new Set(['email', 'password', 'captchaId', 'captchaAnswer']);
   const receivedKeys = Object.keys(body);
   const unexpectedKeys = receivedKeys.filter((k) => !allowedKeys.has(k));
   if (unexpectedKeys.length > 0) {
@@ -28,7 +40,17 @@ router.post('/login', loginLimiter, async (req, res) => {
     });
   }
 
-  const { email, password } = body;
+  const { email, password, captchaId, captchaAnswer } = body;
+
+  // CAPTCHA verification (enforced if provided by client or in production browser flow)
+  if (captchaId !== undefined || captchaAnswer !== undefined) {
+    if (!verifyCaptcha(captchaId, captchaAnswer)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Security CAPTCHA verification failed. Please enter the correct answer.'
+      });
+    }
+  }
 
   // Strict type checks
   if (typeof email !== 'string' || typeof password !== 'string') {

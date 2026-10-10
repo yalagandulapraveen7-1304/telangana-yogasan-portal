@@ -153,6 +153,63 @@
             </div>
           </div>
 
+          <div>
+            <label
+              for="captcha-answer"
+              class="block text-xs font-semibold text-slate-700 mb-1"
+            >
+              Security Verification (CAPTCHA) <span class="text-red-500">*</span>
+            </label>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span
+                    id="captcha-display"
+                    class="font-mono font-bold text-sm text-[#0D5C3A] bg-emerald-100/70 px-2.5 py-1 rounded border border-emerald-300 tracking-wider select-none"
+                    aria-live="polite"
+                  >
+                    Loading CAPTCHA...
+                  </span>
+                  <!-- Screen Reader Speech / Audio Alternative (GIGW 3.0 / WCAG 2.1 AA) -->
+                  <button
+                    type="button"
+                    id="captcha-audio-btn"
+                    title="Listen to CAPTCHA question"
+                    aria-label="Listen to audio alternative of CAPTCHA question"
+                    class="p-1.5 text-slate-600 hover:text-[#0D5C3A] hover:bg-white rounded-lg border border-slate-200 transition focus:outline-none focus:ring-1 focus:ring-[#0D5C3A]"
+                  >
+                    <i class="fa-solid fa-volume-high text-xs" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <!-- Refresh Button -->
+                <button
+                  type="button"
+                  id="captcha-refresh-btn"
+                  title="Generate new CAPTCHA"
+                  aria-label="Generate new security CAPTCHA question"
+                  class="p-1.5 text-slate-600 hover:text-[#0D5C3A] hover:bg-white rounded-lg border border-slate-200 transition focus:outline-none focus:ring-1 focus:ring-[#0D5C3A]"
+                >
+                  <i class="fa-solid fa-arrows-rotate text-xs" aria-hidden="true"></i>
+                </button>
+              </div>
+              <input
+                type="hidden"
+                id="captcha-id"
+                name="captchaId"
+                value=""
+              />
+              <input
+                type="text"
+                id="captcha-answer"
+                name="captchaAnswer"
+                required
+                aria-required="true"
+                placeholder="Enter answer here (e.g. 15)"
+                class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition bg-white"
+              />
+            </div>
+          </div>
+
           <button
             type="submit"
             id="login-btn"
@@ -185,6 +242,50 @@
 
     <!-- Form Handler Script -->
     <script>
+      let currentCaptchaAudioText = "";
+
+      async function fetchNewCaptcha() {
+        const display = document.getElementById("captcha-display");
+        const hiddenId = document.getElementById("captcha-id");
+        const answerInput = document.getElementById("captcha-answer");
+        display.textContent = "Loading...";
+        answerInput.value = "";
+
+        try {
+          const res = await fetch("/auth/captcha");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success) {
+              display.textContent = data.question;
+              hiddenId.value = data.captchaId;
+              currentCaptchaAudioText = data.audioText || data.question;
+            }
+          } else {
+            display.textContent = "Verification active";
+          }
+        } catch (err) {
+          display.textContent = "Verification active";
+        }
+      }
+
+      // Audio alternative speech playback (Web Speech API)
+      document.getElementById("captcha-audio-btn")?.addEventListener("click", () => {
+        if ("speechSynthesis" in window && currentCaptchaAudioText) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(currentCaptchaAudioText);
+          utterance.rate = 0.9;
+          utterance.lang = "en-IN";
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert("Audio alternative: " + currentCaptchaAudioText);
+        }
+      });
+
+      document.getElementById("captcha-refresh-btn")?.addEventListener("click", fetchNewCaptcha);
+
+      // Initialize on load
+      window.addEventListener("DOMContentLoaded", fetchNewCaptcha);
+
       document
         .getElementById("login-form")
         .addEventListener("submit", async (e) => {
@@ -192,6 +293,8 @@
 
           const email = document.getElementById("email").value.trim();
           const password = document.getElementById("password").value;
+          const captchaId = document.getElementById("captcha-id").value;
+          const captchaAnswer = document.getElementById("captcha-answer").value.trim();
           const errorBox = document.getElementById("login-error");
           const errorText = document.getElementById("login-error-text");
           const submitBtn = document.getElementById("login-btn");
@@ -204,13 +307,12 @@
             const res = await fetch("/auth/login", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email, password }),
+              body: JSON.stringify({ email, password, captchaId, captchaAnswer }),
             });
 
             const data = await res.json();
 
             if (res.ok && data.success) {
-              // FIX: store the token so dashboard.html's Authorization header is real
               sessionStorage.setItem("token", data.token || "");
               sessionStorage.setItem("current_role", data.role || "SECRETARY");
               sessionStorage.setItem(
@@ -219,10 +321,11 @@
               );
               window.location.href = "/dashboard.html";
             } else {
-              errorText.textContent = data.error || "Invalid credentials.";
+              errorText.textContent = data.error || "Invalid credentials or verification.";
               errorBox.classList.remove("hidden");
               submitBtn.disabled = false;
               submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
+              fetchNewCaptcha();
             }
           } catch (err) {
             console.error("Login request failed:", err);
@@ -231,6 +334,7 @@
             errorBox.classList.remove("hidden");
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
+            fetchNewCaptcha();
           }
         });
     </script>
