@@ -92,7 +92,63 @@ function verifyCaptcha(captchaId, userInput) {
   }
 }
 
+/**
+ * Verify Google reCAPTCHA Token
+ * Calls https://www.google.com/recaptcha/api/siteverify
+ * Returns { success: boolean, score?: number, error?: string }
+ */
+async function verifyRecaptcha(token, remoteip = '', secretKeyOverride = null) {
+  const constants = require('../config/constants');
+  const secretKey = secretKeyOverride || process.env.RECAPTCHA_SECRET_KEY || constants.RECAPTCHA_SECRET_KEY;
+
+  // If secret key is not set or placeholder in dev, allow graceful bypass or test pass
+  if (!secretKey || secretKey === 'REPLACE_WITH_YOUR_RECAPTCHA_SECRET_KEY') {
+    return { success: true, bypassed: true };
+  }
+
+  if (!token || typeof token !== 'string') {
+    return { success: false, error: 'reCAPTCHA token missing.' };
+  }
+
+  try {
+    const postData = new URLSearchParams({
+      secret: secretKey,
+      response: token
+    });
+    if (remoteip) {
+      postData.append('remoteip', remoteip);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: postData.toString(),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      return { success: false, error: 'reCAPTCHA verification server error.' };
+    }
+
+    const data = await res.json();
+    return {
+      success: !!data.success,
+      score: data.score,
+      action: data.action,
+      errorCodes: data['error-codes']
+    };
+  } catch (err) {
+    console.error('reCAPTCHA verification request error:', err.message);
+    return { success: false, error: 'Failed to verify reCAPTCHA with Google servers.' };
+  }
+}
+
 module.exports = {
   generateCaptcha,
-  verifyCaptcha
+  verifyCaptcha,
+  verifyRecaptcha
 };

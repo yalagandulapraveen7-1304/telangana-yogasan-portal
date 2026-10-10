@@ -57,4 +57,19 @@ describe('Security Tests: Accessible CAPTCHA Verification', () => {
 
     assert.equal(verifyCaptcha(expiredId, '10'), false);
   });
+
+  it('handles Google reCAPTCHA verification gracefully when secret key is unset or bypassed', async () => {
+    const { verifyRecaptcha } = require('../../services/captcha');
+    const result = await verifyRecaptcha('dummy-token');
+    // Without RECAPTCHA_SECRET_KEY set in test env, verifyRecaptcha gracefully bypasses
+    assert.equal(result.success, true);
+  });
+
+  it('rejects missing or empty tokens in verifyRecaptcha', async () => {
+    const { verifyRecaptcha } = require('../../services/captcha');
+    const resNull = await verifyRecaptcha(null, '', 'test_secret_key_mock');
+    assert.equal(resNull.success, false);
+    const resEmpty = await verifyRecaptcha('', '', 'test_secret_key_mock');
+    assert.equal(resEmpty.success, false);
+  });
 });

@@ -47,13 +47,19 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", 'https://checkout.razorpay.com'],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://checkout.razorpay.com',
+          'https://www.google.com/recaptcha/',
+          'https://www.gstatic.com/recaptcha/'
+        ],
         scriptSrcAttr: ["'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
-        connectSrc: ["'self'", 'https://api.razorpay.com'],
-        frameSrc: ["'self'", 'https://api.razorpay.com'],
+        connectSrc: ["'self'", 'https://api.razorpay.com', 'https://www.google.com/recaptcha/'],
+        frameSrc: ["'self'", 'https://api.razorpay.com', 'https://www.google.com/recaptcha/'],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],

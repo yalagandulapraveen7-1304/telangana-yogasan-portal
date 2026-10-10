@@ -8,17 +8,19 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Secretary = require('../models/Secretary');
 const LoginLog = require('../models/LoginLog');
-const { JWT_SECRET, IS_PROD } = require('../config/constants');
+const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY, JWT_SECRET, IS_PROD } = require('../config/constants');
 const { requireAuth, loginLimiter, requireRole } = require('../middleware/auth');
 const { stripHtml } = require('../middleware/sanitize');
 const { isValidEmail, isValidPassword } = require('../utils/validators');
-const { generateCaptcha, verifyCaptcha } = require('../services/captcha');
+const { generateCaptcha, verifyCaptcha, verifyRecaptcha } = require('../services/captcha');
 
-// 0. GET /auth/captcha — Generates an accessible, stateless challenge
+// 0. GET /auth/captcha — Returns reCAPTCHA siteKey and fallback challenge
 router.get('/captcha', (req, res) => {
   const challenge = generateCaptcha();
   return res.json({
     success: true,
+    recaptchaSiteKey: RECAPTCHA_SITE_KEY || '',
+    recaptchaEnabled: !!(RECAPTCHA_SITE_KEY && RECAPTCHA_SECRET_KEY),
     captchaId: challenge.captchaId,
     question: challenge.question,
     audioText: challenge.audioText
@@ -30,7 +32,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   const body = req.body || {};
 
   // Reject unexpected fields to prevent parameter injection / prototype pollution
-  const allowedKeys = new Set(['email', 'password', 'captchaId', 'captchaAnswer']);
+  const allowedKeys = new Set(['email', 'password', 'recaptchaToken', 'captchaId', 'captchaAnswer']);
   const receivedKeys = Object.keys(body);
   const unexpectedKeys = receivedKeys.filter((k) => !allowedKeys.has(k));
   if (unexpectedKeys.length > 0) {
@@ -40,14 +42,33 @@ router.post('/login', loginLimiter, async (req, res) => {
     });
   }
 
-  const { email, password, captchaId, captchaAnswer } = body;
+  const { email, password, recaptchaToken, captchaId, captchaAnswer } = body;
 
-  // CAPTCHA verification (enforced if provided by client or in production browser flow)
-  if (captchaId !== undefined || captchaAnswer !== undefined) {
+  const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+  const clientIp = stripHtml(String(Array.isArray(rawIp) ? rawIp[0] : rawIp)).substring(0, 45);
+  const userAgent = stripHtml(String(req.headers['user-agent'] || 'Unknown Device')).substring(0, 200);
+
+  // 1. If Google reCAPTCHA token is provided or reCAPTCHA is active
+  if (recaptchaToken) {
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken, clientIp);
+    if (!recaptchaResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Google reCAPTCHA verification failed. Please try again.'
+      });
+    }
+  } else if (RECAPTCHA_SECRET_KEY && !recaptchaToken && (captchaId === undefined && captchaAnswer === undefined)) {
+    // If reCAPTCHA is configured on server but token not sent (and no fallback submitted)
+    return res.status(400).json({
+      success: false,
+      error: 'Please complete the Google reCAPTCHA verification.'
+    });
+  } else if (captchaId !== undefined || captchaAnswer !== undefined) {
+    // 2. Fallback math challenge verification
     if (!verifyCaptcha(captchaId, captchaAnswer)) {
       return res.status(400).json({
         success: false,
-        error: 'Security CAPTCHA verification failed. Please enter the correct answer.'
+        error: 'Security verification failed. Please enter the correct answer.'
       });
     }
   }
@@ -71,10 +92,6 @@ router.post('/login', loginLimiter, async (req, res) => {
   if (!isValidPassword(password)) {
     return res.status(400).json({ success: false, error: 'Password length must be between 1 and 128 characters.' });
   }
-
-  const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
-  const clientIp = stripHtml(String(Array.isArray(rawIp) ? rawIp[0] : rawIp)).substring(0, 45);
-  const userAgent = stripHtml(String(req.headers['user-agent'] || 'Unknown Device')).substring(0, 200);
 
   try {
     const user = await Secretary.findOne({ email: cleanEmail });

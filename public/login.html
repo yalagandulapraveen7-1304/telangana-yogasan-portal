@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Secretary Portal Login | Telangana Yoga Association</title>
-
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6LcS0OgtAAAAAE6ffbbbRLGogYmtlFOXC6cZHNzP"></script>
+  <!-- Your code -->
     <!-- Favicon & Touch Icons -->
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -153,14 +154,21 @@
             </div>
           </div>
 
+          <!-- Security Verification: Google reCAPTCHA with fallback -->
           <div>
             <label
-              for="captcha-answer"
               class="block text-xs font-semibold text-slate-700 mb-1"
             >
-              Security Verification (CAPTCHA) <span class="text-red-500">*</span>
+              Security Verification <span class="text-red-500">*</span>
             </label>
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+
+            <!-- Google reCAPTCHA v2 Checkbox Container -->
+            <div id="recaptcha-wrapper" class="flex justify-center my-2 min-h-[78px]">
+              <div id="g-recaptcha-container"></div>
+            </div>
+
+            <!-- Accessible Math Challenge Fallback (Active if reCAPTCHA keys not yet configured) -->
+            <div id="math-captcha-wrapper" class="hidden p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <span
@@ -168,14 +176,14 @@
                     class="font-mono font-bold text-sm text-[#0D5C3A] bg-emerald-100/70 px-2.5 py-1 rounded border border-emerald-300 tracking-wider select-none"
                     aria-live="polite"
                   >
-                    Loading CAPTCHA...
+                    Loading...
                   </span>
-                  <!-- Screen Reader Speech / Audio Alternative (GIGW 3.0 / WCAG 2.1 AA) -->
+                  <!-- Screen Reader Speech / Audio Alternative -->
                   <button
                     type="button"
                     id="captcha-audio-btn"
-                    title="Listen to CAPTCHA question"
-                    aria-label="Listen to audio alternative of CAPTCHA question"
+                    title="Listen to question"
+                    aria-label="Listen to audio alternative of security challenge"
                     class="p-1.5 text-slate-600 hover:text-[#0D5C3A] hover:bg-white rounded-lg border border-slate-200 transition focus:outline-none focus:ring-1 focus:ring-[#0D5C3A]"
                   >
                     <i class="fa-solid fa-volume-high text-xs" aria-hidden="true"></i>
@@ -185,8 +193,8 @@
                 <button
                   type="button"
                   id="captcha-refresh-btn"
-                  title="Generate new CAPTCHA"
-                  aria-label="Generate new security CAPTCHA question"
+                  title="Generate new challenge"
+                  aria-label="Generate new security challenge"
                   class="p-1.5 text-slate-600 hover:text-[#0D5C3A] hover:bg-white rounded-lg border border-slate-200 transition focus:outline-none focus:ring-1 focus:ring-[#0D5C3A]"
                 >
                   <i class="fa-solid fa-arrows-rotate text-xs" aria-hidden="true"></i>
@@ -202,9 +210,7 @@
                 type="text"
                 id="captcha-answer"
                 name="captchaAnswer"
-                required
-                aria-required="true"
-                placeholder="Enter answer here (e.g. 15)"
+                placeholder="Enter answer (e.g. 15)"
                 class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-[#0D5C3A] focus:ring-1 focus:ring-[#0D5C3A] transition bg-white"
               />
             </div>
@@ -240,35 +246,100 @@
       </div>
     </footer>
 
+    <!-- Google reCAPTCHA API Script (async & defer) -->
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+
     <!-- Form Handler Script -->
     <script>
+      let recaptchaWidgetId = null;
+      let isRecaptchaActive = false;
       let currentCaptchaAudioText = "";
 
-      async function fetchNewCaptcha() {
+      async function initCaptchaSystem() {
+        const recaptchaWrapper = document.getElementById("recaptcha-wrapper");
+        const mathWrapper = document.getElementById("math-captcha-wrapper");
+
+        try {
+          const res = await fetch("/auth/captcha");
+          if (!res.ok) throw new Error("Captcha endpoint unreachable");
+          const config = await res.json();
+
+          if (config.recaptchaSiteKey && config.recaptchaSiteKey.trim().length > 0) {
+            // Google reCAPTCHA mode
+            isRecaptchaActive = true;
+            recaptchaWrapper.classList.remove("hidden");
+            mathWrapper.classList.add("hidden");
+
+            const checkGrecaptcha = setInterval(() => {
+              if (window.grecaptcha && window.grecaptcha.render) {
+                clearInterval(checkGrecaptcha);
+                try {
+                  if (recaptchaWidgetId === null) {
+                    recaptchaWidgetId = window.grecaptcha.render("g-recaptcha-container", {
+                      sitekey: config.recaptchaSiteKey,
+                      theme: "light"
+                    });
+                  }
+                } catch (e) {
+                  console.warn("reCAPTCHA render notice:", e);
+                }
+              }
+            }, 100);
+
+            // Timeout fallback after 4s if Google CDN blocked
+            setTimeout(() => {
+              clearInterval(checkGrecaptcha);
+              if (recaptchaWidgetId === null && (!window.grecaptcha || !window.grecaptcha.render)) {
+                fallbackToMath(config);
+              }
+            }, 4000);
+          } else {
+            // Fallback mode when RECAPTCHA_SITE_KEY is not yet populated
+            fallbackToMath(config);
+          }
+        } catch (err) {
+          fallbackToMath();
+        }
+      }
+
+      function fallbackToMath(config = null) {
+        isRecaptchaActive = false;
+        document.getElementById("recaptcha-wrapper").classList.add("hidden");
+        document.getElementById("math-captcha-wrapper").classList.remove("hidden");
+
         const display = document.getElementById("captcha-display");
         const hiddenId = document.getElementById("captcha-id");
         const answerInput = document.getElementById("captcha-answer");
-        display.textContent = "Loading...";
         answerInput.value = "";
+
+        if (config && config.question) {
+          display.textContent = config.question;
+          hiddenId.value = config.captchaId;
+          currentCaptchaAudioText = config.audioText || config.question;
+        } else {
+          fetchFallbackChallenge();
+        }
+      }
+
+      async function fetchFallbackChallenge() {
+        const display = document.getElementById("captcha-display");
+        const hiddenId = document.getElementById("captcha-id");
+        display.textContent = "Loading...";
 
         try {
           const res = await fetch("/auth/captcha");
           if (res.ok) {
             const data = await res.json();
-            if (data.success) {
-              display.textContent = data.question;
-              hiddenId.value = data.captchaId;
-              currentCaptchaAudioText = data.audioText || data.question;
-            }
-          } else {
-            display.textContent = "Verification active";
+            display.textContent = data.question;
+            hiddenId.value = data.captchaId;
+            currentCaptchaAudioText = data.audioText || data.question;
           }
-        } catch (err) {
-          display.textContent = "Verification active";
+        } catch (e) {
+          display.textContent = "Security check active";
         }
       }
 
-      // Audio alternative speech playback (Web Speech API)
+      // Audio speech playback
       document.getElementById("captcha-audio-btn")?.addEventListener("click", () => {
         if ("speechSynthesis" in window && currentCaptchaAudioText) {
           window.speechSynthesis.cancel();
@@ -281,10 +352,9 @@
         }
       });
 
-      document.getElementById("captcha-refresh-btn")?.addEventListener("click", fetchNewCaptcha);
+      document.getElementById("captcha-refresh-btn")?.addEventListener("click", fetchFallbackChallenge);
 
-      // Initialize on load
-      window.addEventListener("DOMContentLoaded", fetchNewCaptcha);
+      window.addEventListener("DOMContentLoaded", initCaptchaSystem);
 
       document
         .getElementById("login-form")
@@ -293,21 +363,48 @@
 
           const email = document.getElementById("email").value.trim();
           const password = document.getElementById("password").value;
-          const captchaId = document.getElementById("captcha-id").value;
-          const captchaAnswer = document.getElementById("captcha-answer").value.trim();
           const errorBox = document.getElementById("login-error");
           const errorText = document.getElementById("login-error-text");
           const submitBtn = document.getElementById("login-btn");
+
+          let recaptchaToken = "";
+          let captchaId = "";
+          let captchaAnswer = "";
+
+          if (isRecaptchaActive && window.grecaptcha && recaptchaWidgetId !== null) {
+            recaptchaToken = window.grecaptcha.getResponse(recaptchaWidgetId);
+            if (!recaptchaToken) {
+              errorText.textContent = "Please check the Google reCAPTCHA checkbox.";
+              errorBox.classList.remove("hidden");
+              return;
+            }
+          } else {
+            captchaId = document.getElementById("captcha-id").value;
+            captchaAnswer = document.getElementById("captcha-answer").value.trim();
+            if (!captchaAnswer) {
+              errorText.textContent = "Please enter the security answer.";
+              errorBox.classList.remove("hidden");
+              return;
+            }
+          }
 
           errorBox.classList.add("hidden");
           submitBtn.disabled = true;
           submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i> Verifying...`;
 
+          const payload = { email, password };
+          if (recaptchaToken) {
+            payload.recaptchaToken = recaptchaToken;
+          } else {
+            payload.captchaId = captchaId;
+            payload.captchaAnswer = captchaAnswer;
+          }
+
           try {
             const res = await fetch("/auth/login", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email, password, captchaId, captchaAnswer }),
+              body: JSON.stringify(payload),
             });
 
             const data = await res.json();
@@ -321,11 +418,16 @@
               );
               window.location.href = "/dashboard.html";
             } else {
-              errorText.textContent = data.error || "Invalid credentials or verification.";
+              errorText.textContent = data.error || "Invalid credentials or security check.";
               errorBox.classList.remove("hidden");
               submitBtn.disabled = false;
               submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
-              fetchNewCaptcha();
+
+              if (isRecaptchaActive && window.grecaptcha && recaptchaWidgetId !== null) {
+                window.grecaptcha.reset(recaptchaWidgetId);
+              } else {
+                fetchFallbackChallenge();
+              }
             }
           } catch (err) {
             console.error("Login request failed:", err);
@@ -334,7 +436,12 @@
             errorBox.classList.remove("hidden");
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;
-            fetchNewCaptcha();
+
+            if (isRecaptchaActive && window.grecaptcha && recaptchaWidgetId !== null) {
+              window.grecaptcha.reset(recaptchaWidgetId);
+            } else {
+              fetchFallbackChallenge();
+            }
           }
         });
     </script>
