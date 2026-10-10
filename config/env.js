@@ -44,13 +44,13 @@ function validateEnv() {
   }
 
   if (warnings.length > 0) {
-    console.warn('\n⚠️  Configuration Warnings:');
+    console.warn('\n[WARN] Configuration Warnings:');
     warnings.forEach((w) => console.warn(`   - ${w}`));
     console.warn('');
   }
 
   if (errors.length > 0) {
-    console.error('\n❌ Configuration Errors:');
+    console.error('\n[ERROR] Configuration Errors:');
     errors.forEach((e) => console.error(`   - ${e}`));
     console.error('');
     throw new Error('Environment validation failed.');

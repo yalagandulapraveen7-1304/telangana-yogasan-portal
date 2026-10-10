@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.setAttribute('data-theme', currentTheme);
 
   if (themeToggleBtn) {
-    themeToggleBtn.innerHTML = currentTheme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+    themeToggleBtn.innerHTML = currentTheme === 'light' ? '<i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Dark Mode</span>' : '<i class="fa-solid fa-sun" aria-hidden="true"></i> <span>Light Mode</span>';
     themeToggleBtn.addEventListener('click', () => {
       const activeTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = activeTheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('doc-theme', newTheme);
-      themeToggleBtn.innerHTML = newTheme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode';
+      themeToggleBtn.innerHTML = newTheme === 'light' ? '<i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Dark Mode</span>' : '<i class="fa-solid fa-sun" aria-hidden="true"></i> <span>Light Mode</span>';
     });
   }
 

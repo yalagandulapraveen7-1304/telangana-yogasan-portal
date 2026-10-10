@@ -319,17 +319,12 @@ h1, h2, h3, h4, h5, h6 {
 .tag-schedule { background: #fef9c3; color: #854d0e; }
 .tag-result   { background: #fce7f3; color: #9d174d; }
 
-/* ── Pulse animation for NEW badge ─────────────────────────── */
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: .6; transform: scale(1.4); }
-}
+/* ── Status dot indicator ───────────────────────────────────── */
 .pulse-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
   background: #16a34a;
   display: inline-block;
-  animation: pulse-dot 1.4s ease-in-out infinite;
 }
 
 /* ── Cards ──────────────────────────────────────────────────── */
@@ -338,11 +333,10 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
-  transition: box-shadow .25s, transform .25s;
+  transition: box-shadow .2s;
 }
 .card:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-3px);
 }
 
 .discipline-icon {
@@ -352,11 +346,10 @@ h1, h2, h3, h4, h5, h6 {
   display: flex; align-items: center; justify-content: center;
   font-size: 1.75rem;
   margin: 0 auto 1rem;
-  transition: background .25s, transform .25s;
+  transition: background .2s;
 }
 .card:hover .discipline-icon {
   background: var(--green-primary);
-  transform: rotate(8deg) scale(1.1);
 }
 
 /* ── Age Division Cards ─────────────────────────────────────── */
@@ -365,12 +358,11 @@ h1, h2, h3, h4, h5, h6 {
   padding: 1.75rem;
   text-align: center;
   border: 2px solid transparent;
-  transition: border-color .2s, box-shadow .2s, transform .2s;
+  transition: border-color .2s, box-shadow .2s;
 }
 .age-card:hover {
   border-color: var(--gold-accent);
   box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
 }
 
 /* ── Buttons ────────────────────────────────────────────────── */
@@ -659,28 +651,16 @@ h1, h2, h3, h4, h5, h6 {
   margin: .5rem auto 0;
 }
 
-/* ── Announcement marquee bar ────────────────────────────────── */
+/* ── Announcement bar ────────────────────────────────────────── */
 .marquee-bar {
   background: var(--gold-light);
-  border-top: 2px solid var(--gold-accent);
-  border-bottom: 2px solid var(--gold-accent);
-  overflow: hidden;
-  white-space: nowrap;
+  border-top: 1px solid var(--gold-accent);
+  border-bottom: 1px solid var(--gold-accent);
   width: 100%;
-  contain: paint;
 }
 .marquee-content {
   display: inline-block;
-  will-change: transform;
-  animation: marquee-scroll 32s linear infinite;
-  padding-left: 100%;
-}
-.marquee-bar:hover .marquee-content {
-  animation-play-state: paused;
-}
-@keyframes marquee-scroll {
-  0%   { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-100%, 0, 0); }
+  color: var(--green-dark);
 }
 
 /* ── Responsive helpers ─────────────────────────────────────── */
@@ -690,24 +670,6 @@ h1, h2, h3, h4, h5, h6 {
   .sidebar { width: 100%; min-height: auto; }
   .data-table { display: block; overflow-x: auto; white-space: nowrap; }
 }
-
-/* ── Scroll-in animation ────────────────────────────────────── */
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-up { animation: fade-up .55s ease both; }
-.delay-100 { animation-delay: .1s; }
-.delay-200 { animation-delay: .2s; }
-.delay-300 { animation-delay: .3s; }
-.delay-400 { animation-delay: .4s; }
-
-/* ── Emblem glow ────────────────────────────────────────────── */
-@keyframes emblem-glow {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(197,160,89,.5)); }
-  50%       { filter: drop-shadow(0 0 14px rgba(197,160,89,.9)); }
-}
-.emblem-glow { animation: emblem-glow 3s ease-in-out infinite; }
 
 /* ── Step indicator (form) ──────────────────────────────────── */
 .step-dot {

@@ -81,18 +81,18 @@ ${styles}
   <header class="doc-header">
     <div class="doc-logo">
       <button id="mobileMenuBtn" class="btn-icon mobile-menu-trigger" aria-label="Toggle Navigation Sidebar" style="display: none;">
-        ☰
+        Menu
       </button>
-      <span style="font-size: 1.25rem;">🧘</span>
+      <i class="fa-solid fa-om" aria-hidden="true" style="font-size: 1.25rem;"></i>
       <span>Telangana Yogasana Portal</span>
       <span class="badge-portal">Architecture Master</span>
     </div>
     <div class="header-actions">
       <button id="printDocBtn" class="btn-icon" title="Print or Export to PDF">
-        🖨️ <span>Print / PDF</span>
+        <i class="fa-solid fa-print" aria-hidden="true"></i> <span>Print / PDF</span>
       </button>
       <button id="themeToggleBtn" class="btn-icon" title="Switch Theme">
-        ☀️ Light Mode
+        <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i> <span>Light Mode</span>
       </button>
       <a href="https://github.com/yalagandulapraveen7-1304/telangana-yogasan-portal.git" target="_blank" class="btn-icon" style="text-decoration: none;">
         <span>GitHub</span> ↗

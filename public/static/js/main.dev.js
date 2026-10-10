@@ -137,7 +137,7 @@ const AGE_CATEGORIES = [
     min: 8, 
     max: 14, 
     cssClass: 'badge-subjunior', 
-    icon: '🌱',
+    icon: '<i class="fa-solid fa-child mr-1" aria-hidden="true"></i>',
     getSubGroup: (age) => age < 10 ? 'Sub Junior Group (A) • 08–10 Yrs' : 'Sub Junior Group (B) • 10–14 Yrs'
   },
   { 
@@ -145,7 +145,7 @@ const AGE_CATEGORIES = [
     min: 14, 
     max: 18, 
     cssClass: 'badge-junior',    
-    icon: '⚡',
+    icon: '<i class="fa-solid fa-user-graduate mr-1" aria-hidden="true"></i>',
     getSubGroup: (age) => 'Junior Group • 14–18 Yrs'
   },
   { 
@@ -153,7 +153,7 @@ const AGE_CATEGORIES = [
     min: 18, 
     max: 120, 
     cssClass: 'badge-senior',    
-    icon: '🏆',
+    icon: '<i class="fa-solid fa-trophy mr-1" aria-hidden="true"></i>',
     getSubGroup: (age) => age < 25 ? 'Senior Group (A) • 18–25 Yrs' : (age <= 35 ? 'Senior Group (B) • 25–35 Yrs' : 'Senior Group (C) • Above 35 Yrs')
   },
 ];
@@ -183,7 +183,7 @@ function getCategory(dob) {
       };
     }
   }
-  return { name: 'Not Eligible', subGroup: 'Minimum age is 8 years', cssClass: 'badge-ineligible', icon: '⛔', age: age };
+  return { name: 'Not Eligible', subGroup: 'Minimum age is 8 years', cssClass: 'badge-ineligible', icon: '<i class="fa-solid fa-ban mr-1" aria-hidden="true"></i>', age: age };
 }
 
 function initDOBCalculator() {
@@ -207,7 +207,7 @@ function initDOBCalculator() {
     const cat = getCategory(dob);
 
     if (!cat) {
-      badge.textContent = '⛔ Invalid Date';
+      badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1" aria-hidden="true"></i> Invalid Date';
       badge.className = 'badge badge-ineligible';
       if (hiddenCat) hiddenCat.value = '';
       return;
@@ -242,10 +242,6 @@ function initDOBCalculator() {
       ageDisp.style.color = '';
       ageDisp.textContent = `Age: ${yrs} yr(s) | Championship Age: ${champAge} yr(s) (${cat.subGroup})`;
     }
-
-    // Pulse animation
-    badge.style.transform = 'scale(1.05)';
-    setTimeout(() => badge.style.transform = '', 250);
   }
 
   dobInput.addEventListener('change', update);
@@ -281,7 +277,6 @@ function initPhotoPreview() {
       reader.onload = e => {
         preview.src = e.target.result;
         preview.style.display = 'block';
-        preview.classList.add('animate-fade-up');
       };
       reader.readAsDataURL(file);
     });
@@ -297,7 +292,7 @@ function initDocUpload() {
 
     input.addEventListener('change', () => {
       if (input.files[0]) {
-        label.textContent = `✓ ${input.files[0].name}`;
+        label.textContent = input.files[0].name;
         label.style.color = '#15803d';
         label.style.fontWeight = '600';
       }
@@ -508,8 +503,8 @@ function showSubmitSuccess(athleteId = '') {
   overlay.innerHTML = `
     <div style="background:#fff;border-radius:1rem;padding:2.5rem;max-width:420px;width:100%;text-align:center;
                 box-shadow:0 25px 50px rgba(0,0,0,.25);border-top:4px solid #C5A059;position:relative;">
-      <button type="button" id="close-success-btn" aria-label="Close confirmation dialog" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.25rem;cursor:pointer;color:#64748b;padding:.5rem;border-radius:.5rem;">✕</button>
-      <div style="font-size:3rem;margin-bottom:1rem;" aria-hidden="true">✅</div>
+      <button type="button" id="close-success-btn" aria-label="Close confirmation dialog" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.25rem;cursor:pointer;color:#64748b;padding:.5rem;border-radius:.5rem;"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      <div style="font-size:3rem;margin-bottom:1rem;color:#16a34a;" aria-hidden="true"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
       <h2 id="submit-success-title" style="color:#0D5C3A;font-size:1.25rem;font-weight:800;margin-bottom:.5rem;">
         Nomination Submitted!
       </h2>
