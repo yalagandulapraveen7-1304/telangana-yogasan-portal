@@ -240,6 +240,38 @@ app.get(['/gallery', '/gallery.html'], (_req, res) => {
   sendHtmlPage(res, 'gallery.html');
 });
 
+app.get(['/about', '/about.html'], (_req, res) => {
+  sendHtmlPage(res, 'about.html');
+});
+
+app.get(['/activities', '/activities.html', '/yoga-activities'], (_req, res) => {
+  sendHtmlPage(res, 'activities.html');
+});
+
+app.get(['/events', '/events.html'], (_req, res) => {
+  sendHtmlPage(res, 'events.html');
+});
+
+app.get(['/districts', '/districts.html'], (_req, res) => {
+  sendHtmlPage(res, 'districts.html');
+});
+
+app.get(['/membership', '/membership.html'], (_req, res) => {
+  sendHtmlPage(res, 'membership.html');
+});
+
+app.get(['/results', '/results.html'], (_req, res) => {
+  sendHtmlPage(res, 'results.html');
+});
+
+app.get(['/downloads', '/downloads.html', '/news', '/news.html'], (_req, res) => {
+  sendHtmlPage(res, 'downloads.html');
+});
+
+app.get(['/contact', '/contact.html'], (_req, res) => {
+  sendHtmlPage(res, 'contact.html');
+});
+
 app.get(['/', '/index', '/index.html'], (_req, res) => {
   sendHtmlPage(res, 'index.html');
 });

@@ -11,7 +11,15 @@ const TEMPLATES = [
   'school-nominate.html',
   'dashboard.html',
   'admitcard.html',
-  'gallery.html'
+  'gallery.html',
+  'about.html',
+  'activities.html',
+  'events.html',
+  'districts.html',
+  'membership.html',
+  'results.html',
+  'downloads.html',
+  'contact.html'
 ];
 
 describe('WCAG 2.2 AA Accessibility Test Suite', () => {

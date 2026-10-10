@@ -43,7 +43,7 @@
     <!-- A11y Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Government Top Utility Bar -->
+    <!-- Top Utility Bar -->
     <div
       class="gov-topbar py-1.5 px-4 sm:px-6 bg-[#0a4229] text-slate-200 border-b border-[#C5A059]/40 text-xs"
     >
@@ -54,19 +54,12 @@
           <span
             class="inline-flex items-center gap-1.5 font-medium tracking-wide"
           >
-            <!-- Local SVG Emblem -->
-            <img
-              src="/static/images/Emblem_of_India.svg"
-              alt="Government of India Emblem"
-              width="16"
-              height="18"
-              class="h-4 sm:h-4.5 w-auto inline-block filter brightness-0 invert opacity-95"
-            />
-            GOVERNMENT OF TELANGANA
+            <i class="fa-solid fa-om text-amber-300" aria-hidden="true"></i>
+            TELANGANA YOGA ASSOCIATION
           </span>
           <span class="text-slate-400">|</span>
           <span class="hidden md:inline font-normal text-slate-300"
-            >Sports Authority of Telangana State (SATS)</span
+            >Affiliated to Yoga Federation of India &bull; Independent State Sports Association</span
           >
         </div>
 
@@ -139,7 +132,7 @@
               <span
                 class="text-[8px] sm:text-xs font-semibold uppercase tracking-wider text-amber-300"
               >
-                Affiliated to Yoga Federation of India &bull; SATS
+                Affiliated to Yoga Federation of India
               </span>
               <span
                 class="text-base sm:text-xl md:text-2xl font-bold tracking-tight font-display text-white leading-tight"
@@ -147,7 +140,7 @@
                 Telangana Yoga Association
               </span>
               <span class="text-[10px] sm:text-xs text-emerald-100/80">
-                Under the aegis of Sports Authority of Telangana State
+                Independent State Sports Association &bull; Telangana
               </span>
             </div>
           </a>
@@ -157,17 +150,22 @@
             class="site-nav-desktop hidden lg:flex items-center space-x-1"
             aria-label="Main Navigation"
           >
-            <a href="#about" class="nav-link active">About</a>
-            <a href="#announcements" class="nav-link">Announcements</a>
-            <a href="#disciplines" class="nav-link">Disciplines</a>
-            <a href="#eligibility" class="nav-link">Eligibility</a>
-            <a href="#districts" class="nav-link">33 Districts</a>
+            <a href="/" class="nav-link active">Home</a>
+            <a href="/about" class="nav-link">About Us</a>
+            <a href="/activities" class="nav-link">Yoga Activities</a>
+            <a href="/events" class="nav-link">Events</a>
+            <a href="/districts" class="nav-link">Districts</a>
+            <a href="/membership" class="nav-link">Membership</a>
+            <a href="/results" class="nav-link">Results</a>
+            <a href="/downloads" class="nav-link">Downloads</a>
+            <a href="/gallery" class="nav-link">Gallery</a>
+            <a href="/contact" class="nav-link">Contact</a>
             <a
               href="/login"
-              class="nav-link-login ml-3 flex items-center gap-2"
+              class="nav-link-login ml-2 flex items-center gap-2"
             >
               <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
-              <span>District Login</span>
+              <span>Portal Login</span>
             </a>
           </nav>
 
@@ -195,46 +193,81 @@
         >
           <div class="nav-menu-inner min-h-0 pt-3 pb-3 space-y-1">
             <a
-              href="#about"
-              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 active:bg-emerald-900 transition-colors duration-150 flex items-center justify-between"
+              href="/"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium bg-emerald-800/90 transition flex items-center justify-between"
             >
-              <span>About Championship</span>
+              <span>Home</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
             <a
-              href="#announcements"
-              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 active:bg-emerald-900 transition-colors duration-150 flex items-center justify-between"
+              href="/about"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
             >
-              <span>Notice Board &amp; Updates</span>
+              <span>About Us</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
             <a
-              href="#disciplines"
-              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 active:bg-emerald-900 transition-colors duration-150 flex items-center justify-between"
+              href="/activities"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
             >
-              <span>Tournament Disciplines</span>
+              <span>Yoga Activities</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
             <a
-              href="#eligibility"
-              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 active:bg-emerald-900 transition-colors duration-150 flex items-center justify-between"
+              href="/events"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
             >
-              <span>Eligibility &amp; Age Divisions</span>
+              <span>Events &amp; Championships</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
             <a
-              href="#districts"
-              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 active:bg-emerald-900 transition-colors duration-150 flex items-center justify-between"
+              href="/districts"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
             >
-              <span>33 Districts Information</span>
+              <span>Districts Network</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a
+              href="/membership"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
+            >
+              <span>Membership</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a
+              href="/results"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
+            >
+              <span>Results &amp; Archives</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a
+              href="/downloads"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
+            >
+              <span>Downloads &amp; Circulars</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a
+              href="/gallery"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
+            >
+              <span>Photo Gallery</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a
+              href="/contact"
+              class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between"
+            >
+              <span>Contact Us</span>
               <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
             </a>
             <div class="pt-2 px-1">
               <a
                 href="/login"
-                class="mobile-nav-link w-full text-center bg-[#C5A059] hover:bg-[#b8893d] active:bg-[#a67930] text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition-colors duration-150"
+                class="mobile-nav-link w-full text-center bg-[#C5A059] hover:bg-[#b8893d] text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition"
               >
-                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
                 <span>District Secretary Login</span>
               </a>
             </div>
@@ -276,8 +309,8 @@
               <div
                 class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-amber-300/30 text-amber-200 text-xs sm:text-sm font-semibold px-3.5 py-1.5 rounded-full mb-4"
               >
-                <i class="fa-solid fa-medal text-amber-300" aria-hidden="true"></i>
-                <span>Official State Championship &bull; All 33 Districts</span>
+                <i class="fa-solid fa-om text-amber-300" aria-hidden="true"></i>
+                <span>Independent State Association &bull; Affiliated to Yoga Federation of India</span>
               </div>
 
               <h1 class="font-display tracking-tight leading-tight mb-4">
@@ -286,21 +319,17 @@
                 >
                   Telangana Yoga Association
                 </span>
-                <br />
                 <span
-                  class="block text-lg sm:text-xl md:text-2xl font-bold text-amber-300 mt-1.5"
+                  class="block text-lg sm:text-xl md:text-2xl font-bold text-amber-300 mt-2"
                 >
-                  Affiliated to Yoga Federation of India
+                  Promoting Yoga. Developing Yogasana Sports. Building a Healthier Community.
                 </span>
               </h1>
 
               <p
                 class="text-base sm:text-lg text-emerald-100 max-w-2xl mb-8 leading-relaxed"
               >
-                Official State Championship &amp; Selection Trials for 33
-                Districts of Telangana. Promoting excellence, athletic poise,
-                and yogic heritage under the aegis of Sports Authority of
-                Telangana State.
+                The Telangana Yoga Association is an independent organization focused on promoting yoga, supporting yogasana sports, encouraging athlete development, and bringing people and institutions together through yoga-related activities across Telangana. Affiliated with the Yoga Federation of India.
               </p>
 
               <!-- Key Action CTAs -->
@@ -308,15 +337,15 @@
                 <div
                   class="flex flex-wrap items-center justify-center lg:justify-start gap-4"
                 >
-                  <a href="/nominate" class="btn-primary">
-                    <i class="fa-solid fa-id-badge" aria-hidden="true"></i>
-                    <span>Register as New Athlete</span>
+                  <a href="/about" class="btn-primary">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <span>About the Association</span>
                     <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
                   </a>
 
-                  <a href="/school-nominate" class="btn-primary">
-                    <i class="fa-solid fa-id-badge" aria-hidden="true"></i>
-                    <span>School & Academy Athlete Nomination</span>
+                  <a href="/activities" class="btn-primary">
+                    <i class="fa-solid fa-spa" aria-hidden="true"></i>
+                    <span>Explore Yoga Activities</span>
                     <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
                   </a>
                 </div>
@@ -324,10 +353,25 @@
                 <div
                   class="flex flex-wrap items-center justify-center lg:justify-start gap-4"
                 >
-                  <a href="/gallery" class="btn-primary">
-                    <i class="fa-solid fa-images" aria-hidden="true"></i>
-                    <span>View Gallery</span>
-                    <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+                  <a href="#championship" class="btn-outline">
+                    <i class="fa-solid fa-trophy text-amber-300" aria-hidden="true"></i>
+                    <span>Inter-District Championship</span>
+                  </a>
+
+                  <a
+                    href="/nominate"
+                    class="btn-outline"
+                  >
+                    <i class="fa-solid fa-id-badge" aria-hidden="true"></i>
+                    <span>Athlete Portal</span>
+                  </a>
+
+                  <a
+                    href="/school-nominate"
+                    class="btn-outline"
+                  >
+                    <i class="fa-solid fa-school" aria-hidden="true"></i>
+                    <span>School Delegations</span>
                   </a>
 
                   <a
@@ -336,7 +380,7 @@
                     class="btn-outline"
                   >
                     <i class="fa-solid fa-file-pdf text-red-400" aria-hidden="true"></i>
-                    <span>Download Official Rulebook (PDF)</span>
+                    <span>Official Rulebook (PDF)</span>
                   </a>
                 </div>
               </div>
@@ -352,27 +396,27 @@
                     33
                   </div>
                   <div class="text-xs text-emerald-100/90 font-medium">
-                    Districts Participating
+                    Districts Reached
                   </div>
                 </div>
                 <div>
                   <div
                     class="text-2xl sm:text-3xl font-extrabold text-amber-300"
                   >
-                    4
+                    5
                   </div>
                   <div class="text-xs text-emerald-100/90 font-medium">
-                    Championship Disciplines
+                    Competitive Formats
                   </div>
                 </div>
                 <div>
                   <div
                     class="text-2xl sm:text-3xl font-extrabold text-amber-300"
                   >
-                    3
+                    YFI
                   </div>
                   <div class="text-xs text-emerald-100/90 font-medium">
-                    Age Categories
+                    National Federation
                   </div>
                 </div>
               </div>
@@ -396,18 +440,18 @@
                 </h2>
                 <p class="text-xs text-emerald-100 mb-4 relative z-10">
                   Performance evaluated by certified National &amp; State Level
-                  Judges as per National Yogasana Sports Federation protocols.
+                  Judges as per Yoga Federation of India protocols.
                 </p>
                 <div
                   class="bg-emerald-950/80 rounded-lg p-3 border border-white/10 text-left space-y-1.5 text-xs text-slate-200 relative z-10"
                 >
                   <div class="flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-amber-400" aria-hidden="true"></i>
-                    <span>Affiliated to Telangana Yoga Association</span>
+                    <span>Telangana Yoga Association</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-amber-400" aria-hidden="true"></i>
-                    <span>Endorsed by Sports Authority (SATS)</span>
+                    <span>Affiliated to Yoga Federation of India</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-amber-400" aria-hidden="true"></i>
@@ -581,8 +625,9 @@
         </div>
       </section>
 
-      <!-- SECTION 2: TOURNAMENT DISCIPLINES -->
-      <section id="disciplines" class="py-16 bg-slate-100/70">
+      <!-- SECTION 2: TOURNAMENT DISCIPLINES & CHAMPIONSHIP -->
+      <section id="disciplines" class="py-16 bg-slate-100/70 scroll-mt-20">
+        <div id="championship" class="scroll-mt-24"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
           <div class="text-center max-w-3xl mx-auto mb-12">
             <span class="section-badge">Competitive Formats</span>
@@ -1229,31 +1274,23 @@
         </div>
       </section>
 
-      <!-- SECTION 5: ABOUT & SATS PATRONAGE -->
+      <!-- SECTION 5: ABOUT TELANGANA YOGA ASSOCIATION -->
       <section id="about" class="py-16 bg-white border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <span class="section-badge">Apex Authority</span>
+              <span class="section-badge">State Organization</span>
               <h2 class="text-3xl font-bold font-display text-slate-900 mb-4">
-                Sports Authority of Telangana State &bull; Telangana Yoga
-                Association
+                About the Telangana Yoga Association
               </h2>
               <p class="text-slate-600 text-sm leading-relaxed mb-4">
-                The Telangana State Inter-District Yogasana Sports Championship
-                serves as the premier official platform for discovering,
-                nurturing, and selecting state athletes for the National
-                Yogasana Championships.
+                The Telangana Yoga Association is an independent sports and cultural organization committed to the promotion, practice, and systematic development of Yoga and competitive Yogasana Sports across Telangana.
               </p>
               <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                Organized strictly adhering to the technical regulations of the
-                National Yogasana Sports Federation (recognized by the Ministry
-                of Youth Affairs &amp; Sports, Govt. of India), the championship
-                enforces the highest standards of judging fairness, technical
-                precision, and athlete welfare.
+                Affiliated with the Yoga Federation of India, the association coordinates state championships, athlete development camps, and certified technical training for coaches and judges in strict alignment with national federation rules.
               </p>
 
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-2 gap-4 mb-6">
                 <div
                   class="border border-slate-200 rounded-lg p-3.5 bg-slate-50"
                 >
@@ -1261,8 +1298,7 @@
                     State Selection Trials
                   </div>
                   <div class="text-xs text-slate-600">
-                    Direct qualification for Telangana State Contingent for
-                    Nationals.
+                    Direct qualification pathway for Telangana contingent in National Championships.
                   </div>
                 </div>
                 <div
@@ -1272,10 +1308,18 @@
                     Standardized Judging
                   </div>
                   <div class="text-xs text-slate-600">
-                    Certified panel of National Referees and Timekeepers.
+                    Certified panel of federation referees, technical scorers, and timekeepers.
                   </div>
                 </div>
               </div>
+
+              <a
+                href="/about"
+                class="inline-flex items-center gap-2 text-xs font-bold text-[#0D5C3A] hover:underline"
+              >
+                <span>Read Full Organizational Profile &amp; Objectives</span>
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              </a>
             </div>
 
             <div
@@ -1285,7 +1329,7 @@
                 class="text-xl font-bold text-amber-300 mb-4 flex items-center gap-2"
               >
                 <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                <span>Helpline &amp; Association Desk</span>
+                <span>Helpline &amp; Association Secretariat</span>
               </h3>
               <div class="space-y-4 text-xs sm:text-sm text-emerald-100">
                 <div class="flex items-start gap-3">
@@ -1293,11 +1337,10 @@
                   ></i>
                   <div>
                     <div class="font-semibold text-white">
-                      Sports Authority of Telangana State (SATS)
+                      Telangana Yoga Association Secretariat
                     </div>
                     <div>
-                      Lal Bahadur Stadium Complex, Basheerbagh, Hyderabad –
-                      500001
+                      State Sports Secretariat, Hyderabad, Telangana – 500001
                     </div>
                   </div>
                 </div>
@@ -1305,11 +1348,10 @@
                   <i class="fa-solid fa-envelope text-amber-300 mt-1" aria-hidden="true"></i>
                   <div>
                     <div class="font-semibold text-white">
-                      Official Championship Email
+                      Official Communications
                     </div>
                     <div>
-                      secretary@telanganayoga.org.in /
-                      support@sats.telangana.gov.in
+                      secretary@telanganayoga.org.in / info@telanganayoga.org.in
                     </div>
                   </div>
                 </div>
@@ -1317,10 +1359,10 @@
                   <i class="fa-solid fa-phone text-amber-300 mt-1" aria-hidden="true"></i>
                   <div>
                     <div class="font-semibold text-white">
-                      State Secretary Helpdesk
+                      State Secretariat Helpdesk
                     </div>
                     <div>
-                      +91 040-2345 8899 / +91 94400 XXXXX (10:00 AM - 5:00 PM)
+                      +91 040-2345 8899 / Mon &ndash; Sat (10:00 AM &ndash; 5:00 PM)
                     </div>
                   </div>
                 </div>
@@ -1330,11 +1372,11 @@
                 class="mt-6 pt-4 border-t border-emerald-700/60 flex items-center justify-between text-xs"
               >
                 <span class="text-emerald-200"
-                  >Affiliated to National Federation</span
+                  >Affiliated to Yoga Federation of India</span
                 >
                 <span
                   class="bg-[#C5A059] text-emerald-950 font-bold px-2.5 py-1 rounded"
-                  >GIGW Compliant</span
+                  >Independent Sports Body</span
                 >
               </div>
             </div>
@@ -1364,9 +1406,7 @@
               >
             </div>
             <p class="text-slate-400 text-xs leading-relaxed">
-              Apex recognized state body for Yogasana Sports across all 33
-              districts of Telangana under the patronage of Sports Authority of
-              Telangana State.
+              State body dedicated to the promotion of yoga and yogasana sports across Telangana. Affiliated to the Yoga Federation of India.
             </p>
           </div>
 
@@ -1377,27 +1417,22 @@
             </h4>
             <ul class="space-y-1.5">
               <li>
-                <a href="#about" class="footer-link">About Championship</a>
+                <a href="/about" class="footer-link">About Us</a>
               </li>
               <li>
-                <a href="#announcements" class="footer-link"
-                  >Official Notice Board</a
-                >
+                <a href="/activities" class="footer-link">Yoga Activities</a>
               </li>
               <li>
-                <a href="#disciplines" class="footer-link"
-                  >Tournament Disciplines</a
-                >
+                <a href="/events" class="footer-link">Events &amp; Championships</a>
               </li>
               <li>
-                <a href="#eligibility" class="footer-link"
-                  >Age Groups &amp; Eligibility</a
-                >
+                <a href="/districts" class="footer-link">Districts Directory</a>
               </li>
               <li>
-                <a href="#districts" class="footer-link"
-                  >33 Participating Districts</a
-                >
+                <a href="/membership" class="footer-link">Membership Programs</a>
+              </li>
+              <li>
+                <a href="/contact" class="footer-link">Contact Secretariat</a>
               </li>
             </ul>
           </div>
@@ -1409,35 +1444,19 @@
             </h4>
             <ul class="space-y-1.5">
               <li>
-                <a href="/login" class="footer-link"
-                  >District Secretary Login</a
-                >
+                <a href="/results" class="footer-link">Results &amp; Admit Cards</a>
               </li>
               <li>
-                <a href="/dashboard" class="footer-link"
-                  >Nomination Dashboard</a
-                >
+                <a href="/downloads" class="footer-link">Rules &amp; Downloads</a>
               </li>
               <li>
-                <a href="/nominate" class="footer-link"
-                  >Athlete Registration Form</a
-                >
+                <a href="/nominate" class="footer-link">Athlete Registration</a>
               </li>
               <li>
-                <a
-                  href="javascript:void(0)"
-                  onclick="alert('Downloading Official Rulebook PDF...')"
-                  class="footer-link"
-                  >State Rulebook (PDF)</a
-                >
+                <a href="/school-nominate" class="footer-link">School Delegations</a>
               </li>
               <li>
-                <a
-                  href="javascript:void(0)"
-                  onclick="alert('Opening Code of Conduct...')"
-                  class="footer-link"
-                  >Code of Conduct</a
-                >
+                <a href="/login" class="footer-link">District Secretary Portal</a>
               </li>
             </ul>
           </div>
@@ -1445,14 +1464,13 @@
           <!-- Col 4 -->
           <div>
             <h4 class="font-bold text-amber-300 text-sm mb-3">
-              Official Disclaimers
+              Affiliation &amp; Compliance
             </h4>
             <p class="text-slate-400 text-xs leading-relaxed mb-2">
-              Designed in accordance with Guidelines for Indian Government
-              Websites (GIGW) and WCAG 2.1 accessibility standards.
+              Affiliated with the Yoga Federation of India. Technical guidelines and championship operations conform to recognized national federations.
             </p>
             <div class="text-[11px] text-slate-400">
-              Last Updated: <span class="text-amber-300">August 2025</span>
+              Official Body: <span class="text-amber-300">Telangana Yoga Association</span>
             </div>
           </div>
         </div>
@@ -1461,22 +1479,13 @@
           class="flex flex-col sm:flex-row items-center justify-between text-slate-400 gap-4 text-[11px]"
         >
           <div>
-            &copy; 2025 Telangana Yoga Association &bull; Sports Authority of
-            Telangana State (SATS). All rights reserved.
+            &copy; 2025&ndash;2026 Telangana Yoga Association &bull; Affiliated to Yoga Federation of India. All rights reserved.
           </div>
           <div class="flex space-x-4">
-            <a href="javascript:void(0)" class="hover:text-amber-300"
-              >Terms of Use</a
-            >
-            <a href="javascript:void(0)" class="hover:text-amber-300"
-              >Privacy Policy</a
-            >
-            <a href="javascript:void(0)" class="hover:text-amber-300"
-              >Accessibility Statement</a
-            >
-            <a href="javascript:void(0)" class="hover:text-amber-300"
-              >Sitemap</a
-            >
+            <a href="/about" class="hover:text-amber-300">About</a>
+            <a href="/contact" class="hover:text-amber-300">Contact</a>
+            <a href="/downloads" class="hover:text-amber-300">Downloads</a>
+            <a href="/districts" class="hover:text-amber-300">Districts</a>
           </div>
         </div>
       </div>

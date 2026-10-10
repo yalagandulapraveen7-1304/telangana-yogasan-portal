@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yoga Activities & Programs | Telangana Yoga Association</title>
+    <meta
+      name="description"
+      content="Explore yoga activities and initiatives conducted by Telangana Yoga Association: competitive yogasana, training camps, referee development, school outreach, and community yoga."
+    />
+    <!-- Open Graph / Social Media Preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Yoga Activities & Programs | Telangana Yoga Association" />
+    <meta
+      property="og:description"
+      content="Comprehensive overview of competitive yogasana disciplines, coaching workshops, and wellness programs across Telangana."
+    />
+    <meta property="og:image" content="/static/images/TSYSC.png" />
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="any" href="/static/images/favicon.png" />
+    <link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png" />
+
+    <!-- Preload Critical Web Fonts -->
+    <link rel="preload" href="/static/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/static/fonts/plus-jakarta-sans-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Google Fonts CDN Fallback & Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" />
+
+    <!-- Local Offline Assets -->
+    <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/output.css" />
+    <link rel="stylesheet" href="/static/css/custom.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+    <!-- A11y Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Top Utility Bar -->
+    <div class="gov-topbar py-1.5 px-4 sm:px-6 bg-[#0a4229] text-slate-200 border-b border-[#C5A059]/40 text-xs">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center space-x-3">
+          <span class="inline-flex items-center gap-1.5 font-medium tracking-wide">
+            <i class="fa-solid fa-om text-amber-300" aria-hidden="true"></i>
+            TELANGANA YOGA ASSOCIATION
+          </span>
+          <span class="text-slate-400">|</span>
+          <span class="hidden md:inline font-normal text-slate-300">
+            Affiliated to Yoga Federation of India
+          </span>
+        </div>
+
+        <div class="flex items-center space-x-4 ml-auto text-xs">
+          <div class="flex items-center space-x-1.5 bg-black/20 rounded px-2 py-0.5 border border-white/10">
+            <button
+              type="button"
+              id="font-decrease"
+              aria-label="Decrease font size"
+              title="Decrease font size"
+              class="touch-target-min hover:text-amber-400 px-1 font-bold focus:outline-none"
+            >
+              A-
+            </button>
+            <button
+              type="button"
+              id="font-normal"
+              aria-label="Reset normal font size"
+              title="Normal font size"
+              class="touch-target-min hover:text-amber-400 px-1 font-bold focus:outline-none"
+            >
+              A
+            </button>
+            <button
+              type="button"
+              id="font-increase"
+              aria-label="Increase font size"
+              title="Increase font size"
+              class="touch-target-min hover:text-amber-400 px-1 font-bold focus:outline-none"
+            >
+              A+
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-[#0D5C3A] text-white border-b-2 border-[#C5A059] sticky top-0 z-50 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Brand Identity -->
+          <a href="/" class="flex items-center gap-3.5 group text-decoration-none">
+            <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0 border-2 border-[#C5A059]">
+              <div class="w-full h-full rounded-full bg-emerald-900 flex flex-col items-center justify-center text-center overflow-hidden">
+                <img
+                  src="/static/images/TSYSC.png"
+                  alt="Telangana State Yoga Association Logo"
+                  width="56"
+                  height="56"
+                  fetchpriority="high"
+                  decoding="sync"
+                  class="w-full h-auto"
+                />
+              </div>
+            </div>
+
+            <div class="flex flex-col">
+              <span class="text-[8px] sm:text-xs font-semibold uppercase tracking-wider text-amber-300">
+                Affiliated to Yoga Federation of India
+              </span>
+              <span class="text-base sm:text-xl md:text-2xl font-bold tracking-tight font-display text-white leading-tight">
+                Telangana Yoga Association
+              </span>
+              <span class="text-[10px] sm:text-xs text-emerald-100/80">
+                Independent State Sports Association &bull; Telangana
+              </span>
+            </div>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="site-nav-desktop hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/about" class="nav-link">About Us</a>
+            <a href="/activities" class="nav-link active">Yoga Activities</a>
+            <a href="/events" class="nav-link">Events</a>
+            <a href="/districts" class="nav-link">Districts</a>
+            <a href="/membership" class="nav-link">Membership</a>
+            <a href="/results" class="nav-link">Results</a>
+            <a href="/downloads" class="nav-link">Downloads</a>
+            <a href="/gallery" class="nav-link">Gallery</a>
+            <a href="/contact" class="nav-link">Contact</a>
+            <a href="/login" class="nav-link-login ml-2 flex items-center gap-2">
+              <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+              <span>Portal Login</span>
+            </a>
+          </nav>
+
+          <!-- Mobile Menu Toggle Button -->
+          <button
+            id="nav-toggle"
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded="false"
+            aria-controls="nav-menu"
+            class="lg:hidden text-white p-2 rounded-lg hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-amber-300 touch-target-min transition-colors duration-200"
+          >
+            <span class="relative w-6 h-6 flex items-center justify-center pointer-events-none">
+              <i class="fa-solid fa-bars text-xl nav-icon-bars transition-all duration-300 transform" aria-hidden="true"></i>
+              <i class="fa-solid fa-xmark text-2xl nav-icon-close absolute transition-all duration-300 transform opacity-0 scale-50 rotate-[-90deg]" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-hidden="true">
+          <div class="nav-menu-inner min-h-0 pt-3 pb-3 space-y-1">
+            <a href="/" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Home</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/about" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>About Us</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/activities" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium bg-emerald-800/90 transition flex items-center justify-between">
+              <span>Yoga Activities</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/events" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Events &amp; Championships</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/districts" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Districts Network</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/membership" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Membership</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/results" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Results &amp; Archives</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/downloads" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Downloads &amp; Circulars</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/gallery" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Photo Gallery</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <a href="/contact" class="mobile-nav-link block px-3.5 py-2.5 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
+              <span>Contact Us</span>
+              <i class="fa-solid fa-chevron-right text-xs text-amber-300/60" aria-hidden="true"></i>
+            </a>
+            <div class="pt-2 px-1">
+              <a
+                href="/login"
+                class="mobile-nav-link w-full text-center bg-[#C5A059] hover:bg-[#b8893d] text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md transition"
+              >
+                <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+                <span>District Secretary Login</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" tabindex="-1" class="flex-grow outline-none">
+      <!-- Breadcrumb Header -->
+      <section class="bg-gradient-to-r from-[#0D5C3A] to-[#0a4229] py-10 text-white border-b border-[#C5A059]/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="flex items-center gap-2 text-xs text-emerald-200 mb-2">
+            <a href="/" class="hover:text-white">Home</a>
+            <i class="fa-solid fa-chevron-right text-[10px]" aria-hidden="true"></i>
+            <span class="text-amber-300">Yoga Activities</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold font-display tracking-tight text-white">
+            Our Yoga Activities &amp; Initiatives
+          </h1>
+          <p class="text-emerald-100/90 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+            From elite sports yogasana competitions to grassroots community wellness, discover the diverse spectrum of year-round activities organized by the association.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section: Activity Categories Grid -->
+      <section class="py-12 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="section-badge">Programs Spectrum</span>
+            <h2 class="text-2xl sm:text-3xl font-bold font-display text-slate-900">
+              Core Pillars of Our Yoga Promotion
+            </h2>
+            <div class="section-divider mx-auto"></div>
+            <p class="text-slate-600 text-xs sm:text-sm">
+              Each activity stream is structured under certified guidelines aligned with the Yoga Federation of India to ensure authentic practice and systematic sports development.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="card p-6 flex flex-col justify-between border-t-4 border-t-emerald-600">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-100 text-[#0D5C3A] flex items-center justify-center text-xl mb-4">
+                  <i class="fa-solid fa-person-praying" aria-hidden="true"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Competitive Yogasana Sports</h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                  Formal sports tournaments featuring Traditional Yogasana, Artistic Solo, Artistic Pair, Rhythmic Pair, and Free Flow disciplines across Sub-Junior, Junior, and Senior age groups with certified referees.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 mb-6">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600" aria-hidden="true"></i><span>State Selection Trials</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600" aria-hidden="true"></i><span>Federation Rulebook Compliance</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600" aria-hidden="true"></i><span>Standardized Scoring Rubrics</span></div>
+                </div>
+              </div>
+              <a href="/events" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1.5">
+                <span>View Championship Details</span>
+                <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+              </a>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card p-6 flex flex-col justify-between border-t-4 border-t-amber-500">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-amber-100 text-[#C5A059] flex items-center justify-center text-xl mb-4">
+                  <i class="fa-solid fa-campground" aria-hidden="true"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Yoga Training Camps &amp; Workshops</h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                  Intensive residential and weekend camps focusing on asana precision, breathing regulation (pranayama), holding duration, flexibility training, and injury prevention under veteran yogis.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 mb-6">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600" aria-hidden="true"></i><span>Seasonal State Camps</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600" aria-hidden="true"></i><span>Biomechanics &amp; Posture Clinics</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600" aria-hidden="true"></i><span>Mental Resilience Training</span></div>
+                </div>
+              </div>
+              <a href="/downloads" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1.5">
+                <span>Camp Schedules &amp; Circulars</span>
+                <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+              </a>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card p-6 flex flex-col justify-between border-t-4 border-t-blue-600">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl mb-4">
+                  <i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Coach &amp; Judge Development</h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                  Upgrading state-level yoga teachers to certified sports adjudicators and high-performance coaches trained in timekeeping, technical difficulty syllabus, and judging ethics.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 mb-6">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-600" aria-hidden="true"></i><span>Referee Refresher Courses</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-600" aria-hidden="true"></i><span>Exam &amp; Certification Clinics</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-blue-600" aria-hidden="true"></i><span>Accredited State Roster</span></div>
+                </div>
+              </div>
+              <a href="/membership" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1.5">
+                <span>Coach Accreditation Info</span>
+                <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+              </a>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card p-6 flex flex-col justify-between border-t-4 border-t-purple-600">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl mb-4">
+                  <i class="fa-solid fa-school-flag" aria-hidden="true"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">School &amp; Academy Participation</h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                  Collaborating with schools, sports academies, and colleges to scout young talent, establish extracurricular yoga clubs, and submit official institutional delegations for district trials.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 mb-6">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-600" aria-hidden="true"></i><span>Bulk School Nomination Portal</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-600" aria-hidden="true"></i><span>Grassroots Scouting Drives</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-600" aria-hidden="true"></i><span>Institutional Certifications</span></div>
+                </div>
+              </div>
+              <a href="/school-nominate" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1.5">
+                <span>School Nomination System</span>
+                <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+              </a>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="card p-6 flex flex-col justify-between border-t-4 border-t-rose-600">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl mb-4">
+                  <i class="fa-solid fa-spa" aria-hidden="true"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Community Yoga &amp; Public Health</h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                  Promoting accessible yoga sessions for all sections of society, senior citizen gentle yoga, youth posture alignment camps, and International Day of Yoga mass demonstrations across districts.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 mb-6">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-rose-600" aria-hidden="true"></i><span>International Day of Yoga</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-rose-600" aria-hidden="true"></i><span>Public Park Morning Sessions</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-rose-600" aria-hidden="true"></i><span>Stress-Relief &amp; Wellness Talks</span></div>
+                </div>
+              </div>
+              <a href="/gallery" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1.5">
+                <span>View Community Gallery</span>
+                <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+              </a>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="card p-6 flex flex-col justify-between border-t-4 border-t-teal-600">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl mb-4">
+                  <i class="fa-solid fa-medal" aria-hidden="true"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">National Contingent Preparation</h3>
+                <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                  State medalists undergo rigorous pre-national conditioning camps to fine-tune team synchronization, solo difficulty routines, and endurance prior to national championships of Yoga Federation of India.
+                </p>
+                <div class="space-y-1.5 text-xs text-slate-500 mb-6">
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-600" aria-hidden="true"></i><span>State Team Selection Scrutiny</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-600" aria-hidden="true"></i><span>Intensive Pre-National Camp</span></div>
+                  <div class="flex items-center gap-2"><i class="fa-solid fa-check text-teal-600" aria-hidden="true"></i><span>Performance Mentorship</span></div>
+                </div>
+              </div>
+              <a href="/results" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1.5">
+                <span>Athlete Ranking Archives</span>
+                <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Competitive Syllabi Overview -->
+      <section class="py-12 bg-slate-100/70 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-5">
+              <span class="section-badge">Standardized Rules</span>
+              <h2 class="text-2xl sm:text-3xl font-bold font-display text-slate-900 mb-3">
+                Federation Technical Regulations
+              </h2>
+              <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4">
+                All competitive yoga activities conducted under the aegis of the Telangana Yoga Association comply strictly with the official technical handbook of the Yoga Federation of India.
+              </p>
+              <div class="space-y-2.5 text-xs text-slate-700 mb-6">
+                <div class="p-3 bg-white rounded-lg border border-slate-200">
+                  <strong>Holding Duration:</strong> Traditional postures require 15 to 30 seconds of undisturbed hold.
+                </div>
+                <div class="p-3 bg-white rounded-lg border border-slate-200">
+                  <strong>Choreography &amp; Music:</strong> Artistic &amp; Rhythmic sequences must adhere to non-vocal classical tempos.
+                </div>
+                <div class="p-3 bg-white rounded-lg border border-slate-200">
+                  <strong>Scrutiny Standards:</strong> Mandatory verification of Date of Birth to preserve competitive age group integrity.
+                </div>
+              </div>
+              <a
+                href="/static/images/Yoga Federation Rules & Regulations.pdf"
+                target="_blank"
+                class="btn-primary"
+              >
+                <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                <span>Download Rulebook (PDF)</span>
+              </a>
+            </div>
+
+            <div class="lg:col-span-7">
+              <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                  <i class="fa-solid fa-list-check text-[#0D5C3A]" aria-hidden="true"></i>
+                  <span>5 Championship Competition Categories</span>
+                </h3>
+                <div class="divide-y divide-slate-100 text-xs">
+                  <div class="py-3">
+                    <span class="font-bold text-slate-800 text-sm">1. Traditional Yogasana</span>
+                    <p class="text-slate-600 mt-0.5">Classical static postures evaluated for alignment, stillness, spine angle, breathing ease, and facial serenity.</p>
+                  </div>
+                  <div class="py-3">
+                    <span class="font-bold text-slate-800 text-sm">2. Artistic Yogasana (Solo)</span>
+                    <p class="text-slate-600 mt-0.5">Expressive performance linking postures through graceful transitions to harmonious musical rhythm.</p>
+                  </div>
+                  <div class="py-3">
+                    <span class="font-bold text-slate-800 text-sm">3. Artistic Yogasana (Pair)</span>
+                    <p class="text-slate-600 mt-0.5">Two athletes executing complementary postures, partner lifts, symmetric balances, and synchronized transitions.</p>
+                  </div>
+                  <div class="py-3">
+                    <span class="font-bold text-slate-800 text-sm">4. Rhythmic Yogasana (Pair)</span>
+                    <p class="text-slate-600 mt-0.5">Continuous fluid transitions matching steady tempo without stopping or breaking postural rhythm.</p>
+                  </div>
+                  <div class="py-3">
+                    <span class="font-bold text-slate-800 text-sm">5. Free Flow</span>
+                    <p class="text-slate-600 mt-0.5">Creative flowing sequences harmonizing breath control, flexibility transitions, and dynamic balance.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Help CTA -->
+      <section class="py-10 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+          <h2 class="text-xl sm:text-2xl font-bold font-display text-slate-900 mb-2">
+            Interested in Conducting a Workshop in Your District?
+          </h2>
+          <p class="text-slate-600 text-xs sm:text-sm mb-6 max-w-xl mx-auto">
+            District associations and affiliated educational institutions can coordinate with our Technical Committee to organize training camps and judging seminars.
+          </p>
+          <div class="flex justify-center gap-4">
+            <a href="/contact" class="btn-green">
+              <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+              <span>Submit Workshop Enquiry</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Official Footer -->
+    <footer class="site-footer bg-[#0a4229] text-slate-300 text-xs py-10 border-t-4 border-[#C5A059]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 pb-8 border-b border-emerald-800/80">
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center p-1">
+                <i class="fa-solid fa-om text-emerald-900 text-sm" aria-hidden="true"></i>
+              </div>
+              <span class="font-bold text-white text-sm">Telangana Yoga Association</span>
+            </div>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Independent state organization affiliated with the Yoga Federation of India. Dedicated to the promotion of yoga and competitive yogasana sports across Telangana.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-amber-300 text-sm mb-3">Quick Navigation</h4>
+            <ul class="space-y-1.5">
+              <li><a href="/" class="footer-link">Home</a></li>
+              <li><a href="/about" class="footer-link">About Us</a></li>
+              <li><a href="/activities" class="footer-link">Yoga Activities</a></li>
+              <li><a href="/events" class="footer-link">Events &amp; Programs</a></li>
+              <li><a href="/districts" class="footer-link">District Directory</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-amber-300 text-sm mb-3">Championship &amp; Portal</h4>
+            <ul class="space-y-1.5">
+              <li><a href="/events" class="footer-link">Inter-District Championship</a></li>
+              <li><a href="/nominate" class="footer-link">Athlete Registration</a></li>
+              <li><a href="/school-nominate" class="footer-link">School Nominations</a></li>
+              <li><a href="/login" class="footer-link">District Secretary Login</a></li>
+              <li><a href="/gallery" class="footer-link">Photo Gallery</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-amber-300 text-sm mb-3">Affiliation &amp; Contacts</h4>
+            <p class="text-slate-400 text-xs leading-relaxed mb-2">
+              Affiliated to the Yoga Federation of India. Operating in coordination with verified district yoga bodies.
+            </p>
+            <div class="text-[11px] text-slate-400">
+              Email: <span class="text-amber-300">contact@telanganayoga.org.in</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between text-slate-400 gap-4 text-[11px]">
+          <div>
+            &copy; 2026 Telangana Yoga Association. Affiliated to Yoga Federation of India. All rights reserved.
+          </div>
+          <div class="flex space-x-4">
+            <a href="/contact" class="hover:text-amber-300">Contact Us</a>
+            <a href="/downloads" class="hover:text-amber-300">Downloads</a>
+            <a href="/membership" class="hover:text-amber-300">Membership</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Local Scripts -->
+    <script src="/static/js/main.js" defer></script>
+    <script>
+      const rootEl = document.documentElement;
+      document.getElementById("font-increase")?.addEventListener("click", () => {
+        rootEl.style.fontSize = "110%";
+      });
+      document.getElementById("font-normal")?.addEventListener("click", () => {
+        rootEl.style.fontSize = "100%";
+      });
+      document.getElementById("font-decrease")?.addEventListener("click", () => {
+        rootEl.style.fontSize = "90%";
+      });
+    </script>
+  </body>
+</html>
