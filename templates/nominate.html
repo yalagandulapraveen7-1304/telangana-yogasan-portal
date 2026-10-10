@@ -499,13 +499,21 @@
 
       </div>
 
-      <!-- SECTION D: DISTRICT SECRETARY DECLARATION -->
-      <div class="bg-amber-50/70 rounded-2xl p-6 border border-amber-200">
+      <!-- SECTION D: DISTRICT SECRETARY & PARENTAL CONSENT DECLARATIONS -->
+      <div class="bg-amber-50/70 rounded-2xl p-6 border border-amber-200 space-y-4">
         <label class="flex items-start gap-3 cursor-pointer" for="secretary-declaration">
           <input type="checkbox" id="secretary-declaration" name="declaration" required aria-required="true" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
           <div class="text-xs text-slate-700 leading-relaxed">
             <strong class="text-slate-900">Official Secretary Declaration:</strong>
             I hereby certify that I am the authorized District Secretary of this District Yoga Association. I have personally scrutinized and verified the athlete's original Date of Birth certificate and Aadhaar details. All particulars entered are true and correct to the best of my official knowledge.
+          </div>
+        </label>
+
+        <label class="flex items-start gap-3 cursor-pointer pt-3 border-t border-amber-200/60" for="privacy-consent">
+          <input type="checkbox" id="privacy-consent" name="privacyConsent" required aria-required="true" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+          <div class="text-xs text-slate-700 leading-relaxed">
+            <strong class="text-slate-900">Parental / Guardian Consent &amp; Data Privacy (DPDP Act 2023):</strong>
+            I confirm that parental or legal guardian consent has been obtained for this minor athlete (aged under 18 years) to register, participate, and have their nomination details, photograph, age proof, and competition results processed and published solely for official sports administration in accordance with the Telangana Yoga Association <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-emerald-800 underline font-semibold hover:text-emerald-950">Privacy Policy</a>.
           </div>
         </label>
       </div>
@@ -528,8 +536,12 @@
 
   <!-- Form Footer -->
   <footer class="bg-slate-900 text-slate-400 text-[11px] py-4 text-center border-t border-slate-800 mt-12">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-2">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div>Telangana Yoga Association &bull; Affiliated to Yoga Federation of India</div>
+      <div class="flex space-x-4">
+        <a href="/privacy-policy" class="text-amber-300 hover:underline">Privacy Policy</a>
+        <a href="/contact" class="hover:text-amber-300">Contact Us</a>
+      </div>
     </div>
   </footer>
 

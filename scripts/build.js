@@ -56,6 +56,8 @@ const redirectsContent = `/index.html / 200
 /downloads /downloads.html 200
 /news /downloads.html 200
 /contact /contact.html 200
+/privacy-policy /privacy-policy.html 200
+/privacy /privacy-policy.html 200
 /gallery /gallery.html 200
 /login /login.html 200
 /nominate /nominate.html 200

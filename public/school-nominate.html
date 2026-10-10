@@ -359,12 +359,18 @@
           </div>
         </div>
 
-        <!-- SECTION 4: PRINCIPAL & PET DECLARATION -->
-        <div class="bg-white/10 rounded-xl p-4 border border-white/15">
+        <!-- SECTION 4: PRINCIPAL & PET DECLARATION AND PARENTAL PRIVACY CONSENT -->
+        <div class="bg-white/10 rounded-xl p-4 border border-white/15 space-y-3">
           <label class="flex items-start gap-3 cursor-pointer" for="school-declaration">
             <input type="checkbox" id="school-declaration" required aria-required="true" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
             <div class="text-xs text-emerald-100 leading-relaxed">
               <strong>Official Institutional Certification:</strong> I hereby certify on behalf of the institution that all nominated students are bona fide enrolled students of this school/college. Their original Date of Birth certificates, School Study Bonafides, and Aadhaar cards have been verified and found genuine as per Yoga Federation regulations.
+            </div>
+          </label>
+          <label class="flex items-start gap-3 cursor-pointer pt-3 border-t border-white/10" for="school-privacy-consent">
+            <input type="checkbox" id="school-privacy-consent" required aria-required="true" class="mt-1 text-[#0D5C3A] focus:ring-[#0D5C3A] rounded w-4 h-4" />
+            <div class="text-xs text-emerald-100 leading-relaxed">
+              <strong>Parental / Guardian Consent &amp; Data Privacy (DPDP Act 2023):</strong> I certify that our institution has obtained formal parental or legal guardian consent for each minor student athlete listed to have their particulars, proof documents, and photographs processed for the Championship under the Telangana Yoga Association <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-amber-300 underline font-semibold hover:text-amber-200">Privacy Policy</a>.
             </div>
           </label>
         </div>
@@ -443,9 +449,12 @@
 
   <!-- Footer -->
   <footer class="bg-[#0a4229] text-emerald-100/70 border-t border-amber-400/30 py-6 text-xs text-center">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <p class="text-slate-300">&copy; 2026 Telangana Yoga Association &bull; Affiliated to Yoga Federation of India</p>
-      <p class="text-[11px] text-emerald-300/60 mt-1">Official Technical Scrutiny &amp; State Championship Platform</p>
+      <div class="flex space-x-4">
+        <a href="/privacy-policy" class="text-amber-300 hover:underline">Privacy Policy</a>
+        <a href="/contact" class="hover:text-amber-300">Contact Us</a>
+      </div>
     </div>
   </footer>
 
@@ -785,6 +794,7 @@
       const coachMobile = document.getElementById('coach_mobile')?.value?.trim();
       const principalName = document.getElementById('principal_name')?.value?.trim();
       const declaration = document.getElementById('school-declaration')?.checked;
+      const privacyConsent = document.getElementById('school-privacy-consent')?.checked;
 
       if (!schoolName || !district || !coachName || !coachMobile || !principalName) {
         alert('Please complete all mandatory institution and coach details marked with *');
@@ -793,6 +803,11 @@
 
       if (!declaration) {
         alert('Please accept the Institutional Certification declaration checkbox before submitting.');
+        return;
+      }
+
+      if (!privacyConsent) {
+        alert('Please confirm that parental/guardian consent has been obtained for all student athletes under the DPDP Act 2023 Privacy Policy.');
         return;
       }
 

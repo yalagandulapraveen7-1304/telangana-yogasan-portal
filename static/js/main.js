@@ -358,7 +358,8 @@ function initNominationForm() {
     // Required fields check
     const required = $$('[required]', form);
     required.forEach(field => {
-      if (!field.value.trim()) {
+      const isMissing = field.type === 'checkbox' ? !field.checked : !field.value.trim();
+      if (isMissing) {
         markInvalid(field, 'This field is required');
         valid = false;
       }

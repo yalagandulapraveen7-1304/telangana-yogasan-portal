@@ -272,6 +272,10 @@ app.get(['/contact', '/contact.html'], (_req, res) => {
   sendHtmlPage(res, 'contact.html');
 });
 
+app.get(['/privacy-policy', '/privacy-policy.html', '/privacy'], (_req, res) => {
+  sendHtmlPage(res, 'privacy-policy.html');
+});
+
 app.get(['/', '/index', '/index.html'], (_req, res) => {
   sendHtmlPage(res, 'index.html');
 });
