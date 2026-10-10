@@ -60,8 +60,8 @@ describe('Security Tests: Accessible CAPTCHA Verification', () => {
 
   it('handles Google reCAPTCHA verification gracefully when secret key is unset or bypassed', async () => {
     const { verifyRecaptcha } = require('../../services/captcha');
-    const result = await verifyRecaptcha('dummy-token');
-    // Without RECAPTCHA_SECRET_KEY set in test env, verifyRecaptcha gracefully bypasses
+    const result = await verifyRecaptcha('dummy-token', '', '');
+    // With empty secret key, verifyRecaptcha gracefully bypasses
     assert.equal(result.success, true);
   });
 

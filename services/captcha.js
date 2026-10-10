@@ -99,7 +99,7 @@ function verifyCaptcha(captchaId, userInput) {
  */
 async function verifyRecaptcha(token, remoteip = '', secretKeyOverride = null) {
   const constants = require('../config/constants');
-  const secretKey = secretKeyOverride || process.env.RECAPTCHA_SECRET_KEY || constants.RECAPTCHA_SECRET_KEY;
+  const secretKey = secretKeyOverride !== null ? secretKeyOverride : (process.env.RECAPTCHA_SECRET_KEY || constants.RECAPTCHA_SECRET_KEY);
 
   // If secret key is not set or placeholder in dev, allow graceful bypass or test pass
   if (!secretKey || secretKey === 'REPLACE_WITH_YOUR_RECAPTCHA_SECRET_KEY') {
