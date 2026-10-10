@@ -38,10 +38,6 @@ if (IS_PROD && !process.env.VERCEL) {
 const RAZORPAY_KEY_ID = rawRazorpayKeyId || 'rzp_test_YOUR_KEY';
 const RAZORPAY_KEY_SECRET = rawRazorpayKeySecret || 'YOUR_SECRET';
 
-// Google reCAPTCHA Configuration
-const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || '';
-const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '';
-
 // 33 Administrative Districts of Telangana
 const TELANGANA_DISTRICTS = [
   'Adilabad', 'Bhadradri Kothagudem', 'Hyderabad', 'Jagtial', 'Jangaon',
@@ -61,7 +57,5 @@ module.exports = {
   FEE_PER_EVENT,
   RAZORPAY_KEY_ID,
   RAZORPAY_KEY_SECRET,
-  RECAPTCHA_SITE_KEY,
-  RECAPTCHA_SECRET_KEY,
   TELANGANA_DISTRICTS
 };

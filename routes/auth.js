@@ -8,31 +8,17 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Secretary = require('../models/Secretary');
 const LoginLog = require('../models/LoginLog');
-const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY, JWT_SECRET, IS_PROD } = require('../config/constants');
+const { JWT_SECRET, IS_PROD } = require('../config/constants');
 const { requireAuth, loginLimiter, requireRole } = require('../middleware/auth');
 const { stripHtml } = require('../middleware/sanitize');
 const { isValidEmail, isValidPassword } = require('../utils/validators');
-const { generateCaptcha, verifyCaptcha, verifyRecaptcha } = require('../services/captcha');
-
-// 0. GET /auth/captcha — Returns reCAPTCHA siteKey and fallback challenge
-router.get('/captcha', (req, res) => {
-  const challenge = generateCaptcha();
-  return res.json({
-    success: true,
-    recaptchaSiteKey: RECAPTCHA_SITE_KEY || '',
-    recaptchaEnabled: !!(RECAPTCHA_SITE_KEY && RECAPTCHA_SECRET_KEY),
-    captchaId: challenge.captchaId,
-    question: challenge.question,
-    audioText: challenge.audioText
-  });
-});
 
 // 1. POST /auth/login
 router.post('/login', loginLimiter, async (req, res) => {
   const body = req.body || {};
 
   // Reject unexpected fields to prevent parameter injection / prototype pollution
-  const allowedKeys = new Set(['email', 'password', 'recaptchaToken', 'captchaId', 'captchaAnswer']);
+  const allowedKeys = new Set(['email', 'password']);
   const receivedKeys = Object.keys(body);
   const unexpectedKeys = receivedKeys.filter((k) => !allowedKeys.has(k));
   if (unexpectedKeys.length > 0) {
@@ -42,43 +28,11 @@ router.post('/login', loginLimiter, async (req, res) => {
     });
   }
 
-  const { email, password, recaptchaToken, captchaId, captchaAnswer } = body;
+  const { email, password } = body;
 
   const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
   const clientIp = stripHtml(String(Array.isArray(rawIp) ? rawIp[0] : rawIp)).substring(0, 45);
   const userAgent = stripHtml(String(req.headers['user-agent'] || 'Unknown Device')).substring(0, 200);
-
-  // 1. If Google reCAPTCHA token is provided or reCAPTCHA is active
-  const isTestEnv = process.env.NODE_ENV === 'test' || !process.env.NODE_ENV;
-
-  if (recaptchaToken) {
-    // In test environment, allow simulated test tokens
-    if (recaptchaToken === 'test-valid-recaptcha-token' && isTestEnv) {
-      // Allow simulated test token
-    } else {
-      const recaptchaResult = await verifyRecaptcha(recaptchaToken, clientIp);
-      if (!recaptchaResult.success) {
-        return res.status(400).json({
-          success: false,
-          error: 'Google reCAPTCHA verification failed. Please try again.'
-        });
-      }
-    }
-  } else if (!isTestEnv && RECAPTCHA_SECRET_KEY && !recaptchaToken && (captchaId === undefined && captchaAnswer === undefined)) {
-    // If reCAPTCHA is configured on server but token not sent (and no fallback submitted)
-    return res.status(400).json({
-      success: false,
-      error: 'Please complete the Google reCAPTCHA verification.'
-    });
-  } else if (captchaId !== undefined || captchaAnswer !== undefined) {
-    // 2. Fallback math challenge verification
-    if (!verifyCaptcha(captchaId, captchaAnswer)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Security verification failed. Please enter the correct answer.'
-      });
-    }
-  }
 
   // Strict type checks
   if (typeof email !== 'string' || typeof password !== 'string') {
