@@ -276,6 +276,10 @@ app.get(['/privacy-policy', '/privacy-policy.html', '/privacy'], (_req, res) => 
   sendHtmlPage(res, 'privacy-policy.html');
 });
 
+app.get(['/help', '/help.html', '/faq', '/faq.html'], (_req, res) => {
+  sendHtmlPage(res, 'help.html');
+});
+
 app.get(['/', '/index', '/index.html'], (_req, res) => {
   sendHtmlPage(res, 'index.html');
 });

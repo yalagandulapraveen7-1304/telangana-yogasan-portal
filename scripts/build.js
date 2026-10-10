@@ -58,6 +58,8 @@ const redirectsContent = `/index.html / 200
 /contact /contact.html 200
 /privacy-policy /privacy-policy.html 200
 /privacy /privacy-policy.html 200
+/help /help.html 200
+/faq /help.html 200
 /gallery /gallery.html 200
 /login /login.html 200
 /nominate /nominate.html 200
