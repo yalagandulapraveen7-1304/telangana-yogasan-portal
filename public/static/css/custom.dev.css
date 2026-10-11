@@ -658,9 +658,34 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid var(--gold-accent);
   width: 100%;
 }
+.marquee-bar {
+  background: var(--gold-light);
+  border-top: 2px solid var(--gold-accent);
+  border-bottom: 2px solid var(--gold-accent);
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  contain: paint;
+}
+
 .marquee-content {
   display: inline-block;
-  color: var(--green-dark);
+  will-change: transform;
+  animation: marquee-scroll 32s linear infinite;
+  padding-left: 100%;
+}
+
+.marquee-bar:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateZ(0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 /* ── Responsive helpers ─────────────────────────────────────── */
