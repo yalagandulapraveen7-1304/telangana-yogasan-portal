@@ -469,7 +469,7 @@
   <script>
     const FEE_PER_EVENT = 260;
     const AGE_CATEGORIES = [
-      { name: 'Sub-Junior', min: 8, max: 14, badgeClass: 'bg-purple-100 text-purple-800 border-purple-200', icon: '<i class="fa-solid fa-child mr-1" aria-hidden="true"></i>', getGroup: (age) => age < 10 ? 'Sub-Junior (08–10 Yrs)' : 'Sub-Junior (10–14 Yrs)' },
+      { name: 'Sub-Junior', min: 8, max: 14, badgeClass: 'bg-amber-100 text-[#C5A059] border-amber-200', icon: '<i class="fa-solid fa-child mr-1" aria-hidden="true"></i>', getGroup: (age) => age < 10 ? 'Sub-Junior (08–10 Yrs)' : 'Sub-Junior (10–14 Yrs)' },
       { name: 'Junior',     min: 14, max: 18, badgeClass: 'bg-blue-100 text-blue-800 border-blue-200', icon: '<i class="fa-solid fa-user-graduate mr-1" aria-hidden="true"></i>', getGroup: () => 'Junior (14–18 Yrs)' },
       { name: 'Senior',     min: 18, max: 120, badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: '<i class="fa-solid fa-trophy mr-1" aria-hidden="true"></i>', getGroup: (age) => age < 25 ? 'Senior (18–25 Yrs)' : (age <= 35 ? 'Senior (25–35 Yrs)' : 'Senior (Above 35 Yrs)') }
     ];
