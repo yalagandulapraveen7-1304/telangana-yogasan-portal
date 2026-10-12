@@ -4,7 +4,7 @@ A full-stack web application designed for state-level sports administrations to 
 
 ---
 
-## 📌 Features
+## Features
 
 - **Role-Based Access Control (RBAC):**
   - **District Secretaries:** Register athletes and view rosters strictly within their assigned district.
@@ -16,7 +16,7 @@ A full-stack web application designed for state-level sports administrations to 
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript, Font Awesome
 - **Backend:** Node.js, Express.js
@@ -25,7 +25,7 @@ A full-stack web application designed for state-level sports administrations to 
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 yogasana-portal/
