@@ -7,6 +7,11 @@
       District Secretary Dashboard | Telangana State Inter-District Yogasana
       Sports Championship
     </title>
+    <meta
+      name="description"
+      content="District Secretary Administrative Dashboard for Athlete Nominations and Scrutiny Management."
+    />
+    <meta name="robots" content="noindex, nofollow" />
 
     <!-- Favicon & Touch Icons -->
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -43,7 +48,7 @@
       >
         <div class="flex items-center gap-3">
           <a
-            href="index.html"
+            href="/"
             class="flex items-center gap-2 text-decoration-none"
           >
             <div
@@ -85,7 +90,7 @@
             HYD
           </div>
           <a
-            href="login.html"
+            href="/login"
             title="Sign out"
             class="bg-red-800/80 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5"
           >
@@ -107,7 +112,7 @@
             class="text-xs text-slate-500 flex items-center gap-2 mb-1"
             aria-label="Breadcrumb"
           >
-            <a href="index.html" class="hover:text-emerald-800 font-medium"
+            <a href="/" class="hover:text-emerald-800 font-medium"
               >Public Home</a
             >
             <span>/</span>
@@ -538,8 +543,8 @@
           Telangana Yoga Association &bull; Affiliated to Yoga Federation of India
         </div>
         <div class="flex space-x-4">
-          <a href="index.html" class="hover:text-amber-300">Public Home</a>
-          <a href="nominate.html" class="hover:text-amber-300"
+          <a href="/" class="hover:text-amber-300">Public Home</a>
+          <a href="/nominate" class="hover:text-amber-300"
             >+ Register Athlete</a
           >
           <a href="/help" class="hover:text-amber-300">Help &amp; FAQ</a>
@@ -739,7 +744,7 @@
             <div class="flex flex-wrap gap-1">${eventTags}</div>
           </td>
           <td class="py-3.5 px-4">
-            <a href="admitcard.html?id=${safeId}" target="_blank" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
+            <a href="/admitcard?id=${safeId}" target="_blank" class="text-xs font-semibold text-[#0D5C3A] hover:underline flex items-center gap-1">
               <i class="fa-solid fa-id-card text-emerald-600" aria-hidden="true"></i> View Admit Card
             </a>
           </td>
@@ -748,7 +753,7 @@
             <button type="button" onclick="openModal('${safeId}', this)" aria-label="Verify athlete ${safeFirst} ${safeLast}" title="Verify Athlete" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors inline-block mr-1 touch-target-min">
               <i class="fa-solid fa-user-check" aria-hidden="true"></i>
             </button>
-            <a href="admitcard.html?id=${safeId}" target="_blank" aria-label="View admit card for ${safeFirst} ${safeLast}" title="View Admit Card" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors inline-block touch-target-min">
+            <a href="/admitcard?id=${safeId}" target="_blank" aria-label="View admit card for ${safeFirst} ${safeLast}" title="View Admit Card" class="p-1.5 hover:bg-slate-100 rounded text-slate-600 hover:text-[#0D5C3A] transition-colors inline-block touch-target-min">
               <i class="fa-solid fa-id-card" aria-hidden="true"></i>
             </a>
           </td>

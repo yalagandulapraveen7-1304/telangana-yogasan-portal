@@ -290,6 +290,19 @@ app.get(['/', '/index', '/index.html'], (_req, res) => {
   sendHtmlPage(res, 'index.html');
 });
 
+// Custom 404 Not Found Page Handler
+app.use((req, res) => {
+  res.status(404);
+  if (req.accepts('html')) {
+    res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+    return res.sendFile('404.html', { root: templateDir });
+  }
+  if (req.accepts('json')) {
+    return res.json({ success: false, error: 'Resource not found' });
+  }
+  res.type('txt').send('404 Not Found');
+});
+
 // 6. Multer / File Upload Error Handler
 app.use((err, _req, res, next) => {
   if (err.code === 'LIMIT_FILE_SIZE') {
