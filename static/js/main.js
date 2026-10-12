@@ -723,6 +723,56 @@ function initLanguageSwitcher() {
   }
 }
 
+/* ── Accessibility Font Resizer ──────────────────────────── */
+function initFontResizer() {
+  const rootEl = document.documentElement;
+  const FONT_KEY = 'tya_font_scale';
+
+  function applyFontScale(scale) {
+    rootEl.style.fontSize = scale;
+    try {
+      localStorage.setItem(FONT_KEY, scale);
+    } catch (err) {}
+  }
+
+  // Restore saved preference if present; default base scale is 110% (the actual base view)
+  try {
+    const savedScale = localStorage.getItem(FONT_KEY);
+    if (savedScale) {
+      rootEl.style.fontSize = savedScale;
+    } else {
+      rootEl.style.fontSize = '110%';
+    }
+  } catch (err) {
+    rootEl.style.fontSize = '110%';
+  }
+
+  const btnDec = document.getElementById('font-decrease');
+  const btnNorm = document.getElementById('font-normal');
+  const btnInc = document.getElementById('font-increase');
+
+  if (btnDec) {
+    btnDec.addEventListener('click', (e) => {
+      e.preventDefault();
+      applyFontScale('100%');
+    });
+  }
+
+  if (btnNorm) {
+    btnNorm.addEventListener('click', (e) => {
+      e.preventDefault();
+      applyFontScale('110%');
+    });
+  }
+
+  if (btnInc) {
+    btnInc.addEventListener('click', (e) => {
+      e.preventDefault();
+      applyFontScale('120%');
+    });
+  }
+}
+
 /* ── Init all on DOM ready ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
@@ -734,4 +784,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initTableSearch();
   initDragZones();
   initLanguageSwitcher();
+  initFontResizer();
 });
+

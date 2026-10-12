@@ -1573,15 +1573,18 @@
       document
         .getElementById("font-increase")
         ?.addEventListener("click", () => {
-          rootEl.style.fontSize = "110%";
+          rootEl.style.fontSize = "120%";
+          try { localStorage.setItem("tya_font_scale", "120%"); } catch (e) {}
         });
       document.getElementById("font-normal")?.addEventListener("click", () => {
-        rootEl.style.fontSize = "100%";
+        rootEl.style.fontSize = "110%";
+        try { localStorage.setItem("tya_font_scale", "110%"); } catch (e) {}
       });
       document
         .getElementById("font-decrease")
         ?.addEventListener("click", () => {
-          rootEl.style.fontSize = "90%";
+          rootEl.style.fontSize = "100%";
+          try { localStorage.setItem("tya_font_scale", "100%"); } catch (e) {}
         });
     </script>
   </body>
