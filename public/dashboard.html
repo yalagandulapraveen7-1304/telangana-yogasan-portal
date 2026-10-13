@@ -471,7 +471,7 @@
           <button
             type="button"
             onclick="updateAthleteStatus('Clarification')"
-            class="px-4 py-2 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition"
+            class="px-4 py-2 text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition"
           >
             Request Clarification
           </button>
@@ -699,17 +699,17 @@
           if (athlete.status === "Verified") {
             statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-solid fa-check text-[10px]" aria-hidden="true"></i> Verified</span>`;
           } else if (athlete.status === "Clarification") {
-            statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]" aria-hidden="true"></i> Clarification</span>`;
+            statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200"><i class="fa-solid fa-triangle-exclamation text-[10px]" aria-hidden="true"></i> Clarification</span>`;
           } else {
             statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200"><i class="fa-regular fa-clock text-[10px]" aria-hidden="true"></i> Submitted</span>`;
           }
 
           const catColor =
             athlete.category === "Sub-Junior"
-              ? "bg-amber-50 text-[#C5A059] border-amber-200"
+              ? "bg-[#f1f5f9] text-[#C5A059] border-[#e2e8f0]"
               : athlete.category === "Junior"
-                ? "bg-blue-50 text-blue-700 border-blue-200"
-                : "bg-teal-50 text-teal-700 border-teal-200";
+                ? "bg-[#f1f5f9] text-[#0D5C3A] border-[#e2e8f0]"
+                : "bg-[#f1f5f9] text-[#0a4229] border-[#e2e8f0]";
 
           const eventTags = (athlete.events || [])
             .map(
@@ -929,7 +929,7 @@
               </td>
               <td class="p-3 font-mono text-[11px]">${escapeHtml(log.ipAddress)}</td>
               <td class="p-3">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${log.status === "SUCCESS" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${log.status === "SUCCESS" ? "bg-emerald-100 text-emerald-800" : "bg-red-50 text-red-700 border border-red-200"}">
                   ${escapeHtml(log.status)}
                 </span>
               </td>
