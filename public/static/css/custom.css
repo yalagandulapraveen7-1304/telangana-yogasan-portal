@@ -4,6 +4,7 @@
 .gallery-card{display:flex;flex-direction:column;height:100%;background-color:#fff;border:1px solid #e2e8f0;border-radius:.75rem;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .gallery-img-wrap{position:relative;width:100%;aspect-ratio:3 / 2;min-height:180px;background-color:#0f172a;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 @supports (aspect-ratio: 3 / 2){.gallery-img-wrap{min-height:unset;aspect-ratio:3 / 2}}
+.gallery-img-wrap picture{width:100%;height:100%;display:block}
 .gallery-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 25%;display:block;transform:none!important;transition:none!important}
 .gallery-card-badge{position:absolute;top:.5rem;left:.5rem;background:rgba(15,23,42,.75);color:#fff;font-size:.625rem;font-weight:700;padding:.2rem .55rem;border-radius:9999px;text-transform:uppercase;letter-spacing:.05em;backdrop-filter:blur(4px);z-index:10}
 .gallery-card-body{padding:.875rem;display:flex;flex-direction:column;flex:1 1 auto;justify-content:space-between;background-color:#fff}

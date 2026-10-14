@@ -773,6 +773,26 @@ function initFontResizer() {
   }
 }
 
+/* ── Cookie & Storage Transparency Notice ───────────────── */
+function initCookieNotice() {
+  const banner = document.getElementById('cookie-notice-banner');
+  const btn = document.getElementById('cookie-notice-accept');
+  if (!banner || !btn) return;
+  try {
+    if (!localStorage.getItem('tya_cookie_ack')) {
+      banner.classList.remove('hidden');
+    }
+  } catch (err) {
+    banner.classList.remove('hidden');
+  }
+  btn.addEventListener('click', () => {
+    try {
+      localStorage.setItem('tya_cookie_ack', 'true');
+    } catch (err) {}
+    banner.classList.add('hidden');
+  });
+}
+
 /* ── Init all on DOM ready ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
@@ -785,5 +805,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initDragZones();
   initLanguageSwitcher();
   initFontResizer();
+  initCookieNotice();
 });
 

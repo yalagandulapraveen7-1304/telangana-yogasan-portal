@@ -76,8 +76,24 @@ const headersContent = `/*
   Referrer-Policy: strict-origin-when-cross-origin
 /static/*
   Cache-Control: public, max-age=2592000, immutable
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=86400
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=86400
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=86400
 `;
 fs.writeFileSync(path.join(publicDir, '_headers'), headersContent);
+
+// 5. Generate sitemap.xml, robots.txt, and llms.txt
+try {
+  require('./generate-sitemap');
+} catch (e) {
+  console.warn('Sitemap generator warning:', e.message);
+}
 
 fs.writeFileSync(path.join(publicDir, '.gitkeep'), '');
 

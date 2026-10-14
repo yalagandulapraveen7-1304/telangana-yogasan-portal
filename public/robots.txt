@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /uploads/
+Disallow: /auth/
+Disallow: /portal/
+
+Sitemap: https://telanganayoga.org.in/sitemap.xml

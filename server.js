@@ -112,6 +112,30 @@ app.get('/favicon.ico', (_req, res) => {
   res.sendFile('favicon.ico', { root: path.join(__dirname, 'static', 'images') });
 });
 
+app.get('/sitemap.xml', (_req, res) => {
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  const file = path.join(__dirname, 'public', 'sitemap.xml');
+  if (fs.existsSync(file)) return res.sendFile('sitemap.xml', { root: path.join(__dirname, 'public') });
+  res.status(404).send('Sitemap not found');
+});
+
+app.get('/robots.txt', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  const file = path.join(__dirname, 'public', 'robots.txt');
+  if (fs.existsSync(file)) return res.sendFile('robots.txt', { root: path.join(__dirname, 'public') });
+  res.status(404).send('Robots.txt not found');
+});
+
+app.get('/llms.txt', (_req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  const file = path.join(__dirname, 'public', 'llms.txt');
+  if (fs.existsSync(file)) return res.sendFile('llms.txt', { root: path.join(__dirname, 'public') });
+  res.status(404).send('llms.txt not found');
+});
+
 // 3. Static Assets with aggressive caching headers (served without waiting on database)
 app.use('/static', express.static(path.join(__dirname, 'static'), {
   maxAge: '30d',
