@@ -435,7 +435,7 @@ function initNominationForm() {
           showSubmitSuccess();
         }
       } else {
-        showAlert(data.error || data.details || "Failed to submit nomination", "error");
+        showAlert(data.error || data.details || "We could not submit your registration. Please check the information you entered and try again.", "error");
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `<span>Submit Nomination</span>`;
@@ -443,7 +443,7 @@ function initNominationForm() {
       }
     } catch (err) {
       console.error("Submission error:", err);
-      showAlert("Network error during nomination submission", "error");
+      showAlert("We could not submit your registration because of a network connection error. Your details were not lost. Please check your internet connection and try again.", "error");
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<span>Submit Nomination</span>`;
@@ -496,7 +496,7 @@ function showSubmitSuccess(athleteId = '') {
         font-size:.875rem;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(13,92,58,.25);
         margin-bottom:.75rem;transition:background .2s;
       ">
-        <i class="fa-solid fa-id-card" aria-hidden="true"></i> View & Print Admit Card (Hall Ticket)
+        <i class="fa-solid fa-id-card" aria-hidden="true"></i> View and print your admit card
       </a>
     `;
   }
@@ -507,10 +507,10 @@ function showSubmitSuccess(athleteId = '') {
       <button type="button" id="close-success-btn" aria-label="Close confirmation dialog" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.25rem;cursor:pointer;color:#64748b;padding:.5rem;border-radius:.5rem;"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       <div style="font-size:3rem;margin-bottom:1rem;color:#16a34a;" aria-hidden="true"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
       <h2 id="submit-success-title" style="color:#0D5C3A;font-size:1.25rem;font-weight:800;margin-bottom:.5rem;">
-        Nomination Submitted!
+        Registration Complete!
       </h2>
       <p style="color:#64748b;margin-bottom:1.5rem;font-size:.9rem;">
-        The payment is successful and your athlete nomination has been recorded.
+        Your registration details have been saved and your payment was successful.
       </p>
       ${admitCardButtonHTML}
       <button type="button" id="done-success-btn" style="background:#f1f5f9;color:#334155;font-weight:600;padding:.625rem 1.5rem;border-radius:.5rem;border:none;cursor:pointer;font-size:.875rem;">Close</button>

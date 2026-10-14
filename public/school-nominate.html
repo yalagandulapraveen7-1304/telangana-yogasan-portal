@@ -107,15 +107,15 @@
             School &amp; Academy Athlete Nomination
           </h1>
           <p class="text-xs sm:text-sm text-slate-600 mt-1">
-            Register multiple student athletes under your school, college, or club delegation with verified document proofs.
+            Register a team of student athletes from your school, college, or yoga academy.
           </p>
         </div>
 
         <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-4 py-2.5 rounded-xl text-xs text-emerald-900">
           <i class="fa-solid fa-graduation-cap text-2xl text-emerald-700" aria-hidden="true"></i>
           <div>
-            <div class="font-bold">Form: SCH-NOM-2025</div>
-            <div class="text-[10px] text-emerald-700">Bulk Delegation Upload</div>
+            <div class="font-bold">School Team Entry</div>
+            <div class="text-[10px] text-emerald-700">Register up to 50 students</div>
           </div>
         </div>
       </div>
@@ -132,8 +132,8 @@
             1
           </div>
           <div>
-            <h2 class="text-base font-bold text-slate-900 font-display">Institution &amp; Physical Director Information</h2>
-            <p class="text-xs text-slate-500">Provide official school identification, principal, and coach contact details.</p>
+            <h2 class="text-base font-bold text-slate-900 font-display">School and coach details</h2>
+            <p class="text-xs text-slate-500">Enter your school name, location, and the teacher or coach in charge.</p>
           </div>
         </div>
 
@@ -325,8 +325,8 @@
               2
             </div>
             <div>
-              <h2 class="text-base font-bold text-slate-900 font-display">Student Athletes Delegation Roster</h2>
-              <p class="text-xs text-slate-500">Add all students representing your institution with verified DOB and photo proofs.</p>
+              <h2 class="text-base font-bold text-slate-900 font-display">Student athlete list</h2>
+              <p class="text-xs text-slate-500">Add each student representing your school with their date of birth and photo.</p>
             </div>
           </div>
 
@@ -354,8 +354,8 @@
               3
             </div>
             <div>
-              <h3 class="text-base font-bold font-display text-white">Delegation Summary &amp; Fee Estimation</h3>
-              <p class="text-xs text-emerald-200/80">Real-time breakdown of athletes and registered disciplines (₹260/event).</p>
+              <h3 class="text-base font-bold font-display text-white">Team summary and total fee</h3>
+              <p class="text-xs text-emerald-200/80">Summary of registered athletes and events (₹260 per event).</p>
             </div>
           </div>
           <span class="text-xs bg-emerald-800/80 text-emerald-100 px-3 py-1 rounded-full border border-emerald-600/50 font-semibold">
@@ -406,13 +406,13 @@
           id="submit-school-btn"
           class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-base shadow-lg hover:shadow-xl transition transform hover:scale-[1.02] flex items-center justify-center gap-2"
         >
-          <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit School Delegation &amp; Generate Admit Cards
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit team registration
         </button>
         <a 
           href="/" 
           class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-sm transition text-center"
         >
-          Cancel &amp; Return Home
+          Cancel
         </a>
       </div>
 
@@ -830,7 +830,7 @@
       }
 
       if (!declaration) {
-        alert('Please accept the Institutional Certification declaration checkbox before submitting.');
+        alert('Please check the declaration box to confirm your school details before submitting.');
         return;
       }
 
@@ -913,7 +913,7 @@
 
       const submitBtn = document.getElementById('submit-school-btn');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Registering Delegation...';
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Registering student team...';
 
       try {
         const response = await fetch('/portal/athletes/bulk-nominate', {
@@ -926,15 +926,15 @@
         if (response.ok && res.success) {
           showSuccessModal(res);
         } else {
-          alert(res.error || 'Failed to submit school nomination. Please verify all fields.');
+          alert(res.error || 'We could not submit your team registration. Please check all fields and try again.');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit School Delegation &amp; Generate Admit Cards';
+          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit team registration';
         }
       } catch (err) {
         console.error('Submission error:', err);
         alert('Network or server error during submission. Please try again.');
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit School Delegation &amp; Generate Admit Cards';
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit team registration';
       }
     });
 
