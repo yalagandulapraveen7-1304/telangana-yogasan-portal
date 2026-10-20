@@ -49,7 +49,10 @@ const nominationLimiter = rateLimit({
 function extractToken(req) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.split(' ')[1].trim();
+    const candidate = authHeader.split(' ')[1]?.trim();
+    if (candidate && candidate !== 'null' && candidate !== 'undefined') {
+      return candidate;
+    }
   }
   return req.cookies?.token || null;
 }

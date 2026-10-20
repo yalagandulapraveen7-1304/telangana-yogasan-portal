@@ -483,7 +483,7 @@
                 Create and publish official Yogasana championships with customized fees, age rules, and venues.
               </p>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+            <span id="comp-admin-badge" class="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
               Super Admin Control
             </span>
           </div>
@@ -1613,23 +1613,35 @@
 
       async function loadCompetitionsTable() {
         const tbody = document.getElementById("competitions-table-body");
-        if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Loading tournaments...</td></tr>';
+        const tabBody = document.getElementById("competitions-tab-rows");
+        if (!tbody && !tabBody) return;
+
+        const loadingHtml = '<tr><td colspan="7" class="p-4 text-center text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Loading tournaments...</td></tr>';
+        if (tbody) tbody.innerHTML = loadingHtml;
+        if (tabBody) tabBody.innerHTML = loadingHtml;
 
         try {
           const token = sessionStorage.getItem("token");
-          const headers = token ? { Authorization: `Bearer ${token}` } : {};
-          const res = await fetch("/portal/competitions/all", { headers });
+          const headers = {};
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
+          let res = await fetch("/portal/competitions/all", { headers });
+          if (!res.ok) {
+            res = await fetch("/portal/competitions");
+          }
           if (!res.ok) throw new Error("Failed to load");
           const json = await res.json();
           const comps = json.competitions || [];
 
           if (comps.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">No tournaments configured.</td></tr>';
+            const emptyHtml = '<tr><td colspan="7" class="p-4 text-center text-slate-500">No tournaments configured.</td></tr>';
+            if (tbody) tbody.innerHTML = emptyHtml;
+            if (tabBody) tabBody.innerHTML = emptyHtml;
             return;
           }
 
-          tbody.innerHTML = comps.map(c => {
+          const html = comps.map(c => {
             const safeId = escapeHtml(c.competitionId);
             const safeName = escapeHtml(c.name);
             const safeType = escapeHtml(c.type || "STATE");
@@ -1664,7 +1676,6 @@
           }).join("");
 
           if (tbody) tbody.innerHTML = html;
-          const tabBody = document.getElementById("competitions-tab-rows");
           if (tabBody) tabBody.innerHTML = html;
 
           // Populate photo competition selector
@@ -1674,49 +1685,66 @@
           }
         } catch (err) {
           console.error("Error loading competitions table:", err);
-          if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-red-500">Failed to load tournaments.</td></tr>';
+          const errHtml = '<tr><td colspan="7" class="p-4 text-center text-red-500">Failed to load tournaments.</td></tr>';
+          if (tbody) tbody.innerHTML = errHtml;
+          if (tabBody) tabBody.innerHTML = errHtml;
         }
       }
 
       async function handleCreateCompetition(e) {
         e.preventDefault();
+        const nameVal = document.getElementById("new-comp-name")?.value.trim();
+        if (!nameVal) {
+          alert("Please enter a Competition Name.");
+          return;
+        }
         await submitCompetitionForm({
-          name: document.getElementById("new-comp-name")?.value.trim(),
+          name: nameVal,
           competitionId: document.getElementById("new-comp-id")?.value.trim() || undefined,
-          type: document.getElementById("new-comp-type")?.value,
+          type: document.getElementById("new-comp-type")?.value || "STATE",
           venue: document.getElementById("new-comp-venue")?.value.trim() || undefined,
-          feePerEvent: Number(document.getElementById("new-comp-fee")?.value) || 0,
+          feePerEvent: Number(document.getElementById("new-comp-fee")?.value) || 260,
           regEndDate: document.getElementById("new-comp-reg-end")?.value || undefined,
           ageCutoffDate: document.getElementById("new-comp-cutoff")?.value || undefined,
-          status: document.getElementById("new-comp-status")?.value
+          status: document.getElementById("new-comp-status")?.value || "OPEN"
         }, document.getElementById("btn-submit-comp"), document.getElementById("create-competition-form"));
       }
 
       async function handleCreateCompetitionTab(e) {
         e.preventDefault();
+        const nameVal = document.getElementById("tab-comp-name")?.value.trim();
+        if (!nameVal) {
+          alert("Please enter a Competition Name.");
+          return;
+        }
         await submitCompetitionForm({
-          name: document.getElementById("tab-comp-name")?.value.trim(),
+          name: nameVal,
           competitionId: document.getElementById("tab-comp-id")?.value.trim() || undefined,
-          type: document.getElementById("tab-comp-type")?.value,
+          type: document.getElementById("tab-comp-type")?.value || "STATE",
           venue: document.getElementById("tab-comp-venue")?.value.trim() || undefined,
-          feePerEvent: Number(document.getElementById("tab-comp-fee")?.value) || 0,
+          feePerEvent: Number(document.getElementById("tab-comp-fee")?.value) || 260,
           regEndDate: document.getElementById("tab-comp-reg-end")?.value || undefined,
           ageCutoffDate: document.getElementById("tab-comp-cutoff")?.value || undefined,
-          status: document.getElementById("tab-comp-status")?.value
+          status: document.getElementById("tab-comp-status")?.value || "OPEN"
         }, document.getElementById("btn-submit-comp-tab"), document.getElementById("create-comp-tab-form"));
       }
 
       async function submitCompetitionForm(payload, btn, form) {
         const token = sessionStorage.getItem("token");
-        if (btn) btn.disabled = true;
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5" aria-hidden="true"></i><span>Publishing...</span>';
+        }
+
+        const headers = { "Content-Type": "application/json" };
+        if (token && token !== "null" && token !== "undefined") {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
 
         try {
           const res = await fetch("/portal/competitions", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
+            headers,
             body: JSON.stringify(payload)
           });
 
@@ -1733,7 +1761,10 @@
           console.error("Competition creation error:", err);
           alert("Network error while creating competition.");
         } finally {
-          if (btn) btn.disabled = false;
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-circle-check text-amber-300" aria-hidden="true"></i><span>Publish Competition</span>';
+          }
         }
       }
 
@@ -1744,9 +1775,13 @@
 
         try {
           const token = sessionStorage.getItem("token");
+          const headers = {};
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
           const res = await fetch(`/portal/admin/competitions/${encodeURIComponent(competitionId)}`, {
             method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` }
+            headers
           });
 
           const data = await res.json().catch(() => ({}));
@@ -1766,12 +1801,13 @@
       async function handleToggleStatus(competitionId, newStatus) {
         try {
           const token = sessionStorage.getItem("token");
+          const headers = { "Content-Type": "application/json" };
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
           const res = await fetch(`/portal/competitions/${encodeURIComponent(competitionId)}`, {
             method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`
-            },
+            headers,
             body: JSON.stringify({ status: newStatus })
           });
 
@@ -2233,6 +2269,16 @@
 
           const manageCompBtn = document.getElementById("btn-manage-competitions");
           if (manageCompBtn) manageCompBtn.classList.remove("hidden");
+        } else {
+          const compBadge = document.getElementById("comp-admin-badge");
+          if (compBadge) {
+            compBadge.textContent = "Super Admin Only (View-Only Mode)";
+            compBadge.className = "text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full";
+          }
+          const submitBtn = document.getElementById("btn-submit-comp-tab");
+          if (submitBtn) {
+            submitBtn.title = "Only Statewide Super Admins can publish new competitions. Please log in with a Super Admin account.";
+          }
         }
 
         // Initialize district list in photo district dropdown if available
