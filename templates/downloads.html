@@ -372,7 +372,7 @@
             </p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div id="downloads-circulars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <!-- Rulebook Card -->
             <div class="card p-6 bg-white border-l-4 border-l-red-600 flex flex-col justify-between shadow-xs">
               <div>
@@ -597,6 +597,42 @@
       document.getElementById("font-decrease")?.addEventListener("click", () => {
         rootEl.style.fontSize = "100%";
         try { localStorage.setItem("tya_font_scale", "100%"); } catch (e) {}
+      });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const res = await fetch("/portal/notices?category=CIRCULAR");
+          if (res.ok) {
+            const data = await res.json();
+            const circulars = data.notices || [];
+            if (circulars.length > 0) {
+              const grid = document.getElementById("downloads-circulars-grid");
+              if (grid) {
+                const dynamicHtml = circulars.map(c => `
+                  <div class="card p-6 bg-white border-l-4 border-l-emerald-600 flex flex-col justify-between shadow-xs">
+                    <div>
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase">Circular</span>
+                        <span class="text-[11px] text-slate-400 font-mono">${c.district && c.district !== 'ALL' ? c.district : 'Statewide'}</span>
+                      </div>
+                      <h3 class="font-bold text-slate-900 text-base mb-2">${c.title}</h3>
+                      <p class="text-xs text-slate-600 leading-relaxed mb-4">${c.summary || c.body || ''}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                      <span class="text-[11px] text-slate-500 font-medium">${new Date(c.createdAt).toLocaleDateString('en-GB')}</span>
+                      ${c.attachmentPath
+                        ? `<a href="/portal/notices/attachment/${c._id}" target="_blank" class="btn-primary text-xs"><i class="fa-solid fa-file-pdf mr-1" aria-hidden="true"></i> Download PDF</a>`
+                        : (c.linkUrl ? `<a href="${c.linkUrl}" class="btn-primary text-xs">${c.linkLabel || 'View Details'}</a>` : `<span class="text-xs text-slate-400">Notice</span>`)}
+                    </div>
+                  </div>
+                `).join("");
+                grid.insertAdjacentHTML("afterbegin", dynamicHtml);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("Could not load dynamic circulars:", err);
+        }
       });
     </script>
   </body>

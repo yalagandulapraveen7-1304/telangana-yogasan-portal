@@ -415,10 +415,19 @@
         Live Update
       </div>
       <div class="overflow-hidden whitespace-nowrap w-full" tabindex="0" aria-label="Announcement ticker">
-        <div class="marquee-content inline-block text-emerald-950">
+        <div id="marquee-ticker-text" class="marquee-content inline-block text-emerald-950">
           Registration is now open for Sub-Junior, Junior, and Senior age groups. &bull; Please keep your Aadhaar card or birth certificate ready as proof of age. &bull; Check the notice board below for competition dates and locations. &bull; Need help? Call +91 98490 12345.
         </div>
       </div>
+      <button
+        id="btn-toggle-marquee"
+        type="button"
+        aria-label="Pause live updates ticker"
+        title="Pause or play live updates ticker"
+        class="ml-2 text-slate-700 hover:text-slate-900 text-xs px-2 py-0.5 rounded border border-slate-300 bg-white/80 transition flex items-center gap-1 flex-shrink-0"
+      >
+        <i class="fa-solid fa-pause" aria-hidden="true"></i>
+      </button>
     </div>
 
     <main id="main-content" tabindex="-1" class="flex-grow outline-none">
@@ -614,7 +623,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div id="notices-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Notice 1 -->
             <div
               class="card p-5 flex flex-col justify-between border-l-4 border-l-emerald-600"
@@ -1596,6 +1605,75 @@
           rootEl.style.fontSize = "100%";
           try { localStorage.setItem("tya_font_scale", "100%"); } catch (e) {}
         });
+
+      // Accessible Marquee Play/Pause Toggle
+      const btnToggle = document.getElementById("btn-toggle-marquee");
+      const tickerContent = document.getElementById("marquee-ticker-text");
+      if (btnToggle && tickerContent) {
+        let isPaused = false;
+        btnToggle.addEventListener("click", () => {
+          isPaused = !isPaused;
+          tickerContent.style.animationPlayState = isPaused ? "paused" : "running";
+          btnToggle.setAttribute("aria-label", isPaused ? "Play live updates ticker" : "Pause live updates ticker");
+          btnToggle.innerHTML = isPaused ? '<i class="fa-solid fa-play" aria-hidden="true"></i>' : '<i class="fa-solid fa-pause" aria-hidden="true"></i>';
+        });
+      }
+
+      // Dynamic Marquee Ticker & Notice Board Loader
+      document.addEventListener("DOMContentLoaded", async () => {
+        // 1. Fetch dynamic marquee ticker
+        try {
+          const res = await fetch("/portal/marquee");
+          if (res.ok) {
+            const data = await res.json();
+            const items = data.items || [];
+            if (items.length > 0 && tickerContent) {
+              tickerContent.innerHTML = items.map(item => `
+                <span><strong>${item.title}:</strong> ${item.summary || item.body || ''}</span>
+              `).join(" &bull; ");
+            }
+          }
+        } catch (e) {
+          console.warn("Could not load dynamic marquee ticker:", e);
+        }
+
+        // 2. Fetch latest published notices
+        try {
+          const res = await fetch("/portal/notices?limit=6");
+          if (res.ok) {
+            const data = await res.json();
+            const notices = data.notices || [];
+            const grid = document.getElementById("notices-grid");
+            if (notices.length > 0 && grid) {
+              grid.innerHTML = notices.map(n => {
+                const catClass = n.category === 'CIRCULAR' ? 'border-l-blue-600' : n.category === 'SCHEDULE_UPDATE' ? 'border-l-amber-500' : 'border-l-emerald-600';
+                const downloadLink = n.attachmentPath
+                  ? `<a href="/portal/notices/attachment/${n._id}" target="_blank" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>Download PDF</span> <i class="fa-solid fa-file-pdf text-[10px]" aria-hidden="true"></i></a>`
+                  : (n.linkUrl ? `<a href="${n.linkUrl}" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>${n.linkLabel || 'Details'}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i></a>` : `<span class="text-[11px] text-slate-400">Official Notice</span>`);
+
+                return `
+                  <div class="card p-5 flex flex-col justify-between border-l-4 ${catClass}">
+                    <div>
+                      <div class="flex items-center justify-between mb-2.5">
+                        <span class="notice-tag tag-new"><span class="pulse-dot mr-1"></span> [${n.category}]</span>
+                        <span class="text-[11px] text-slate-500 font-medium">${new Date(n.createdAt).toLocaleDateString('en-GB')}</span>
+                      </div>
+                      <h3 class="font-bold text-slate-900 text-base mb-2 hover:text-[#0D5C3A]">${n.title}</h3>
+                      <p class="text-xs text-slate-600 leading-relaxed mb-4">${n.summary || n.body || ''}</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                      <span class="text-[11px] font-semibold text-slate-500">${n.district && n.district !== 'ALL' ? `Dist: ${n.district}` : 'Statewide'}</span>
+                      ${downloadLink}
+                    </div>
+                  </div>
+                `;
+              }).join("");
+            }
+          }
+        } catch (e) {
+          console.warn("Could not load dynamic notices:", e);
+        }
+      });
     </script>
 
     <!-- Cookie & Privacy Notice Banner -->

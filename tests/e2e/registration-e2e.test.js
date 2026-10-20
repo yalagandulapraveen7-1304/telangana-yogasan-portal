@@ -22,6 +22,7 @@ describe('E2E Tests: Registration to Admit Card User Journey', () => {
 
   before(async () => {
     await connectDB();
+    await Athlete.deleteMany({ firstName: 'Sneha', lastName: 'Kulkarni' });
     await new Promise((resolve) => {
       server = app.listen(0, () => {
         const port = server.address().port;

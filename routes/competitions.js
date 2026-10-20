@@ -8,6 +8,8 @@
 const express = require('express');
 const router = express.Router();
 const Competition = require('../models/Competition');
+const Athlete = require('../models/Athlete');
+const Photo = require('../models/Photo');
 const { requireAuth, requireRole, apiLimiter } = require('../middleware/auth');
 const {
   getPublishedCompetitions,
@@ -15,6 +17,7 @@ const {
   ensureDefaultCompetition
 } = require('../services/competitionService');
 const { sanitizeBoundedText, stripHtml } = require('../middleware/sanitize');
+const { logAdminAction } = require('../utils/audit');
 
 /**
  * 1. GET /portal/competitions
@@ -140,6 +143,13 @@ router.post('/', requireAuth, requireRole('SUPER_ADMIN'), async (req, res) => {
     }
 
     const newComp = await Competition.create(payload);
+    await logAdminAction({
+      req,
+      action: 'CREATE_COMPETITION',
+      targetType: 'COMPETITION',
+      targetId: newComp.competitionId,
+      details: { name: newComp.name, type: newComp.type, status: newComp.status }
+    });
     return res.status(201).json({ success: true, competition: newComp });
   } catch (err) {
     console.error('Error creating competition:', err.message);
@@ -197,6 +207,14 @@ router.patch('/:id', requireAuth, requireRole('SUPER_ADMIN'), async (req, res) =
       runValidators: true
     });
 
+    await logAdminAction({
+      req,
+      action: 'UPDATE_COMPETITION',
+      targetType: 'COMPETITION',
+      targetId: comp.competitionId,
+      details: updates
+    });
+
     return res.json({ success: true, competition: updated });
   } catch (err) {
     console.error('Error updating competition:', err.message);
@@ -204,4 +222,61 @@ router.patch('/:id', requireAuth, requireRole('SUPER_ADMIN'), async (req, res) =
   }
 });
 
+/**
+ * 5. DELETE /portal/competitions/:id
+ * Protected endpoint: Super Admin can safely delete a competition ONLY if it has zero nominations or photos.
+ */
+router.delete('/:id', requireAuth, requireRole('SUPER_ADMIN'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const comp = await resolveCompetition(id);
+    if (!comp) {
+      return res.status(404).json({ success: false, error: 'Competition not found.' });
+    }
+
+    // Safety guard: check dependent athlete nominations
+    const athleteCount = await Athlete.countDocuments({
+      competitionId: comp.competitionId.toLowerCase()
+    });
+
+    if (athleteCount > 0) {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot delete competition '${comp.name}' because it contains ${athleteCount} existing athlete nomination(s). Please archive or close the competition instead.`
+      });
+    }
+
+    // Safety guard: check dependent gallery photos
+    const photoCount = await Photo.countDocuments({
+      competitionId: comp.competitionId.toLowerCase()
+    });
+
+    if (photoCount > 0) {
+      return res.status(400).json({
+        success: false,
+        error: `Cannot delete competition '${comp.name}' because it is linked to ${photoCount} gallery photo(s). Please remove or reassign the photos first, or archive the competition.`
+      });
+    }
+
+    await Competition.findByIdAndDelete(comp._id);
+
+    await logAdminAction({
+      req,
+      action: 'DELETE_COMPETITION',
+      targetType: 'COMPETITION',
+      targetId: comp.competitionId,
+      details: { name: comp.name, type: comp.type }
+    });
+
+    return res.json({
+      success: true,
+      message: `Competition '${comp.name}' was safely deleted.`
+    });
+  } catch (err) {
+    console.error('Error deleting competition:', err.message);
+    return res.status(500).json({ success: false, error: 'Failed to delete competition.' });
+  }
+});
+
 module.exports = router;
+

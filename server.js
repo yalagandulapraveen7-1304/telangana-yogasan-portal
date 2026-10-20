@@ -16,6 +16,9 @@ const { resolveFilePath, fileExists, getStorageDir } = require('./services/stora
 const { router: authRoutes } = require('./routes/auth');
 const nominateRoutes = require('./routes/nominate');
 const competitionRoutes = require('./routes/competitions');
+const adminRoutes = require('./routes/admin');
+const photoRoutes = require('./routes/photos');
+const noticeRoutes = require('./routes/notices');
 const Athlete = require('./models/Athlete');
 const { validateEnv } = require('./config/env');
 const { isValidFilename, normalizeDistrict } = require('./utils/validators');
@@ -237,6 +240,13 @@ app.use(
   nominateRoutes
 );
 app.use('/portal/competitions', competitionRoutes);
+app.use('/portal/photos', photoRoutes);
+app.use('/portal/notices', noticeRoutes);
+app.get('/portal/marquee', (req, res, next) => {
+  req.url = '/marquee';
+  noticeRoutes(req, res, next);
+});
+app.use('/portal/admin', adminRoutes);
 
 // 5. Template Directory Setup & Page Routing
 const templateDir = path.join(__dirname, 'templates');

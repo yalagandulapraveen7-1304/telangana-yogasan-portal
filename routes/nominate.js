@@ -18,6 +18,7 @@ const { requireAuth, optionalAuth, nominationLimiter } = require('../middleware/
 const upload = require('../middleware/upload');
 const { getFileUrl } = require('../services/storage');
 const { escapeRegex, stripHtml } = require('../middleware/sanitize');
+const { logAdminAction } = require('../utils/audit');
 const { TELANGANA_DISTRICTS } = require('../config/constants');
 const {
   calculateAgeCategory,
@@ -884,6 +885,21 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
 
     // Invalidate cached admit card upon status or remark mutation
     evictCachedAdmitCard(id.toUpperCase(), updated.chestNumber ? updated.chestNumber.toUpperCase() : null);
+
+    await logAdminAction({
+      req,
+      action: 'UPDATE_ATHLETE_STATUS',
+      targetType: 'ATHLETE',
+      targetId: String(updated._id),
+      details: {
+        chestNumber: updated.chestNumber,
+        fullName: updated.fullName,
+        district: updated.district,
+        oldStatus: updated.status,
+        newStatus: status,
+        remarks: sanitizedRemarks
+      }
+    });
 
     return res.json(updated);
   } catch (err) {

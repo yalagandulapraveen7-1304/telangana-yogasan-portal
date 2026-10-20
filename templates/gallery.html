@@ -1878,6 +1878,48 @@
           }
         });
       }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const res = await fetch("/portal/photos?limit=50");
+          if (res.ok) {
+            const data = await res.json();
+            const photos = data.photos || [];
+            if (photos.length > 0) {
+              const grid = document.getElementById("gallery-grid");
+              if (grid) {
+                const dynamicHtml = photos.map(p => `
+                  <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="championship">
+                    <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
+                      <img
+                        src="${p.thumbnailPath || p.filePath}"
+                        alt="${p.altText || p.title}"
+                        class="gallery-card-img w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      ${p.isCover ? '<span class="gallery-card-badge absolute top-2 left-2 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow">COVER</span>' : '<span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">Live Action</span>'}
+                    </div>
+                    <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+                      <div>
+                        <h3 class="gallery-card-title font-bold text-slate-900 text-xs">${p.title}</h3>
+                        <p class="gallery-card-desc text-[11px] text-slate-500 mt-1">${p.caption || ''}</p>
+                      </div>
+                      <div class="gallery-card-footer mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                        <span>${p.district || 'Statewide'}</span>
+                        <span>${new Date(p.createdAt).toLocaleDateString('en-GB')}</span>
+                      </div>
+                    </div>
+                  </div>
+                `).join("");
+                grid.insertAdjacentHTML("afterbegin", dynamicHtml);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("Could not load dynamic gallery photos:", err);
+        }
+      });
     </script>
   </body>
 </html>
