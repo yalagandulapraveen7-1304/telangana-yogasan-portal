@@ -13,36 +13,37 @@ const { formatChestNumber } = require('./category');
 /**
  * Normalizes counter identifier key.
  */
-function getCounterId(district, category) {
+function getCounterId(district, category, competitionId = null) {
   const cleanDist = String(district || 'Hyderabad').trim().toLowerCase().replace(/\s+district$/i, '');
   const cleanCat = String(category || 'Junior').trim().toLowerCase();
-  return `chest_${cleanDist}_${cleanCat}`;
+  const compSuffix = competitionId ? `_${String(competitionId).trim().toLowerCase()}` : '';
+  return `chest_${cleanDist}_${cleanCat}${compSuffix}`;
 }
 
 /**
  * Ensures the counter document is seeded if existing records already exist.
  */
-async function syncCounterBaseline(counterId, district, category) {
+async function syncCounterBaseline(counterId, district, category, competitionId = null) {
   const existing = await Counter.findById(counterId);
   if (!existing) {
-    // Count existing records to initialize sequence properly
-    const currentCount = await Athlete.countDocuments({ district, category });
+    const query = { district, category };
+    if (competitionId) query.competitionId = competitionId;
+    const currentCount = await Athlete.countDocuments(query);
     try {
       await Counter.create({ _id: counterId, seq: currentCount });
     } catch (err) {
-      // Ignore duplicate key error in case of concurrent first-time init
       if (err.code !== 11000) throw err;
     }
   }
 }
 
 /**
- * Atomically generates the next chest number for a given district and category.
+ * Atomically generates the next chest number for a given district, category, and competition.
  * Thread-safe and concurrency-safe across multiple server processes.
  */
-async function getNextChestNumber(district, category) {
-  const counterId = getCounterId(district, category);
-  await syncCounterBaseline(counterId, district, category);
+async function getNextChestNumber(district, category, competitionId = null) {
+  const counterId = getCounterId(district, category, competitionId);
+  await syncCounterBaseline(counterId, district, category, competitionId);
 
   const counter = await Counter.findOneAndUpdate(
     { _id: counterId },
@@ -59,12 +60,13 @@ async function getNextChestNumber(district, category) {
  * @param {string} district
  * @param {string} category
  * @param {number} count - Number of sequential chest numbers to allocate
+ * @param {string} [competitionId] - Optional competition identifier
  * @returns {Promise<string[]>} Array of formatted chest numbers
  */
-async function getNextChestNumbersBatch(district, category, count) {
+async function getNextChestNumbersBatch(district, category, count, competitionId = null) {
   if (count <= 0) return [];
-  const counterId = getCounterId(district, category);
-  await syncCounterBaseline(counterId, district, category);
+  const counterId = getCounterId(district, category, competitionId);
+  await syncCounterBaseline(counterId, district, category, competitionId);
 
   const counter = await Counter.findOneAndUpdate(
     { _id: counterId },

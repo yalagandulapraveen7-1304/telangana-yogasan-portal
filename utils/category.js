@@ -9,13 +9,18 @@
  * 2. Junior:     14 to <18 Years (14-18 Yrs)
  * 3. Senior:     18+ Years (Group A: 18-25 Yrs, Group B: 25-35 Yrs, Group C: Above 35 Yrs)
  */
-function calculateAgeCategory(dob) {
+function calculateAgeCategory(dob, cutoffDate = null) {
   if (!dob) return 'Junior';
   const birthDate = new Date(dob);
   if (isNaN(birthDate.getTime())) return 'Junior';
 
-  const today = new Date();
-  const refDate = new Date(today.getFullYear(), 11, 31);
+  let refDate;
+  if (cutoffDate && !isNaN(new Date(cutoffDate).getTime())) {
+    refDate = new Date(cutoffDate);
+  } else {
+    const today = new Date();
+    refDate = new Date(today.getFullYear(), 11, 31);
+  }
   const age = (refDate - birthDate) / (1000 * 60 * 60 * 24 * 365.25);
 
   if (age >= 8 && age < 14) return 'Sub-Junior';

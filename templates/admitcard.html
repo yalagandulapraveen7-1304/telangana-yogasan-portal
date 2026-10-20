@@ -91,10 +91,10 @@
             >Telangana Yoga Association</span
           >
         </div>
-        <h1 class="text-xl font-black font-display tracking-wide">
+        <h1 id="card-competition-name" class="text-xl font-black font-display tracking-wide">
           STATE SELECTION TRIALS - ADMIT CARD
         </h1>
-        <p class="text-[11px] text-emerald-200 mt-0.5">
+        <p id="card-competition-venue" class="text-[11px] text-emerald-200 mt-0.5">
           Inter-District Yogasana Sports Championship (2025-26)
         </p>
       </div>
@@ -262,6 +262,12 @@
 
           // Populate Fields
           const fullName = `${athlete.firstName || ""} ${athlete.lastName || ""}`.trim() || "-";
+          if (athlete.competitionName) {
+            document.getElementById("card-competition-name").textContent = `${athlete.competitionName.toUpperCase()} - ADMIT CARD`;
+          }
+          if (athlete.competitionVenue) {
+            document.getElementById("card-competition-venue").textContent = athlete.competitionVenue;
+          }
           document.getElementById("card-name").textContent = fullName;
           document.getElementById("card-chest").textContent =
             athlete.chestNumber || "HYD-JR-01";

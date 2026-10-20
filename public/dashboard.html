@@ -286,7 +286,7 @@
         class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8"
       >
         <div
-          class="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/70"
+          class="p-4 sm:p-5 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/70"
         >
           <div>
             <h2
@@ -300,6 +300,49 @@
               Trials.
             </p>
           </div>
+
+          <!-- Filter Toolbar: Competition, Status, Search, and Super Admin Management -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <select
+              id="filter-competition"
+              onchange="onFilterChange()"
+              aria-label="Filter by Competition"
+              class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:ring-1 focus:ring-[#0D5C3A]"
+            >
+              <option value="">All Competitions</option>
+            </select>
+
+            <select
+              id="filter-status"
+              onchange="onFilterChange()"
+              aria-label="Filter by Status"
+              class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:ring-1 focus:ring-[#0D5C3A]"
+            >
+              <option value="">All Statuses</option>
+              <option value="Submitted">Submitted</option>
+              <option value="Verified">Verified</option>
+              <option value="Clarification">Clarification</option>
+            </select>
+
+            <input
+              id="filter-search"
+              type="search"
+              oninput="debounceSearch()"
+              placeholder="Search athlete or chest..."
+              aria-label="Search athletes"
+              class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-700 focus:ring-1 focus:ring-[#0D5C3A]"
+            />
+
+            <button
+              id="btn-manage-competitions"
+              type="button"
+              onclick="openCompetitionMgmtModal()"
+              class="hidden text-xs bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1.5 rounded-lg shadow-sm transition items-center gap-1.5"
+            >
+              <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+              <span>Manage Competitions</span>
+            </button>
+          </div>
         </div>
 
         <!-- Responsive Table -->
@@ -310,6 +353,7 @@
             >
               <tr>
                 <th class="py-3.5 px-4">Chest No</th>
+                <th class="py-3.5 px-4">Competition</th>
                 <th class="py-3.5 px-4">Athlete Name</th>
                 <th class="py-3.5 px-4">Gender &amp; Age</th>
                 <th class="py-3.5 px-4">Category</th>
@@ -409,6 +453,12 @@
                 <span class="text-slate-500">Date of Birth:</span>
                 <strong id="modal-dob" class="text-slate-800">-</strong>
               </p>
+              <p
+                class="flex justify-between border-b border-slate-200/60 pb-1.5"
+              >
+                <span class="text-slate-500">Competition:</span>
+                <strong id="modal-competition" class="text-slate-800 text-right">-</strong>
+              </p>
               <p class="flex justify-between pb-0.5">
                 <span class="text-slate-500">Registered Events:</span>
                 <strong id="modal-events" class="text-slate-800 text-right"
@@ -481,6 +531,144 @@
             class="px-4 py-2 text-xs font-bold text-white bg-[#0D5C3A] hover:bg-[#0a4229] rounded-lg shadow-sm transition"
           >
             Verify &amp; Approve
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Super Admin Competition Management Modal -->
+    <div
+      id="competition-mgmt-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="comp-mgmt-title"
+      class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden"
+      >
+        <div
+          class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50"
+        >
+          <div>
+            <h3
+              class="text-base font-bold text-slate-900 font-display flex items-center gap-2"
+              id="comp-mgmt-title"
+            >
+              <i class="fa-solid fa-trophy text-[#0D5C3A]" aria-hidden="true"></i>
+              <span>Championship &amp; Competition Management</span>
+            </h3>
+            <p class="text-xs text-slate-500">
+              Configure tournaments, entry fees, age cutoffs, and registration statuses.
+            </p>
+          </div>
+          <button
+            onclick="closeCompetitionMgmtModal()"
+            type="button"
+            aria-label="Close competition management dialog"
+            class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg touch-target-min"
+          >
+            <i class="fa-solid fa-xmark text-lg" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="flex-grow p-6 overflow-y-auto space-y-6">
+          <!-- Create Competition Form Collapsible Card -->
+          <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
+            <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-plus-circle text-emerald-700" aria-hidden="true"></i>
+              <span>Configure New Competition</span>
+            </h4>
+            <form id="create-competition-form" onsubmit="handleCreateCompetition(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+              <div class="sm:col-span-2">
+                <label for="new-comp-name" class="block font-semibold text-slate-700 mb-1">Competition Name <span class="text-red-500">*</span></label>
+                <input type="text" id="new-comp-name" required placeholder="e.g. Hyderabad District Yogasana Championship 2026" class="form-input text-xs w-full bg-white" />
+              </div>
+
+              <div>
+                <label for="new-comp-id" class="block font-semibold text-slate-700 mb-1">Identifier Slug (Unique)</label>
+                <input type="text" id="new-comp-id" placeholder="e.g. hyd-dist-2026 (auto if blank)" class="form-input text-xs w-full bg-white font-mono" />
+              </div>
+
+              <div>
+                <label for="new-comp-type" class="block font-semibold text-slate-700 mb-1">Type / Level</label>
+                <select id="new-comp-type" class="form-input text-xs w-full bg-white">
+                  <option value="STATE">STATE</option>
+                  <option value="DISTRICT">DISTRICT</option>
+                  <option value="INTER_SCHOOL">INTER_SCHOOL</option>
+                  <option value="NATIONAL_TRIALS">NATIONAL_TRIALS</option>
+                  <option value="OPEN">OPEN</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="new-comp-venue" class="block font-semibold text-slate-700 mb-1">Venue</label>
+                <input type="text" id="new-comp-venue" placeholder="e.g. Kotla Vijaya Bhaskar Reddy Stadium" class="form-input text-xs w-full bg-white" />
+              </div>
+
+              <div>
+                <label for="new-comp-fee" class="block font-semibold text-slate-700 mb-1">Fee Per Event (₹)</label>
+                <input type="number" id="new-comp-fee" value="260" min="0" class="form-input text-xs w-full bg-white" />
+              </div>
+
+              <div>
+                <label for="new-comp-reg-end" class="block font-semibold text-slate-700 mb-1">Reg End Date</label>
+                <input type="date" id="new-comp-reg-end" class="form-input text-xs w-full bg-white" />
+              </div>
+
+              <div>
+                <label for="new-comp-cutoff" class="block font-semibold text-slate-700 mb-1">Age Cutoff Date</label>
+                <input type="date" id="new-comp-cutoff" class="form-input text-xs w-full bg-white" />
+              </div>
+
+              <div>
+                <label for="new-comp-status" class="block font-semibold text-slate-700 mb-1">Initial Status</label>
+                <select id="new-comp-status" class="form-input text-xs w-full bg-white">
+                  <option value="OPEN">OPEN (Accepting entries)</option>
+                  <option value="DRAFT">DRAFT</option>
+                  <option value="CLOSED">CLOSED</option>
+                </select>
+              </div>
+
+              <div class="sm:col-span-2 lg:col-span-3 flex justify-end pt-2">
+                <button type="submit" id="btn-submit-comp" class="bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-xs px-5 py-2.5 rounded-lg shadow transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-amber-300" aria-hidden="true"></i>
+                  <span>Publish Competition</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Existing Competitions List Table -->
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-list text-emerald-700" aria-hidden="true"></i>
+              <span>All Configured Tournaments</span>
+            </h4>
+            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold">
+                  <tr>
+                    <th class="p-3">Slug</th>
+                    <th class="p-3">Name</th>
+                    <th class="p-3">Type</th>
+                    <th class="p-3">Fee</th>
+                    <th class="p-3">Cutoff</th>
+                    <th class="p-3">Status</th>
+                    <th class="p-3 text-right">Quick Toggle</th>
+                  </tr>
+                </thead>
+                <tbody id="competitions-table-body" class="divide-y divide-slate-100 text-slate-700">
+                  <!-- Live data loaded by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+          <button type="button" onclick="closeCompetitionMgmtModal()" class="px-4 py-2 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 transition">
+            Close
           </button>
         </div>
       </div>
@@ -578,12 +766,14 @@
         const pageEl = document.getElementById("page-district-title");
         const bannerEl = document.getElementById("district-banner-title");
         const badgeEl = document.querySelector("header .bg-amber-400");
+        const compBtn = document.getElementById("btn-manage-competitions");
 
         if (userRole === "SUPER_ADMIN" || savedDistrict === "ALL_DISTRICTS") {
           if (headerEl) headerEl.textContent = "ALL_DISTRICTS Dashboard";
           if (pageEl) pageEl.textContent = "Statewide Super Admin Dashboard";
           if (bannerEl) bannerEl.textContent = "ALL_DISTRICTS Yoga Association";
           if (badgeEl) badgeEl.textContent = "ALL";
+          if (compBtn) compBtn.classList.remove("hidden");
         } else {
           if (headerEl)
             headerEl.textContent = savedDistrict + " District Association";
@@ -596,14 +786,65 @@
             badgeEl.textContent = savedDistrict.substring(0, 3).toUpperCase();
         }
 
+        loadCompetitionFilterOptions();
         loadLiveAthletes();
       });
+
+      async function loadCompetitionFilterOptions() {
+        const compFilter = document.getElementById("filter-competition");
+        if (!compFilter) return;
+
+        try {
+          const token = sessionStorage.getItem("token");
+          const headers = token ? { Authorization: `Bearer ${token}` } : {};
+          let res = await fetch("/portal/competitions/all", { headers });
+          if (!res.ok) {
+            res = await fetch("/portal/competitions");
+          }
+          if (res.ok) {
+            const data = await res.json();
+            const comps = data.competitions || [];
+            compFilter.innerHTML = '<option value="">All Competitions</option>';
+            comps.forEach((c) => {
+              const opt = document.createElement("option");
+              opt.value = c.competitionId;
+              opt.textContent = `${c.name}${c.status !== 'OPEN' ? ` [${c.status}]` : ''}`;
+              compFilter.appendChild(opt);
+            });
+          }
+        } catch (err) {
+          console.warn("Could not load competition filter list:", err);
+        }
+      }
+
+      function onFilterChange() {
+        currentPage = 1;
+        loadLiveAthletes();
+      }
+
+      let searchTimeout = null;
+      function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          onFilterChange();
+        }, 300);
+      }
 
       async function loadLiveAthletes() {
         try {
           const token = sessionStorage.getItem("token");
+          const compFilter = document.getElementById("filter-competition")?.value || "";
+          const statusFilter = document.getElementById("filter-status")?.value || "";
+          const searchFilter = document.getElementById("filter-search")?.value || "";
 
-          const response = await fetch("/portal/athletes/list", {
+          const params = new URLSearchParams();
+          if (compFilter) params.set("competitionId", compFilter);
+          if (statusFilter) params.set("status", statusFilter);
+          if (searchFilter) params.set("search", searchFilter);
+
+          const url = `/portal/athletes/list${params.toString() ? `?${params.toString()}` : ''}`;
+
+          const response = await fetch(url, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -723,6 +964,11 @@
           row.innerHTML = `
           <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
           <td class="py-3.5 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+              ${escapeHtml(athlete.competitionId || "tysc-state-2026")}
+            </span>
+          </td>
+          <td class="py-3.5 px-4">
             <div class="flex items-center gap-2.5">
               <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
                 ${initials}
@@ -821,6 +1067,8 @@
         if (dobEl) dobEl.textContent = athlete.dob ? new Date(athlete.dob).toLocaleDateString("en-GB") : "-";
         const eventsEl = document.getElementById("modal-events");
         if (eventsEl) eventsEl.textContent = (athlete.events || []).join(", ") || "-";
+        const compEl = document.getElementById("modal-competition");
+        if (compEl) compEl.textContent = athlete.competitionName || athlete.competitionId || "tysc-state-2026";
         const remarksEl = document.getElementById("scrutiny-remarks");
         if (remarksEl) remarksEl.value = "";
 
@@ -898,6 +1146,144 @@
           }
         } catch (err) {
           console.error("Status update failed:", err);
+        }
+      }
+
+      // --- Super Admin Competition Management Handlers ---
+      async function openCompetitionMgmtModal() {
+        const modal = document.getElementById("competition-mgmt-modal");
+        if (modal) {
+          modal.classList.remove("hidden");
+          await loadCompetitionsTable();
+        }
+      }
+
+      function closeCompetitionMgmtModal() {
+        const modal = document.getElementById("competition-mgmt-modal");
+        if (modal) modal.classList.add("hidden");
+      }
+
+      async function loadCompetitionsTable() {
+        const tbody = document.getElementById("competitions-table-body");
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">Loading tournaments...</td></tr>';
+
+        try {
+          const token = sessionStorage.getItem("token");
+          const headers = token ? { Authorization: `Bearer ${token}` } : {};
+          const res = await fetch("/portal/competitions/all", { headers });
+          if (!res.ok) throw new Error("Failed to load");
+          const json = await res.json();
+          const comps = json.competitions || [];
+
+          if (comps.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">No tournaments configured.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = comps.map(c => {
+            const safeId = escapeHtml(c.competitionId);
+            const safeName = escapeHtml(c.name);
+            const safeType = escapeHtml(c.type || "STATE");
+            const fee = c.feePerEvent != null ? `₹${c.feePerEvent}` : "₹260";
+            const cutoff = c.ageCutoffDate ? new Date(c.ageCutoffDate).toLocaleDateString("en-GB") : "-";
+            let statusClass = "bg-amber-100 text-amber-800";
+            if (c.status === "OPEN") statusClass = "bg-emerald-100 text-emerald-800";
+            if (c.status === "CLOSED") statusClass = "bg-slate-100 text-slate-700";
+            if (c.status === "ARCHIVED") statusClass = "bg-red-100 text-red-800";
+
+            return `
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-mono text-[11px] font-bold text-emerald-800">${safeId}</td>
+                <td class="p-3 font-medium text-slate-900">${safeName}</td>
+                <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-semibold">${safeType}</span></td>
+                <td class="p-3 font-semibold text-slate-800">${fee}</td>
+                <td class="p-3 text-slate-600">${cutoff}</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${statusClass}">${escapeHtml(c.status)}</span></td>
+                <td class="p-3 text-right">
+                  <select onchange="handleToggleStatus('${safeId}', this.value)" class="text-[11px] bg-white border border-slate-300 rounded px-2 py-1">
+                    <option value="OPEN" ${c.status === 'OPEN' ? 'selected' : ''}>OPEN</option>
+                    <option value="CLOSED" ${c.status === 'CLOSED' ? 'selected' : ''}>CLOSED</option>
+                    <option value="DRAFT" ${c.status === 'DRAFT' ? 'selected' : ''}>DRAFT</option>
+                    <option value="ARCHIVED" ${c.status === 'ARCHIVED' ? 'selected' : ''}>ARCHIVED</option>
+                  </select>
+                </td>
+              </tr>
+            `;
+          }).join("");
+        } catch (err) {
+          console.error("Error loading competitions table:", err);
+          tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-red-500">Failed to load tournaments.</td></tr>';
+        }
+      }
+
+      async function handleCreateCompetition(e) {
+        e.preventDefault();
+        const token = sessionStorage.getItem("token");
+        const btn = document.getElementById("btn-submit-comp");
+        if (btn) btn.disabled = true;
+
+        try {
+          const payload = {
+            name: document.getElementById("new-comp-name").value.trim(),
+            competitionId: document.getElementById("new-comp-id").value.trim() || undefined,
+            type: document.getElementById("new-comp-type").value,
+            venue: document.getElementById("new-comp-venue").value.trim() || undefined,
+            feePerEvent: Number(document.getElementById("new-comp-fee").value) || 0,
+            regEndDate: document.getElementById("new-comp-reg-end").value || undefined,
+            ageCutoffDate: document.getElementById("new-comp-cutoff").value || undefined,
+            status: document.getElementById("new-comp-status").value
+          };
+
+          const res = await fetch("/portal/competitions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.success) {
+            alert("Competition successfully published!");
+            document.getElementById("create-competition-form").reset();
+            await loadCompetitionsTable();
+            await loadCompetitionFilterOptions();
+          } else {
+            alert(data.error || "Failed to create competition.");
+          }
+        } catch (err) {
+          console.error("Competition creation error:", err);
+          alert("Network error while creating competition.");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      }
+
+      async function handleToggleStatus(competitionId, newStatus) {
+        try {
+          const token = sessionStorage.getItem("token");
+          const res = await fetch(`/portal/competitions/${encodeURIComponent(competitionId)}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
+
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.success) {
+            await loadCompetitionsTable();
+            await loadCompetitionFilterOptions();
+          } else {
+            alert(data.error || "Failed to update competition status.");
+            await loadCompetitionsTable();
+          }
+        } catch (err) {
+          console.error("Status toggle error:", err);
+          alert("Network error updating status.");
         }
       }
 

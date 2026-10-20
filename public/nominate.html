@@ -134,12 +134,57 @@
       class="space-y-6"
     >
      
-      <!-- SECTION A: ATHLETE PERSONAL INFORMATION -->
+      <!-- STEP 1: SELECT TOURNAMENT / COMPETITION -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm border-l-4 border-l-[#0D5C3A]">
+        <div class="flex items-center gap-2.5 pb-4 mb-5 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
+            1
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900 font-display">Select Competition / Championship</h2>
+            <p class="text-xs text-slate-500">Choose the tournament you are nominating this athlete for.</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label for="competition-select" class="form-label">
+              Championship Tournament <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-trophy input-icon" aria-hidden="true"></i>
+              <select
+                id="competition-select"
+                name="competitionId"
+                required
+                class="form-input text-sm bg-white font-medium"
+              >
+                <option value="tysc-state-2026" selected>13th Telangana State Inter-District Yogasana Sports Championship</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic Competition Summary Card -->
+          <div id="competition-info-card" class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-950 space-y-1.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="font-bold text-sm text-[#0D5C3A]" id="comp-info-name">13th Telangana State Inter-District Yogasana Sports Championship</div>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800" id="comp-info-type">STATE</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4 text-slate-600 text-xs pt-1">
+              <div><i class="fa-solid fa-location-dot text-emerald-700 mr-1" aria-hidden="true"></i><span id="comp-info-venue">Telangana State Sports Complex, Hyderabad</span></div>
+              <div><i class="fa-solid fa-indian-rupee-sign text-emerald-700 mr-1" aria-hidden="true"></i>Fee: ₹<span id="comp-info-fee">260</span> per event</div>
+              <div><i class="fa-solid fa-calendar-check text-emerald-700 mr-1" aria-hidden="true"></i>Age Cutoff Date: <span id="comp-info-cutoff">31 Dec 2026</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: ATHLETE PERSONAL INFORMATION -->
       <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         
         <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
           <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
-            1
+            2
           </div>
           <div>
             <h2 class="text-base font-bold text-slate-900 font-display">Personal details</h2>
@@ -388,12 +433,12 @@
 
       </div>
 
-      <!-- SECTION B: EVENT & DISCIPLINE SELECTION -->
+      <!-- STEP 3: EVENT & DISCIPLINE SELECTION -->
       <fieldset id="events-section" class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         
         <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
           <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm" aria-hidden="true">
-            2
+            3
           </div>
           <div>
             <legend class="text-base font-bold text-slate-900 font-display">
@@ -457,12 +502,12 @@
 
       </fieldset>
 
-      <!-- SECTION C: DOCUMENT UPLOADS WITH IMAGE PREVIEW -->
+      <!-- STEP 4: DOCUMENT UPLOADS WITH IMAGE PREVIEW -->
       <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
         
         <div class="flex items-center gap-2.5 pb-4 mb-6 border-b border-slate-200">
           <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#0D5C3A] flex items-center justify-center font-bold text-sm">
-            3
+            4
           </div>
           <div>
             <h2 class="text-base font-bold text-slate-900 font-display">Upload documents</h2>

@@ -164,13 +164,25 @@ function calcAgeOnDate(dob, refDate) {
   return diff / (1000 * 60 * 60 * 24 * 365.25);
 }
 
-function getCategory(dob) {
+function getCategory(dob, refDate = null, minAge = 8, maxAge = 100) {
   const today = new Date();
-  // Championship age = age as of 31 Dec of current year (common sports rule)
-  const refDate = new Date(today.getFullYear(), 11, 31);
-  const age = calcAgeOnDate(dob, refDate);
+  // Championship age = age as of competition cutoff date or 31 Dec of current year
+  let targetDate = refDate instanceof Date && !isNaN(refDate.getTime())
+    ? refDate
+    : new Date(today.getFullYear(), 11, 31);
+  const age = calcAgeOnDate(dob, targetDate);
 
   if (isNaN(age) || age < 0) return null;
+
+  if (age < minAge || age >= maxAge) {
+    return {
+      name: 'Not Eligible',
+      subGroup: `Allowed age: ${minAge} to ${maxAge} years`,
+      cssClass: 'badge-ineligible',
+      icon: '<i class="fa-solid fa-ban mr-1" aria-hidden="true"></i>',
+      age: age
+    };
+  }
 
   for (const cat of AGE_CATEGORIES) {
     if (age >= cat.min && age < cat.max) {
@@ -183,7 +195,7 @@ function getCategory(dob) {
       };
     }
   }
-  return { name: 'Not Eligible', subGroup: 'Minimum age is 8 years', cssClass: 'badge-ineligible', icon: '<i class="fa-solid fa-ban mr-1" aria-hidden="true"></i>', age: age };
+  return { name: 'Not Eligible', subGroup: `Minimum age is ${minAge} years`, cssClass: 'badge-ineligible', icon: '<i class="fa-solid fa-ban mr-1" aria-hidden="true"></i>', age: age };
 }
 
 function initDOBCalculator() {
@@ -191,7 +203,24 @@ function initDOBCalculator() {
   const badge    = $('#age-category-badge');
   const ageDisp  = $('#age-display');
   const hiddenCat = $('#hidden-category');
+  const compSelect = $('#competition-select');
   if (!dobInput || !badge) return;
+
+  function getCompParameters() {
+    if (compSelect && compSelect.selectedOptions && compSelect.selectedOptions[0]) {
+      const opt = compSelect.selectedOptions[0];
+      const rawCutoff = opt.getAttribute('data-cutoff');
+      let cutoffDate = null;
+      if (rawCutoff) {
+        const d = new Date(rawCutoff);
+        if (!isNaN(d.getTime())) cutoffDate = d;
+      }
+      const minAge = parseInt(opt.getAttribute('data-min-age'), 10) || 8;
+      const maxAge = parseInt(opt.getAttribute('data-max-age'), 10) || 100;
+      return { cutoffDate, minAge, maxAge };
+    }
+    return { cutoffDate: null, minAge: 8, maxAge: 100 };
+  }
 
   function update() {
     const val = dobInput.value;
@@ -204,7 +233,8 @@ function initDOBCalculator() {
     }
 
     const dob = new Date(val);
-    const cat = getCategory(dob);
+    const { cutoffDate, minAge, maxAge } = getCompParameters();
+    const cat = getCategory(dob, cutoffDate, minAge, maxAge);
 
     if (!cat) {
       badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1" aria-hidden="true"></i> Invalid Date';
@@ -214,10 +244,10 @@ function initDOBCalculator() {
     }
 
     if (cat.name === 'Not Eligible') {
-      badge.innerHTML = `${cat.icon} Not Eligible (Min 8 Yrs)`;
+      badge.innerHTML = `${cat.icon} Not Eligible (${cat.subGroup})`;
       badge.className = 'badge ' + cat.cssClass;
       if (ageDisp) {
-        ageDisp.textContent = 'Athletes must be at least 8 years of age as per Championship norms.';
+        ageDisp.textContent = `Athlete must satisfy competition age requirements (${cat.subGroup}).`;
         ageDisp.style.color = '#dc2626';
       }
       if (hiddenCat) hiddenCat.value = '';
@@ -246,6 +276,9 @@ function initDOBCalculator() {
 
   dobInput.addEventListener('change', update);
   dobInput.addEventListener('input',  update);
+  if (compSelect) {
+    compSelect.addEventListener('change', update);
+  }
 }
 
 /* ── Photo Upload Preview ────────────────────────────────── */
@@ -793,9 +826,84 @@ function initCookieNotice() {
   });
 }
 
+/* ── Competition Selector Loader ─────────────────────────── */
+async function initCompetitionSelector() {
+  const compSelect = $('#competition-select') || $('#school-competition-select');
+  if (!compSelect) return;
+
+  try {
+    const res = await fetch('/portal/competitions');
+    if (!res.ok) return;
+    const json = await res.json();
+    if (!json.success || !Array.isArray(json.competitions) || json.competitions.length === 0) return;
+
+    // Keep the current selection if user already interacted
+    const currentValue = compSelect.value;
+    compSelect.innerHTML = '';
+
+    json.competitions.forEach((comp, idx) => {
+      const opt = document.createElement('option');
+      opt.value = comp.competitionId;
+      opt.textContent = `${comp.name}${comp.type ? ` (${comp.type})` : ''}`;
+      opt.setAttribute('data-name', comp.name || '');
+      opt.setAttribute('data-type', comp.type || 'STATE');
+      opt.setAttribute('data-venue', comp.venue || '');
+      opt.setAttribute('data-fee', comp.feePerEvent != null ? comp.feePerEvent : 260);
+      opt.setAttribute('data-cutoff', comp.ageCutoffDate || '');
+      opt.setAttribute('data-min-age', comp.minAge != null ? comp.minAge : 8);
+      opt.setAttribute('data-max-age', comp.maxAge != null ? comp.maxAge : 100);
+      if (comp.disciplines && comp.disciplines.length) {
+        opt.setAttribute('data-disciplines', JSON.stringify(comp.disciplines));
+      }
+      if (currentValue === comp.competitionId || (!currentValue && (comp.isDefault || idx === 0))) {
+        opt.selected = true;
+      }
+      compSelect.appendChild(opt);
+    });
+
+    function updateCompCard() {
+      const selected = compSelect.selectedOptions ? compSelect.selectedOptions[0] : null;
+      if (!selected) return;
+
+      const nameEl = $('#comp-info-name');
+      const typeEl = $('#comp-info-type');
+      const venueEl = $('#comp-info-venue');
+      const feeEl = $('#comp-info-fee');
+      const cutoffEl = $('#comp-info-cutoff');
+
+      if (nameEl) nameEl.textContent = selected.getAttribute('data-name') || selected.textContent;
+      if (typeEl) typeEl.textContent = selected.getAttribute('data-type') || 'STATE';
+      if (venueEl) venueEl.textContent = selected.getAttribute('data-venue') || 'Telangana State Sports Complex, Hyderabad';
+      if (feeEl) feeEl.textContent = selected.getAttribute('data-fee') || '260';
+
+      const cutoff = selected.getAttribute('data-cutoff');
+      if (cutoffEl) {
+        if (cutoff) {
+          const d = new Date(cutoff);
+          cutoffEl.textContent = isNaN(d.getTime()) ? cutoff : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        } else {
+          cutoffEl.textContent = '31 Dec ' + new Date().getFullYear();
+        }
+      }
+
+      // Trigger DOB update
+      const dobInput = $('#dob-input');
+      if (dobInput && dobInput.value) {
+        dobInput.dispatchEvent(new Event('input'));
+      }
+    }
+
+    compSelect.addEventListener('change', updateCompCard);
+    updateCompCard();
+  } catch (err) {
+    console.warn('Could not load competition list:', err.message);
+  }
+}
+
 /* ── Init all on DOM ready ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
+  initCompetitionSelector();
   initDOBCalculator();
   initPhotoPreview();
   initDocUpload();
@@ -807,4 +915,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initFontResizer();
   initCookieNotice();
 });
+
 

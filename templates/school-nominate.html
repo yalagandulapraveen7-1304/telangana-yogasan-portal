@@ -139,6 +139,20 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           
+          <!-- Competition / Tournament Selection -->
+          <div class="sm:col-span-2 lg:col-span-3">
+            <label for="school-competition-select" class="form-label">
+              Championship Tournament <span class="text-red-500">*</span>
+            </label>
+            <div class="input-icon-wrapper">
+              <i class="fa-solid fa-trophy input-icon" aria-hidden="true"></i>
+              <select id="school-competition-select" name="competitionId" required class="form-input text-sm bg-white font-medium">
+                <option value="tysc-state-2026" selected>13th Telangana State Inter-District Yogasana Sports Championship</option>
+              </select>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Select the championship or tournament for this school team nomination.</p>
+          </div>
+
           <!-- School / College / Academy Name -->
           <div class="sm:col-span-2">
             <label for="school_name" class="form-label">
@@ -910,6 +924,9 @@
       if (hasValidationError) return;
 
       formData.append('students', JSON.stringify(studentsList));
+      const compSelect = document.getElementById('school-competition-select');
+      const selectedCompId = compSelect ? compSelect.value : 'tysc-state-2026';
+      formData.append('competitionId', selectedCompId);
 
       const submitBtn = document.getElementById('submit-school-btn');
       submitBtn.disabled = true;

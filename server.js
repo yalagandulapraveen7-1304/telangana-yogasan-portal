@@ -15,6 +15,7 @@ const { noSqlSanitizer, originGuard } = require('./middleware/sanitize');
 const { resolveFilePath, fileExists, getStorageDir } = require('./services/storage');
 const { router: authRoutes } = require('./routes/auth');
 const nominateRoutes = require('./routes/nominate');
+const competitionRoutes = require('./routes/competitions');
 const Athlete = require('./models/Athlete');
 const { validateEnv } = require('./config/env');
 const { isValidFilename, normalizeDistrict } = require('./utils/validators');
@@ -235,6 +236,7 @@ app.use(
   },
   nominateRoutes
 );
+app.use('/portal/competitions', competitionRoutes);
 
 // 5. Template Directory Setup & Page Routing
 const templateDir = path.join(__dirname, 'templates');

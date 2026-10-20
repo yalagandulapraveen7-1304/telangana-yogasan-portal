@@ -15,9 +15,10 @@ const razorpay = new Razorpay({
 /**
  * Creates a Razorpay order based on event count.
  */
-async function createOrder(eventCount = 1) {
+async function createOrder(eventCount = 1, feePerEvent = FEE_PER_EVENT) {
   const count = Math.max(1, eventCount);
-  const amountInPaise = count * FEE_PER_EVENT * 100;
+  const effectiveFee = typeof feePerEvent === 'number' && feePerEvent >= 0 ? feePerEvent : FEE_PER_EVENT;
+  const amountInPaise = Math.round(count * effectiveFee * 100);
 
   const options = {
     amount: amountInPaise,

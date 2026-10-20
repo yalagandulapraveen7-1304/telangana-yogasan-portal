@@ -31,6 +31,8 @@ const AthleteSchema = new mongoose.Schema(
     photoPath: { type: String, default: '' },
     dobProofPath: { type: String, default: '' },
     chestNumber: { type: String },
+    competitionId: { type: String, default: 'tysc-state-2026', trim: true, index: true },
+    competition: { type: mongoose.Schema.Types.ObjectId, ref: 'Competition' },
     paymentDetails: {
       orderId: { type: String },
       paymentId: { type: String },
@@ -41,6 +43,9 @@ const AthleteSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+AthleteSchema.index({ competitionId: 1, district: 1, createdAt: -1 });
+AthleteSchema.index({ competitionId: 1, status: 1 });
 
 // Indexes optimized for application query patterns:
 // 1. Fast unique lookup for admit cards and public certificates

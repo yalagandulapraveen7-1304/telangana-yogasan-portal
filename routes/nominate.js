@@ -8,6 +8,12 @@ const mongoose = require('mongoose');
 const router = express.Router();
 
 const Athlete = require('../models/Athlete');
+const Competition = require('../models/Competition');
+const {
+  resolveCompetition,
+  validateEligibility,
+  DEFAULT_COMPETITION_ID
+} = require('../services/competitionService');
 const { requireAuth, optionalAuth, nominationLimiter } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const { getFileUrl } = require('../services/storage');
@@ -155,8 +161,54 @@ router.get('/list', requireAuth, async (req, res) => {
       }
     }
 
-    // High-performance lean projection: omits heavy paymentDetails, residentialAddress, and raw certs
-    const LIST_PROJECTION = 'firstName lastName dob gender category district chestNumber events status institutionName guardianName createdAt aadhaarLast4 photoPath';
+    // Competition filter
+    if (req.query.competitionId) {
+      const qComp = String(req.query.competitionId).trim().toLowerCase();
+      if (qComp.toUpperCase() !== 'ALL') {
+        if (qComp === DEFAULT_COMPETITION_ID) {
+          filter.$and = filter.$and || [];
+          filter.$and.push({
+            $or: [
+              { competitionId: qComp },
+              { competitionId: { $exists: false } },
+              { competitionId: null },
+              { competitionId: '' }
+            ]
+          });
+        } else {
+          filter.competitionId = qComp;
+        }
+      }
+    }
+
+    // Category filter
+    if (req.query.category && String(req.query.category).trim().toUpperCase() !== 'ALL') {
+      filter.category = String(req.query.category).trim();
+    }
+
+    // Payment status filter
+    if (req.query.paymentStatus && String(req.query.paymentStatus).trim().toUpperCase() !== 'ALL') {
+      filter['paymentDetails.status'] = String(req.query.paymentStatus).trim().toUpperCase();
+    }
+
+    // Search query filter (search by athlete name, chest number, mobile)
+    if (req.query.search) {
+      const qSearch = escapeRegex(String(req.query.search).trim());
+      if (qSearch) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+          $or: [
+            { firstName: { $regex: qSearch, $options: 'i' } },
+            { lastName: { $regex: qSearch, $options: 'i' } },
+            { chestNumber: { $regex: qSearch, $options: 'i' } },
+            { mobileNumber: { $regex: qSearch, $options: 'i' } }
+          ]
+        });
+      }
+    }
+
+    // High-performance lean projection: includes competitionId and omits heavy paymentDetails and addresses
+    const LIST_PROJECTION = 'firstName lastName dob gender category district chestNumber events status institutionName guardianName createdAt aadhaarLast4 photoPath competitionId';
 
     // Execute query first; if page 1 has fewer items than limit, totalCount is known without a second countDocuments round-trip
     const athletes = await Athlete.find(filter, LIST_PROJECTION)
@@ -210,7 +262,7 @@ router.get('/:id/public-card', async (req, res) => {
     }
 
     let athlete;
-    const publicFields = 'firstName lastName dob gender category district chestNumber events status guardianName institutionName aadhaarLast4 photoPath';
+    const publicFields = 'firstName lastName dob gender category district chestNumber events status guardianName institutionName aadhaarLast4 photoPath competitionId';
 
     if (isValidObjectId(id)) {
       athlete = await Athlete.findById(id).select(publicFields).lean();
@@ -224,14 +276,25 @@ router.get('/:id/public-card', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Athlete record not found' });
     }
 
+    // Attach resolved competition details
+    const comp = await resolveCompetition(athlete.competitionId);
+    const cardData = {
+      ...athlete,
+      competitionName: comp ? comp.name : 'Telangana State Yogasana Championship',
+      competitionVenue: comp ? comp.venue : 'Telangana State Sports Complex, Hyderabad',
+      competitionType: comp ? comp.type : 'STATE',
+      competitionStartDate: comp ? comp.startDate : null,
+      competitionEndDate: comp ? comp.endDate : null
+    };
+
     // Populate cache under requested key and secondary alias (Chest Number or ObjectId)
     const docId = athlete._id ? athlete._id.toString().toUpperCase() : null;
     const chestNum = athlete.chestNumber ? athlete.chestNumber.toUpperCase() : null;
-    setCachedAdmitCard(cacheKey, athlete, cacheKey === chestNum ? docId : chestNum);
+    setCachedAdmitCard(cacheKey, cardData, cacheKey === chestNum ? docId : chestNum);
 
     res.setHeader('X-Cache', 'MISS');
     res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
-    return res.json(athlete);
+    return res.json(cardData);
   } catch (err) {
     console.error('Error fetching public admit card:', err.message);
     return res.status(500).json({ success: false, error: 'Failed to retrieve athlete details' });
@@ -276,24 +339,43 @@ router.post('/create-order', nominationLimiter, async (req, res) => {
     const body = req.body || {};
 
     // Reject unexpected fields to prevent parameter injection
-    const allowedKeys = new Set(['events']);
+    const allowedKeys = new Set(['events', 'competitionId']);
     const unexpected = Object.keys(body).filter((k) => !allowedKeys.has(k));
     if (unexpected.length > 0) {
       return res.status(400).json({ success: false, message: `Unexpected field(s): ${unexpected.join(', ')}` });
     }
 
-    const { events } = body;
+    const { events, competitionId } = body;
     const eventsValidation = validateEvents(events);
     if (!eventsValidation.isValid) {
       return res.status(400).json({ success: false, message: eventsValidation.error });
     }
 
+    let feePerEvent = FEE_PER_EVENT;
+    let resolvedCompId = DEFAULT_COMPETITION_ID;
+
+    if (competitionId) {
+      const comp = await resolveCompetition(competitionId);
+      if (!comp) {
+        return res.status(400).json({ success: false, message: 'Invalid or unknown competition.' });
+      }
+      if (comp.status !== 'OPEN' && comp.status !== 'PUBLISHED') {
+        return res.status(400).json({ success: false, message: `Registration is not open for ${comp.name}.` });
+      }
+      if (typeof comp.feePerEvent === 'number' && comp.feePerEvent >= 0) {
+        feePerEvent = comp.feePerEvent;
+      }
+      resolvedCompId = comp.competitionId;
+    }
+
     const eventCount = Math.min(eventsValidation.events.length, 10);
-    const orderData = await createOrder(eventCount);
+    const orderData = await createOrder(eventCount, feePerEvent);
 
     return res.json({
       success: true,
-      ...orderData
+      ...orderData,
+      feePerEvent,
+      competitionId: resolvedCompId
     });
   } catch (err) {
     console.error('Order creation error:', err.message);
@@ -428,11 +510,37 @@ router.post(
         }
       }
 
-      const category = calculateAgeCategory(dobValue);
+      // 10b. Resolve & Validate Target Competition
+      const rawCompId = body.competitionId || body.competition_id;
+      const competition = await resolveCompetition(rawCompId);
+      if (!competition) {
+        return res.status(400).json({
+          success: false,
+          error: 'The selected competition is invalid or no longer exists. Please choose a valid tournament.'
+        });
+      }
+
+      // Validate Eligibility against competition rules
+      const eligibility = validateEligibility(competition, {
+        dob: dobValue,
+        district: districtValue,
+        events: selectedEvents
+      });
+      if (!eligibility.isValid) {
+        return res.status(400).json({
+          success: false,
+          error: eligibility.error
+        });
+      }
+
+      const category = calculateAgeCategory(dobValue, competition.ageCutoffDate);
 
       // 11. Payment Signature Verification (if provided)
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
       let paymentRecord = null;
+      const effectiveFeePerEvent = typeof competition.feePerEvent === 'number' && competition.feePerEvent >= 0
+        ? competition.feePerEvent
+        : FEE_PER_EVENT;
 
       if (razorpay_order_id || razorpay_payment_id || razorpay_signature) {
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -458,7 +566,7 @@ router.post(
         paymentRecord = {
           orderId: orderIdStr,
           paymentId: paymentIdStr,
-          amount: selectedEvents.length * FEE_PER_EVENT,
+          amount: selectedEvents.length * effectiveFeePerEvent,
           status: 'PAID',
           paidAt: new Date()
         };
@@ -478,6 +586,8 @@ router.post(
         events: selectedEvents.slice(0, 10),
         category,
         status: 'Submitted',
+        competitionId: competition.competitionId,
+        competition: competition._id,
         paymentDetails: paymentRecord || undefined
       };
 
@@ -498,10 +608,11 @@ router.post(
         }
       }
 
-      // Atomically Generate Next Chest Number (Thread-safe & concurrency-safe)
+      // Atomically Generate Next Chest Number (Thread-safe & concurrency-safe per competition)
       athletePayload.chestNumber = await getNextChestNumber(
         athletePayload.district,
-        athletePayload.category
+        athletePayload.category,
+        competition.competitionId
       );
 
       const newAthlete = new Athlete(athletePayload);
@@ -630,6 +741,13 @@ router.post(
         }
       }
 
+      // 4b. Resolve & Validate Target Competition
+      const rawCompId = body.competitionId || body.competition_id;
+      const competition = await resolveCompetition(rawCompId);
+      if (!competition) {
+        return res.status(400).json({ success: false, error: 'The selected competition was not found.' });
+      }
+
       // Map uploaded files by fieldname
       const fileMap = {};
       if (req.files && Array.isArray(req.files)) {
@@ -643,14 +761,14 @@ router.post(
       // Pre-calculate and atomically allocate batch chest numbers per category
       const studentsPerCategory = {};
       studentsData.forEach((student) => {
-        const cat = student.category || calculateAgeCategory(student.dob);
+        const cat = student.category || calculateAgeCategory(student.dob, competition.ageCutoffDate);
         studentsPerCategory[cat] = (studentsPerCategory[cat] || 0) + 1;
       });
 
       const allocatedChestNumbers = {};
       await Promise.all(
         Object.entries(studentsPerCategory).map(async ([cat, count]) => {
-          allocatedChestNumbers[cat] = await getNextChestNumbersBatch(district, cat, count);
+          allocatedChestNumbers[cat] = await getNextChestNumbersBatch(district, cat, count, competition.competitionId);
         })
       );
 
@@ -658,10 +776,10 @@ router.post(
 
       for (let i = 0; i < studentsData.length; i++) {
         const student = studentsData[i];
-        const category = student.category || calculateAgeCategory(student.dob);
+        const category = student.category || calculateAgeCategory(student.dob, competition.ageCutoffDate);
         const chestNumber = allocatedChestNumbers[category] && allocatedChestNumbers[category].length > 0
           ? allocatedChestNumbers[category].shift()
-          : await getNextChestNumber(district, category);
+          : await getNextChestNumber(district, category, competition.competitionId);
 
         const rawAadhaar = String(student.aadhaarLast4 || student.aadhaar_last_4).trim();
         const evCheck = validateEvents(student.events);
@@ -682,6 +800,8 @@ router.post(
           residentialAddress: sanitizeBoundedText(student.residentialAddress || student.residential_address, 250, schoolName),
           events,
           category,
+          competitionId: competition.competitionId,
+          competition: competition._id,
           dobProofType: sanitizeBoundedText(student.dobProofType, 50, 'School Bonafide'),
           photoPath: fileMap[`photo_${i}`] || fileMap[`passport_photo_${i}`] || '',
           dobProofPath: fileMap[`dob_${i}`] || fileMap[`dob_certificate_${i}`] || '',

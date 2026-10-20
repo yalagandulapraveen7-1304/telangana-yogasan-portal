@@ -57,6 +57,14 @@ function stripHtml(input = '') {
 }
 
 /**
+ * Trims, strips HTML tags, and bounds text to a maximum length.
+ */
+function sanitizeBoundedText(input = '', maxLen = 200) {
+  if (typeof input !== 'string') return '';
+  return stripHtml(input).trim().substring(0, maxLen);
+}
+
+/**
  * Origin Guard Middleware
  * Verifies that state-changing requests (POST, PATCH, PUT, DELETE) originate
  * from the same domain or trusted hosts to protect against CSRF attacks.
@@ -99,5 +107,6 @@ module.exports = {
   noSqlSanitizer,
   escapeRegex,
   stripHtml,
+  sanitizeBoundedText,
   originGuard
 };
