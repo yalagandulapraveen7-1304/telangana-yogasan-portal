@@ -28,7 +28,10 @@ const PhotoSchema = new mongoose.Schema(
       enum: ['DRAFT', 'PUBLISHED', 'ARCHIVED'],
       default: 'PUBLISHED'
     },
-    uploadedBy: { type: String, default: 'admin@telanganayoga.org' }
+    uploadedBy: { type: String, default: 'admin@telanganayoga.org' },
+    imageData: { type: Buffer, select: false },
+    thumbnailData: { type: Buffer, select: false },
+    mimeType: { type: String, default: 'image/jpeg' }
   },
   { timestamps: true }
 );

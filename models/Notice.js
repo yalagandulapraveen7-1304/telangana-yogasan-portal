@@ -32,7 +32,9 @@ const NoticeSchema = new mongoose.Schema(
     },
     isMarquee: { type: Boolean, default: false },
     marqueeOrder: { type: Number, default: 0 },
-    uploadedBy: { type: String, default: 'admin@telanganayoga.org' }
+    uploadedBy: { type: String, default: 'admin@telanganayoga.org' },
+    fileData: { type: Buffer, select: false },
+    mimeType: { type: String, default: 'application/pdf' }
   },
   { timestamps: true }
 );

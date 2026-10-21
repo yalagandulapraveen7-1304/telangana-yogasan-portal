@@ -241,8 +241,18 @@
             onclick="filterGallery('all', this)"
             class="gallery-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition cursor-pointer bg-[#0D5C3A] text-white shadow-xs"
             data-cat="all"
+            id="gallery-tab-all"
           >
             All Photos (46)
+          </button>
+          <button
+            type="button"
+            onclick="filterGallery('live', this)"
+            class="gallery-filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition cursor-pointer bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+            data-cat="live"
+            id="gallery-tab-live"
+          >
+            Live Uploads
           </button>
           <button
             type="button"
@@ -1863,7 +1873,9 @@
       function filterGallery(category, btnEl) {
         const cards = document.querySelectorAll('.gallery-card');
         cards.forEach((card) => {
-          if (category === 'all' || card.getAttribute('data-cat') === category) {
+          const cardCat = card.getAttribute('data-cat') || 'all';
+          const isLive = card.getAttribute('data-live') === 'true';
+          if (category === 'all' || cardCat === category || (category === 'live' && isLive)) {
             card.style.display = 'flex';
           } else {
             card.style.display = 'none';
@@ -1879,9 +1891,19 @@
         });
       }
 
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
       document.addEventListener("DOMContentLoaded", async () => {
         try {
-          const res = await fetch("/portal/photos?limit=50");
+          const res = await fetch("/portal/photos?limit=100");
           if (res.ok) {
             const data = await res.json();
             const photos = data.photos || [];
@@ -1889,30 +1911,41 @@
               const grid = document.getElementById("gallery-grid");
               if (grid) {
                 const dynamicHtml = photos.map(p => `
-                  <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="championship">
+                  <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="live" data-live="true">
                     <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
                       <img
-                        src="${p.thumbnailPath || p.filePath}"
-                        alt="${p.altText || p.title}"
+                        src="${escapeHtml(p.thumbnailPath || p.filePath)}"
+                        alt="${escapeHtml(p.altText || p.title)}"
                         class="gallery-card-img w-full h-full object-cover"
                         loading="lazy"
                         decoding="async"
+                        onerror="this.onerror=null; this.src='/static/images/gallery/DSC_8586.jpg';"
                       />
                       ${p.isCover ? '<span class="gallery-card-badge absolute top-2 left-2 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow">COVER</span>' : '<span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">Live Action</span>'}
                     </div>
                     <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
                       <div>
-                        <h3 class="gallery-card-title font-bold text-slate-900 text-xs">${p.title}</h3>
-                        <p class="gallery-card-desc text-[11px] text-slate-500 mt-1">${p.caption || ''}</p>
+                        <h3 class="gallery-card-title font-bold text-slate-900 text-xs">${escapeHtml(p.title)}</h3>
+                        <p class="gallery-card-desc text-[11px] text-slate-500 mt-1">${escapeHtml(p.caption || '')}</p>
                       </div>
                       <div class="gallery-card-footer mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-                        <span>${p.district || 'Statewide'}</span>
+                        <span>${escapeHtml(p.district && p.district !== 'ALL' ? p.district : 'Statewide')}</span>
                         <span>${new Date(p.createdAt).toLocaleDateString('en-GB')}</span>
                       </div>
                     </div>
                   </div>
                 `).join("");
                 grid.insertAdjacentHTML("afterbegin", dynamicHtml);
+
+                const tabAll = document.getElementById("gallery-tab-all");
+                if (tabAll) {
+                  tabAll.textContent = `All Photos (${46 + photos.length})`;
+                }
+
+                const tabLive = document.getElementById("gallery-tab-live");
+                if (tabLive) {
+                  tabLive.textContent = `Live Uploads (${photos.length})`;
+                }
               }
             }
           }

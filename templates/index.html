@@ -982,8 +982,8 @@
             </p>
           </div>
 
-          <!-- Curated Preview Grid (6 Recent Photos, No Zoom, No Slideshow) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+          <!-- Curated Preview Grid (Recent Photos & Live Tournament Action) -->
+          <div id="homepage-gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
 
             <!-- Gallery Card: DSC_8586.jpg -->
             <div class="gallery-card bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs flex flex-col h-full">
@@ -1132,7 +1132,7 @@
               class="inline-flex items-center gap-2 bg-[#0D5C3A] text-white hover:bg-[#0a4229] px-7 py-3 rounded-full text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
               <i class="fa-solid fa-images" aria-hidden="true"></i>
-              <span>View Full Gallery (46 Photos)</span>
+              <span id="homepage-gallery-btn-text">View Full Gallery (46 Photos)</span>
               <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
             </a>
           </div>
@@ -1662,8 +1662,55 @@
               }).join("");
             }
           }
+        // 3. Fetch latest published gallery photos
+        try {
+          const res = await fetch("/portal/photos?limit=6");
+          if (res.ok) {
+            const data = await res.json();
+            const photos = data.photos || [];
+            const grid = document.getElementById("homepage-gallery-grid");
+            if (photos.length > 0 && grid) {
+              const dynamicCards = photos.map(p => {
+                const badgeText = p.isCover ? 'COVER' : (p.district && p.district !== 'ALL' ? escapeHtml(p.district) : 'Championship');
+                const badgeClass = p.isCover ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-900/80 text-white font-bold';
+                const imgSrc = escapeHtml(p.thumbnailPath || p.filePath);
+                const titleText = escapeHtml(p.title);
+                const captionText = escapeHtml(p.caption || p.competitionId || '');
+
+                return `
+                  <div class="gallery-card bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs flex flex-col h-full hover:shadow-md transition">
+                    <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0" style="aspect-ratio: 3/2;">
+                      <img
+                        src="${imgSrc}"
+                        alt="${escapeHtml(p.altText || p.title)}"
+                        loading="lazy"
+                        decoding="async"
+                        class="w-full h-full object-cover"
+                        onerror="this.onerror=null; this.src='/static/images/gallery/DSC_8586.jpg';"
+                      />
+                      <span class="gallery-card-badge absolute top-2 left-2 ${badgeClass} text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">
+                        ${badgeText}
+                      </span>
+                    </div>
+                    <div class="p-3 bg-white flex flex-col flex-grow justify-between">
+                      <div class="text-[11px] sm:text-xs font-semibold text-slate-800 line-clamp-1">
+                        ${titleText}
+                      </div>
+                      ${captionText ? `<div class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">${captionText}</div>` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join("");
+              grid.insertAdjacentHTML("afterbegin", dynamicCards);
+
+              const btnText = document.getElementById("homepage-gallery-btn-text");
+              if (btnText) {
+                btnText.textContent = `View Full Gallery (${46 + photos.length} Photos)`;
+              }
+            }
+          }
         } catch (e) {
-          console.warn("Could not load dynamic notices:", e);
+          console.warn("Could not load dynamic gallery photos on homepage:", e);
         }
       });
     </script>

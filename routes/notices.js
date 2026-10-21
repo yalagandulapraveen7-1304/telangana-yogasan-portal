@@ -8,6 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const fs = require('fs');
 const Notice = require('../models/Notice');
 const { apiLimiter } = require('../middleware/auth');
 const { getStorageDir, resolveFilePath, fileExists } = require('../services/storage');
@@ -100,7 +101,7 @@ router.get('/attachment/:id', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid notice identifier.' });
     }
 
-    const notice = await Notice.findById(id);
+    const notice = await Notice.findById(id).select('+fileData');
     if (!notice || !notice.attachmentPath) {
       return res.status(404).json({ success: false, error: 'Notice or attachment not found.' });
     }
@@ -110,16 +111,32 @@ router.get('/attachment/:id', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Disallowed file identifier.' });
     }
 
+    const cleanTitle = (notice.title || 'document').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const contentType = notice.mimeType || 'application/pdf';
+
+    // 1. Check local filesystem
     const { isValid, filePath } = resolveFilePath(filename);
-    if (!isValid || !filePath || !fileExists(filename)) {
-      return res.status(404).json({ success: false, error: 'Attachment file not found.' });
+    if (isValid && filePath && fileExists(filename)) {
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}.pdf"`);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(filename, { root: storageDir });
     }
 
-    const cleanTitle = (notice.title || 'document').replace(/[^a-zA-Z0-9_-]/g, '_');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}.pdf"`);
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    return res.sendFile(filename, { root: storageDir });
+    // 2. Serverless recovery fallback from MongoDB
+    if (notice.fileData && notice.fileData.length > 0) {
+      try {
+        const cachePath = path.join(storageDir, filename);
+        fs.writeFileSync(cachePath, notice.fileData);
+      } catch (_) {}
+
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}.pdf"`);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.end(notice.fileData);
+    }
+
+    return res.status(404).json({ success: false, error: 'Attachment file not found.' });
   } catch (err) {
     console.error('Error streaming notice attachment:', err.message);
     return res.status(500).json({ success: false, error: 'Failed to stream notice attachment.' });
@@ -137,14 +154,31 @@ router.get('/raw/:filename', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid file identifier.' });
     }
 
+    // 1. Check local filesystem
     const { isValid, filePath } = resolveFilePath(filename);
-    if (!isValid || !filePath || !fileExists(filename)) {
-      return res.status(404).json({ success: false, error: 'Document not found.' });
+    if (isValid && filePath && fileExists(filename)) {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(path.basename(filename), { root: storageDir });
     }
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    return res.sendFile(path.basename(filename), { root: storageDir });
+    // 2. Serverless recovery fallback from MongoDB
+    const notice = await Notice.findOne({
+      attachmentPath: new RegExp(filename, 'i')
+    }).select('+fileData');
+
+    if (notice && notice.fileData && notice.fileData.length > 0) {
+      try {
+        const cachePath = path.join(storageDir, path.basename(filename));
+        fs.writeFileSync(cachePath, notice.fileData);
+      } catch (_) {}
+
+      res.setHeader('Content-Type', notice.mimeType || 'application/pdf');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.end(notice.fileData);
+    }
+
+    return res.status(404).json({ success: false, error: 'Document not found.' });
   } catch (err) {
     console.error('Error streaming raw notice file:', err.message);
     return res.status(500).json({ success: false, error: 'Failed to stream notice file.' });

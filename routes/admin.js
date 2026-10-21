@@ -8,6 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const fs = require('fs');
 const sharp = require('sharp');
 
 const Competition = require('../models/Competition');
@@ -89,9 +90,10 @@ router.post('/photos', requireAuth, upload.single('photo'), async (req, res) => 
 
     // Generate optimized thumbnail using sharp
     let thumbnailFilename = filename;
+    let thumbDiskPath = tempPath;
     try {
       const thumbName = `thumb-${path.parse(filename).name}.webp`;
-      const thumbDiskPath = path.join(storageDir, thumbName);
+      thumbDiskPath = path.join(storageDir, thumbName);
 
       await sharp(tempPath)
         .resize(480, 320, { fit: 'cover' })
@@ -102,6 +104,17 @@ router.post('/photos', requireAuth, upload.single('photo'), async (req, res) => 
     } catch (sharpErr) {
       console.warn('Sharp thumbnail generation notice:', sharpErr.message);
       thumbnailFilename = filename;
+      thumbDiskPath = tempPath;
+    }
+
+    // Read binary buffers for serverless persistence (e.g. Vercel ephemeral /tmp)
+    let imgBuf = null;
+    let thumbBuf = null;
+    try {
+      imgBuf = fs.readFileSync(tempPath);
+      thumbBuf = fs.existsSync(thumbDiskPath) ? fs.readFileSync(thumbDiskPath) : imgBuf;
+    } catch (readErr) {
+      console.warn('Could not read image buffers:', readErr.message);
     }
 
     // If marked as cover, unmark existing covers for this competition
@@ -120,7 +133,10 @@ router.post('/photos', requireAuth, upload.single('photo'), async (req, res) => 
       isCover,
       order,
       status,
-      uploadedBy: req.user.email
+      uploadedBy: req.user.email,
+      imageData: imgBuf,
+      thumbnailData: thumbBuf,
+      mimeType: req.file.mimetype || 'image/jpeg'
     });
 
     await logAdminAction({
@@ -342,8 +358,16 @@ router.post('/notices', requireAuth, upload.single('attachment'), async (req, re
     const marqueeOrder = parseInt(body.marqueeOrder, 10) || 0;
 
     let attachmentPath = '';
+    let fileData = null;
+    let fileMime = 'application/pdf';
     if (req.file) {
       attachmentPath = `/portal/notices/raw/${req.file.filename}`;
+      try {
+        fileData = fs.readFileSync(req.file.path);
+        fileMime = req.file.mimetype || 'application/pdf';
+      } catch (e) {
+        console.warn('Could not read notice file buffer:', e.message);
+      }
     }
 
     const newNotice = await Notice.create({
@@ -361,6 +385,8 @@ router.post('/notices', requireAuth, upload.single('attachment'), async (req, re
       order,
       marqueeOrder,
       uploadedBy: req.user.email,
+      fileData,
+      mimeType: fileMime,
       startDate: body.startDate ? new Date(body.startDate) : new Date(),
       endDate: body.endDate ? new Date(body.endDate) : undefined
     });
