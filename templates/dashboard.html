@@ -769,7 +769,7 @@
 
             <div class="flex items-center pt-5">
               <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-800">
-                <input type="checkbox" id="notice-is-marquee" name="isMarquee" value="true" class="rounded border-slate-300 text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
+                <input type="checkbox" id="notice-is-marquee" name="isMarquee" value="true" checked class="rounded border-slate-300 text-[#0D5C3A] focus:ring-[#0D5C3A] w-4 h-4" />
                 <span class="text-amber-700 font-bold">Display on Homepage Marquee Ticker</span>
               </label>
             </div>
@@ -2069,10 +2069,14 @@
           const form = document.getElementById("create-notice-form");
           const formData = new FormData(form);
           const token = sessionStorage.getItem("token");
+          const headers = {};
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
 
           const res = await fetch("/portal/admin/notices", {
             method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
+            headers,
             body: formData
           });
 
@@ -2080,6 +2084,8 @@
           if (res.ok && data.success) {
             alert("Notice successfully published!");
             form.reset();
+            const chk = document.getElementById("notice-is-marquee");
+            if (chk) chk.checked = true;
             await loadAdminNotices();
           } else {
             alert(data.error || "Failed to publish notice.");
@@ -2095,26 +2101,45 @@
       async function handleToggleNoticeMarquee(noticeId, currentMarquee) {
         try {
           const token = sessionStorage.getItem("token");
+          const headers = { "Content-Type": "application/json" };
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
           const res = await fetch(`/portal/admin/notices/${noticeId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            headers,
             body: JSON.stringify({ isMarquee: !currentMarquee })
           });
-          if (res.ok) await loadAdminNotices();
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.success) {
+            await loadAdminNotices();
+          } else {
+            alert(data.error || "Failed to toggle marquee status.");
+          }
         } catch (err) {
           console.error("Error toggling marquee:", err);
+          alert("Network error toggling marquee.");
         }
       }
 
       async function handleToggleNoticeStatus(noticeId, newStatus) {
         try {
           const token = sessionStorage.getItem("token");
+          const headers = { "Content-Type": "application/json" };
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
           const res = await fetch(`/portal/admin/notices/${noticeId}`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            headers,
             body: JSON.stringify({ status: newStatus })
           });
-          if (res.ok) await loadAdminNotices();
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.success) {
+            await loadAdminNotices();
+          } else {
+            alert(data.error || "Failed to update notice status.");
+          }
         } catch (err) {
           console.error("Error updating notice status:", err);
         }
@@ -2124,9 +2149,13 @@
         if (!confirm("Are you sure you want to delete this notice?")) return;
         try {
           const token = sessionStorage.getItem("token");
+          const headers = {};
+          if (token && token !== "null" && token !== "undefined") {
+            headers["Authorization"] = `Bearer ${token}`;
+          }
           const res = await fetch(`/portal/admin/notices/${noticeId}`, {
             method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` }
+            headers
           });
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
@@ -2137,6 +2166,7 @@
           }
         } catch (err) {
           console.error("Delete notice error:", err);
+          alert("Network error deleting notice.");
         }
       }
 

@@ -21,12 +21,12 @@ const storageDir = getStorageDir();
  */
 router.get('/', apiLimiter, async (req, res) => {
   try {
-    const now = new Date();
+    const nowBuffer = new Date(Date.now() + 5 * 60 * 1000);
     const query = {
       status: 'PUBLISHED',
       $and: [
-        { $or: [{ startDate: { $exists: false } }, { startDate: null }, { startDate: { $lte: now } }] },
-        { $or: [{ endDate: { $exists: false } }, { endDate: null }, { endDate: { $gte: now } }] }
+        { $or: [{ startDate: { $exists: false } }, { startDate: null }, { startDate: { $lte: nowBuffer } }] },
+        { $or: [{ endDate: { $exists: false } }, { endDate: null }, { endDate: { $gte: new Date() } }] }
       ]
     };
 
@@ -59,20 +59,28 @@ router.get('/', apiLimiter, async (req, res) => {
  */
 router.get('/marquee', apiLimiter, async (_req, res) => {
   try {
-    const now = new Date();
-    const query = {
+    const nowBuffer = new Date(Date.now() + 5 * 60 * 1000);
+    const baseQuery = {
       status: 'PUBLISHED',
-      isMarquee: true,
       $and: [
-        { $or: [{ startDate: { $exists: false } }, { startDate: null }, { startDate: { $lte: now } }] },
-        { $or: [{ endDate: { $exists: false } }, { endDate: null }, { endDate: { $gte: now } }] }
+        { $or: [{ startDate: { $exists: false } }, { startDate: null }, { startDate: { $lte: nowBuffer } }] },
+        { $or: [{ endDate: { $exists: false } }, { endDate: null }, { endDate: { $gte: new Date() } }] }
       ]
     };
 
-    const items = await Notice.find(query)
+    // 1. Primary: fetch notices explicitly flagged for marquee
+    let items = await Notice.find({ ...baseQuery, isMarquee: true })
       .sort({ marqueeOrder: 1, createdAt: -1 })
       .limit(20)
       .lean();
+
+    // 2. Fallback: If none flagged with isMarquee, automatically display recent published notices
+    if (items.length === 0) {
+      items = await Notice.find(baseQuery)
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean();
+    }
 
     return res.json({ success: true, count: items.length, items });
   } catch (err) {

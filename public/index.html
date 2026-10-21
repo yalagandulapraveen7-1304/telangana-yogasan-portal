@@ -1599,6 +1599,16 @@
 
       const tickerContent = document.getElementById("marquee-ticker-text");
 
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
       // Dynamic Marquee Ticker & Notice Board Loader
       document.addEventListener("DOMContentLoaded", async () => {
         // 1. Fetch dynamic marquee ticker
@@ -1608,9 +1618,10 @@
             const data = await res.json();
             const items = data.items || [];
             if (items.length > 0 && tickerContent) {
-              tickerContent.innerHTML = items.map(item => `
-                <span><strong>${item.title}:</strong> ${item.summary || item.body || ''}</span>
-              `).join(" &bull; ");
+              tickerContent.innerHTML = items.map(item => {
+                const desc = (item.summary || item.body || '').trim();
+                return `<span><strong>${escapeHtml(item.title)}</strong>${desc ? `: ${escapeHtml(desc)}` : ''}</span>`;
+              }).join(" &bull; ");
             }
           }
         } catch (e) {
@@ -1629,20 +1640,21 @@
                 const catClass = n.category === 'CIRCULAR' ? 'border-l-blue-600' : n.category === 'SCHEDULE_UPDATE' ? 'border-l-amber-500' : 'border-l-emerald-600';
                 const downloadLink = n.attachmentPath
                   ? `<a href="/portal/notices/attachment/${n._id}" target="_blank" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>Download PDF</span> <i class="fa-solid fa-file-pdf text-[10px]" aria-hidden="true"></i></a>`
-                  : (n.linkUrl ? `<a href="${n.linkUrl}" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>${n.linkLabel || 'Details'}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i></a>` : `<span class="text-[11px] text-slate-400">Official Notice</span>`);
+                  : (n.linkUrl ? `<a href="${n.linkUrl}" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>${escapeHtml(n.linkLabel) || 'Details'}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i></a>` : `<span class="text-[11px] text-slate-400">Official Notice</span>`);
+                const bodyText = (n.summary || n.body || '').trim();
 
                 return `
                   <div class="card p-5 flex flex-col justify-between border-l-4 ${catClass}">
                     <div>
                       <div class="flex items-center justify-between mb-2.5">
-                        <span class="notice-tag tag-new"><span class="pulse-dot mr-1"></span> [${n.category}]</span>
+                        <span class="notice-tag tag-new"><span class="pulse-dot mr-1"></span> [${escapeHtml(n.category)}]</span>
                         <span class="text-[11px] text-slate-500 font-medium">${new Date(n.createdAt).toLocaleDateString('en-GB')}</span>
                       </div>
-                      <h3 class="font-bold text-slate-900 text-base mb-2 hover:text-[#0D5C3A]">${n.title}</h3>
-                      <p class="text-xs text-slate-600 leading-relaxed mb-4">${n.summary || n.body || ''}</p>
+                      <h3 class="font-bold text-slate-900 text-base mb-2 hover:text-[#0D5C3A]">${escapeHtml(n.title)}</h3>
+                      <p class="text-xs text-slate-600 leading-relaxed mb-4">${escapeHtml(bodyText) || 'Official circular issued by Telangana Yoga Association. Please review for details.'}</p>
                     </div>
                     <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                      <span class="text-[11px] font-semibold text-slate-500">${n.district && n.district !== 'ALL' ? `Dist: ${n.district}` : 'Statewide'}</span>
+                      <span class="text-[11px] font-semibold text-slate-500">${escapeHtml(n.district && n.district !== 'ALL' ? 'Dist: ' + n.district : 'Statewide')}</span>
                       ${downloadLink}
                     </div>
                   </div>
