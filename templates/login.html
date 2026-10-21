@@ -310,7 +310,7 @@
           } catch (err) {
             console.error("Login request failed:", err);
             errorText.textContent =
-              "We could not connect to the server right now. Please check your internet connection and try again.";
+              "We could not sign you in right now due to a network connection issue. Please check your internet connection and try again.";
             errorBox.classList.remove("hidden");
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<span>Sign In to Secretary Portal</span><i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i>`;

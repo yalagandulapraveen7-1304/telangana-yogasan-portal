@@ -599,6 +599,16 @@
         try { localStorage.setItem("tya_font_scale", "100%"); } catch (e) {}
       });
 
+      function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
       document.addEventListener("DOMContentLoaded", async () => {
         try {
           const res = await fetch("/portal/notices?category=CIRCULAR");
@@ -613,16 +623,16 @@
                     <div>
                       <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 uppercase">Circular</span>
-                        <span class="text-[11px] text-slate-400 font-mono">${c.district && c.district !== 'ALL' ? c.district : 'Statewide'}</span>
+                        <span class="text-[11px] text-slate-400 font-mono">${escapeHtml(c.district && c.district !== 'ALL' ? c.district : 'Statewide')}</span>
                       </div>
-                      <h3 class="font-bold text-slate-900 text-base mb-2">${c.title}</h3>
-                      <p class="text-xs text-slate-600 leading-relaxed mb-4">${c.summary || c.body || ''}</p>
+                      <h3 class="font-bold text-slate-900 text-base mb-2">${escapeHtml(c.title)}</h3>
+                      <p class="text-xs text-slate-600 leading-relaxed mb-4">${escapeHtml(c.summary || c.body || '')}</p>
                     </div>
                     <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
                       <span class="text-[11px] text-slate-500 font-medium">${new Date(c.createdAt).toLocaleDateString('en-GB')}</span>
                       ${c.attachmentPath
-                        ? `<a href="/portal/notices/attachment/${c._id}" target="_blank" class="btn-primary text-xs"><i class="fa-solid fa-file-pdf mr-1" aria-hidden="true"></i> Download PDF</a>`
-                        : (c.linkUrl ? `<a href="${c.linkUrl}" class="btn-primary text-xs">${c.linkLabel || 'View Details'}</a>` : `<span class="text-xs text-slate-400">Notice</span>`)}
+                        ? `<a href="/portal/notices/attachment/${encodeURIComponent(c._id)}" target="_blank" class="btn-primary text-xs"><i class="fa-solid fa-file-pdf mr-1" aria-hidden="true"></i> Download PDF</a>`
+                        : (c.linkUrl ? `<a href="${encodeURI(c.linkUrl)}" class="btn-primary text-xs">${escapeHtml(c.linkLabel || 'View Details')}</a>` : `<span class="text-xs text-slate-400">Notice</span>`)}
                     </div>
                   </div>
                 `).join("");

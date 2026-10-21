@@ -589,14 +589,14 @@
             resultBox.innerHTML = `
               <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-4 text-xs text-center">
                 <i class="fa-solid fa-circle-exclamation text-base mb-1" aria-hidden="true"></i>
-                <p>No athlete record found for identifier "<strong>${idInput}</strong>". Please verify your Chest Number or Application ID.</p>
+                <p>No athlete registration found matching "<strong>${idInput}</strong>". Please check your Chest Number or Application Number and try again.</p>
               </div>
             `;
           }
         } catch (err) {
           resultBox.innerHTML = `
             <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-xs text-center">
-              Failed to connect to verification server. Please try again later.
+              We could not verify this entry right now due to a network connection issue. Please check your internet connection and try again.
             </div>
           `;
         } finally {

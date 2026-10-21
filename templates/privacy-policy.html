@@ -390,7 +390,7 @@
             <ul class="text-xs sm:text-sm text-slate-700 space-y-2 list-disc list-inside bg-slate-50 p-4 rounded-xl border border-slate-200">
               <li><strong>Athlete Demographic Information:</strong> Full name, gender, residential district, school or yoga academy affiliation.</li>
               <li><strong>Age Verification Proof:</strong> Date of birth and an official proof document (Municipal Birth Certificate, School Study Bonafide, or Passport).</li>
-              <li><strong>Aadhaar Information (Strictly Limited):</strong> Only the <em>last 4 digits</em> of the Aadhaar number are recorded for anti-impersonation cross-verification. Full 12-digit Aadhaar numbers are never stored in databases.</li>
+              <li><strong>Aadhaar Information (Strictly Limited):</strong> Only the <em>last 4 digits</em> of the Aadhaar number are recorded for anti-impersonation cross-verification. Full 12-digit Aadhaar numbers are never stored in our systems.</li>
               <li><strong>Passport-size Photograph:</strong> Used solely for hall ticket (admit card) generation and athlete field accreditation.</li>
               <li><strong>Guardian &amp; Official Contact Information:</strong> Parent/guardian name, coach mobile number, and school principal email for emergency contact and tournament coordination.</li>
             </ul>
@@ -451,10 +451,10 @@
               Technical protections are implemented across the portal infrastructure in alignment with GIGW 3.0 Section 5.3:
             </p>
             <ul class="text-xs sm:text-sm text-slate-700 space-y-2 list-disc list-inside bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <li><strong>Tenant &amp; District Isolation:</strong> District secretaries can only access and view athlete rosters belonging to their verified district. Cross-district record retrieval is prevented by server-side authorization guards.</li>
-              <li><strong>Credential Security:</strong> Administrative passwords are stored using salted cryptographic hashes (bcrypt) with high work factors. Plaintext passwords are never recorded.</li>
-              <li><strong>Transport Layer Security:</strong> All data in transit is encrypted using HTTPS and HTTP Strict Transport Security (HSTS).</li>
-              <li><strong>Injection &amp; Traversal Defense:</strong> All incoming form parameters undergo server-side NoSQL operator sanitization, regex escaping, and path-traversal blocking.</li>
+              <li><strong>District Privacy Boundaries:</strong> Authorized District Secretaries can only access and view athlete rosters for their own assigned district. Access to athlete records from other districts is strictly restricted.</li>
+              <li><strong>Password Protection:</strong> Administrative passwords are protected with strong, one-way cryptographic encryption. Passwords are never saved in readable plain text.</li>
+              <li><strong>Encrypted Communications:</strong> All communications between your web browser and the portal are fully encrypted using modern HTTPS and secure transport standards.</li>
+              <li><strong>Form &amp; Input Safeguards:</strong> All information submitted through registration forms is strictly checked and verified to guard against unauthorized access, malicious tampering, or invalid entries.</li>
             </ul>
           </div>
 
@@ -537,28 +537,28 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                   <tr>
-                    <td class="p-2.5 font-mono font-semibold">HTTP Cookie</td>
+                    <td class="p-2.5 font-mono font-semibold">Essential Cookie</td>
                     <td class="p-2.5 font-mono text-[#0D5C3A]">auth_token</td>
-                    <td class="p-2.5">Strictly Necessary: Session authentication token for authorized District Association Secretaries accessing the administrative portal. Protected with <code>HttpOnly</code>, <code>SameSite=Strict</code>, and <code>Secure</code>.</td>
+                    <td class="p-2.5">Strictly Necessary: Secure sign-in identifier for authorized District Association Secretaries accessing the official administrative portal.</td>
                     <td class="p-2.5">Session / 24 Hours</td>
                   </tr>
                   <tr>
                     <td class="p-2.5 font-mono font-semibold">Local Storage</td>
                     <td class="p-2.5 font-mono text-[#0D5C3A]">tya_font_scale</td>
-                    <td class="p-2.5">Functional Accessibility: Remembers user font size preference (A- / A / A+) selected via top utility bar to ensure comfortable reading across sessions.</td>
-                    <td class="p-2.5">Persistent (Local)</td>
+                    <td class="p-2.5">Accessibility Setting: Remembers your preferred reading text size (A- / A / A+) selected via the top bar.</td>
+                    <td class="p-2.5">Until browser cache is cleared</td>
                   </tr>
                   <tr>
                     <td class="p-2.5 font-mono font-semibold">Local Storage</td>
                     <td class="p-2.5 font-mono text-[#0D5C3A]">tya_lang</td>
-                    <td class="p-2.5">Functional Preference: Remembers user language preference (English / Telugu).</td>
-                    <td class="p-2.5">Persistent (Local)</td>
+                    <td class="p-2.5">Language Preference: Remembers your preferred language selection (English / Telugu).</td>
+                    <td class="p-2.5">Until browser cache is cleared</td>
                   </tr>
                   <tr>
                     <td class="p-2.5 font-mono font-semibold">Session Storage</td>
                     <td class="p-2.5 font-mono text-[#0D5C3A]">token</td>
-                    <td class="p-2.5">Security / Functional: Temporary API authorization token during active secretary administrative sessions.</td>
-                    <td class="p-2.5">Browser Tab Close</td>
+                    <td class="p-2.5">Security: Temporary authorization pass active only while an authorized secretary remains signed in.</td>
+                    <td class="p-2.5">Until browser tab is closed</td>
                   </tr>
                   <tr>
                     <td class="p-2.5 font-mono font-semibold">Third-Party Scripts</td>

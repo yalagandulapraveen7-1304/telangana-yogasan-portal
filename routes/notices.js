@@ -139,7 +139,7 @@ router.get('/attachment/:id', async (req, res) => {
     return res.status(404).json({ success: false, error: 'Attachment file not found.' });
   } catch (err) {
     console.error('Error streaming notice attachment:', err.message);
-    return res.status(500).json({ success: false, error: 'Failed to stream notice attachment.' });
+    return res.status(500).json({ success: false, error: 'Failed to open notice attachment.' });
   }
 });
 
@@ -181,7 +181,7 @@ router.get('/raw/:filename', async (req, res) => {
     return res.status(404).json({ success: false, error: 'Document not found.' });
   } catch (err) {
     console.error('Error streaming raw notice file:', err.message);
-    return res.status(500).json({ success: false, error: 'Failed to stream notice file.' });
+    return res.status(500).json({ success: false, error: 'Failed to open notice document.' });
   }
 });
 

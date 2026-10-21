@@ -447,10 +447,10 @@
             <i class="fa-solid fa-user-slash" aria-hidden="true"></i>
           </div>
           <h3 class="text-base font-bold text-slate-700">
-            No Nominations Found
+            No Registrations Found
           </h3>
           <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            No athletes registered yet.
+            No athlete entries match your current search or filter criteria.
           </p>
         </div>
 
@@ -495,8 +495,8 @@
             </div>
 
             <div>
-              <label for="tab-comp-id" class="block font-semibold text-slate-700 mb-1">Identifier Slug (Unique)</label>
-              <input type="text" id="tab-comp-id" placeholder="e.g. state-championship-2026 (auto if blank)" class="form-input text-xs w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-mono focus:bg-white" />
+              <label for="tab-comp-id" class="block font-semibold text-slate-700 mb-1">Competition Code (Optional)</label>
+              <input type="text" id="tab-comp-id" placeholder="e.g. state-championship-2026 (leave empty to generate automatically)" class="form-input text-xs w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-mono focus:bg-white" />
             </div>
 
             <div>
@@ -816,7 +816,7 @@
             </table>
           </div>
           <div id="admin-notices-empty" class="hidden p-12 text-center text-slate-500 text-xs">
-            No notices or circulars created yet. Use the form above to add an announcement.
+            No announcements or circulars posted yet. Use the form above to add an announcement.
           </div>
         </div>
       </div><!-- End panel-notices -->
@@ -829,14 +829,14 @@
             <div>
               <h2 class="text-base font-bold text-slate-900 font-display flex items-center gap-2">
                 <i class="fa-solid fa-shield-halved text-[#0D5C3A]" aria-hidden="true"></i>
-                <span>Administrative Actions Audit Trail</span>
+                <span>Administrative Actions Activity Trail</span>
               </h2>
               <p class="text-xs text-slate-500">
-                Immutable chronological ledger of all administrative mutations, status updates, uploads, and deletions.
+                Official activity record of administrative updates, approvals, uploads, and removals.
               </p>
             </div>
             <span class="text-xs font-semibold text-purple-900 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full self-start sm:self-auto">
-              Super Admin Forensic Log
+              Official Activity Log
             </span>
           </div>
 
@@ -844,12 +844,12 @@
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-100 text-slate-600 uppercase font-semibold">
                 <tr>
-                  <th class="p-3">Timestamp</th>
-                  <th class="p-3">Actor / District</th>
+                  <th class="p-3">Date &amp; Time</th>
+                  <th class="p-3">Official / District</th>
                   <th class="p-3">Action</th>
-                  <th class="p-3">Target Entity</th>
+                  <th class="p-3">Item Affected</th>
                   <th class="p-3">IP Address</th>
-                  <th class="p-3">Audit Details</th>
+                  <th class="p-3">Activity Details</th>
                 </tr>
               </thead>
               <tbody id="admin-audit-table-body" class="divide-y divide-slate-100 text-slate-700">
@@ -858,7 +858,7 @@
             </table>
           </div>
           <div id="admin-audit-empty" class="hidden p-12 text-center text-slate-500 text-xs">
-            No audit records captured yet.
+            No administrative activity recorded yet.
           </div>
         </div>
 
@@ -868,9 +868,9 @@
             <div>
               <h3 class="font-bold text-slate-900 font-display flex items-center gap-2">
                 <i class="fa-solid fa-key text-amber-600" aria-hidden="true"></i>
-                <span>Statewide Authentication History</span>
+                <span>Official Sign-In History</span>
               </h3>
-              <p class="text-xs text-slate-500">Recent login attempts across all district secretary accounts.</p>
+              <p class="text-xs text-slate-500">Recent sign-in history across all district secretary accounts.</p>
             </div>
           </div>
           <div class="overflow-x-auto">
@@ -1300,7 +1300,7 @@
           });
 
           if (!response.ok)
-            throw new Error(`Server returned ${response.status}`);
+            throw new Error(`Unable to load athlete entries (${response.status})`);
 
           const athletes = await response.json();
           liveAthletesList = athletes;
@@ -1590,10 +1590,11 @@
             closeModal();
             loadLiveAthletes();
           } else {
-            alert("Failed to update status.");
+            alert("We could not update the verification status. Please check your connection and try again.");
           }
         } catch (err) {
           console.error("Status update failed:", err);
+          alert("We could not update the verification status due to a connection issue. Please try again.");
         }
       }
 
@@ -1755,11 +1756,11 @@
             await loadCompetitionsTable();
             await loadCompetitionFilterOptions();
           } else {
-            alert(data.error || "Failed to create competition.");
+            alert(data.error || "We could not create the competition. Please check the entered information and try again.");
           }
         } catch (err) {
           console.error("Competition creation error:", err);
-          alert("Network error while creating competition.");
+          alert("We could not create the competition due to a network connection issue. Please check your internet connection and try again.");
         } finally {
           if (btn) {
             btn.disabled = false;
@@ -1769,7 +1770,7 @@
       }
 
       async function handleDeleteCompetition(competitionId, compName) {
-        if (!confirm(`Are you sure you want to delete the competition "${compName}"?\nNote: Deletion will be rejected if existing athlete nominations or photos are linked.`)) {
+        if (!confirm(`Are you sure you want to remove the competition "${compName}"?\nNote: A competition cannot be removed if athletes have already registered or photos have been uploaded for it.`)) {
           return;
         }
 
@@ -1786,15 +1787,15 @@
 
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
-            alert(data.message || "Competition safely deleted.");
+            alert(data.message || "Competition successfully removed.");
             await loadCompetitionsTable();
             await loadCompetitionFilterOptions();
           } else {
-            alert(data.error || "Failed to delete competition.");
+            alert(data.error || "We could not remove this competition. Please check for linked registrations or photos.");
           }
         } catch (err) {
           console.error("Delete competition error:", err);
-          alert("Network error while deleting competition.");
+          alert("We could not remove the competition due to a network connection issue. Please try again.");
         }
       }
 
@@ -1816,12 +1817,12 @@
             await loadCompetitionsTable();
             await loadCompetitionFilterOptions();
           } else {
-            alert(data.error || "Failed to update competition status.");
+            alert(data.error || "We could not update the competition status. Please try again.");
             await loadCompetitionsTable();
           }
         } catch (err) {
           console.error("Status toggle error:", err);
-          alert("Network error updating status.");
+          alert("We could not update the status due to a network connection issue. Please try again.");
         }
       }
 
@@ -1891,7 +1892,7 @@
           }).join("");
         } catch (err) {
           console.error("Error loading photos:", err);
-          if (grid) grid.innerHTML = '<div class="col-span-full p-4 text-center text-red-500 text-xs">Failed to load photo records.</div>';
+          if (grid) grid.innerHTML = '<div class="col-span-full p-4 text-center text-red-500 text-xs">We could not load photos right now. Please refresh the page.</div>';
         }
       }
 
@@ -1913,15 +1914,15 @@
 
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
-            alert("Photo successfully uploaded and WebP thumbnail generated!");
+            alert("Photo successfully published to the gallery!");
             form.reset();
             await loadAdminPhotos();
           } else {
-            alert(data.error || "Failed to upload photo.");
+            alert(data.error || "We could not upload this photo. Please check the file and try again.");
           }
         } catch (err) {
           console.error("Photo upload error:", err);
-          alert("Network error while uploading photo.");
+          alert("We could not upload the photo due to a network connection issue. Please check your internet connection and try again.");
         } finally {
           if (btn) btn.disabled = false;
         }
@@ -1956,7 +1957,7 @@
       }
 
       async function handleDeletePhoto(photoId) {
-        if (!confirm("Are you sure you want to delete this gallery photo?")) return;
+        if (!confirm("Are you sure you want to remove this gallery photo?")) return;
         try {
           const token = sessionStorage.getItem("token");
           const res = await fetch(`/portal/admin/photos/${photoId}`, {
@@ -1965,10 +1966,10 @@
           });
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
-            alert("Photo deleted.");
+            alert("Photo removed from the gallery.");
             await loadAdminPhotos();
           } else {
-            alert(data.error || "Failed to delete photo.");
+            alert(data.error || "We could not remove this photo. Please try again.");
           }
         } catch (err) {
           console.error("Delete photo error:", err);
@@ -2082,17 +2083,17 @@
 
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
-            alert("Notice successfully published!");
+            alert("Announcement successfully published!");
             form.reset();
             const chk = document.getElementById("notice-is-marquee");
             if (chk) chk.checked = true;
             await loadAdminNotices();
           } else {
-            alert(data.error || "Failed to publish notice.");
+            alert(data.error || "We could not publish this announcement. Please check your details and try again.");
           }
         } catch (err) {
           console.error("Notice creation error:", err);
-          alert("Network error while creating notice.");
+          alert("We could not publish the announcement due to a network connection issue. Please check your internet connection and try again.");
         } finally {
           if (btn) btn.disabled = false;
         }
@@ -2114,11 +2115,11 @@
           if (res.ok && data.success) {
             await loadAdminNotices();
           } else {
-            alert(data.error || "Failed to toggle marquee status.");
+            alert(data.error || "We could not update the announcement ticker. Please try again.");
           }
         } catch (err) {
           console.error("Error toggling marquee:", err);
-          alert("Network error toggling marquee.");
+          alert("We could not update the announcement ticker due to a network connection issue. Please try again.");
         }
       }
 
@@ -2138,7 +2139,7 @@
           if (res.ok && data.success) {
             await loadAdminNotices();
           } else {
-            alert(data.error || "Failed to update notice status.");
+            alert(data.error || "We could not update the announcement status. Please try again.");
           }
         } catch (err) {
           console.error("Error updating notice status:", err);
@@ -2146,7 +2147,7 @@
       }
 
       async function handleDeleteNotice(noticeId) {
-        if (!confirm("Are you sure you want to delete this notice?")) return;
+        if (!confirm("Are you sure you want to remove this announcement?")) return;
         try {
           const token = sessionStorage.getItem("token");
           const headers = {};
@@ -2159,14 +2160,14 @@
           });
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
-            alert("Notice deleted.");
+            alert("Announcement successfully removed.");
             await loadAdminNotices();
           } else {
-            alert(data.error || "Failed to delete notice.");
+            alert(data.error || "We could not remove this announcement. Please try again.");
           }
         } catch (err) {
           console.error("Delete notice error:", err);
-          alert("Network error deleting notice.");
+          alert("We could not remove the announcement due to a network connection issue. Please try again.");
         }
       }
 
@@ -2197,10 +2198,13 @@
 
           if (empty) empty.classList.add("hidden");
           tbody.innerHTML = logs.map(l => {
-            const detailsJson = escapeHtml(JSON.stringify(l.details || {}));
+            const detailsFormatted = l.details && typeof l.details === 'object'
+              ? Object.entries(l.details).map(([k, v]) => `${k}: ${v}`).join(', ')
+              : '-';
+            const detailsClean = escapeHtml(detailsFormatted);
             return `
               <tr class="hover:bg-slate-50 transition text-xs">
-                <td class="p-3 font-mono text-[11px] text-slate-500">${escapeHtml(new Date(l.createdAt).toLocaleString())}</td>
+                <td class="p-3 text-[11px] text-slate-500">${escapeHtml(new Date(l.createdAt).toLocaleString())}</td>
                 <td class="p-3">
                   <div class="font-semibold text-slate-900">${escapeHtml(l.actorEmail)}</div>
                   <div class="text-[10px] text-slate-400">${escapeHtml(l.actorRole)} &bull; ${escapeHtml(l.actorDistrict)}</div>
@@ -2210,19 +2214,19 @@
                     ${escapeHtml(l.action)}
                   </span>
                 </td>
-                <td class="p-3 font-mono text-[11px]">
+                <td class="p-3 text-[11px]">
                   <strong>${escapeHtml(l.targetType)}</strong>: ${escapeHtml(l.targetId)}
                 </td>
-                <td class="p-3 font-mono text-[11px] text-slate-600">${escapeHtml(l.ipAddress || '-')}</td>
-                <td class="p-3 font-mono text-[10px] text-slate-500 max-w-xs truncate" title="${detailsJson}">
-                  ${detailsJson}
+                <td class="p-3 text-[11px] text-slate-600">${escapeHtml(l.ipAddress || '-')}</td>
+                <td class="p-3 text-[11px] text-slate-600 max-w-xs truncate" title="${detailsClean}">
+                  ${detailsClean}
                 </td>
               </tr>
             `;
           }).join("");
         } catch (err) {
           console.error("Error loading audit logs:", err);
-          if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500 text-xs">Failed to load audit logs.</td></tr>';
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-red-500 text-xs">We could not load activity logs right now. Please refresh the page.</td></tr>';
         }
       }
 

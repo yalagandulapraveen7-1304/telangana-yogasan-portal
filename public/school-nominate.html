@@ -949,7 +949,7 @@
         }
       } catch (err) {
         console.error('Submission error:', err);
-        alert('Network or server error during submission. Please try again.');
+        alert('We could not submit your team registration due to a network connection issue. Please check your internet connection and try again.');
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Submit team registration';
       }

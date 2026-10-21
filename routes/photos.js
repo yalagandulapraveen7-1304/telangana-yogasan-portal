@@ -116,7 +116,7 @@ router.get('/raw/:filename', async (req, res) => {
     return res.status(404).json({ success: false, error: 'Photo not found.' });
   } catch (err) {
     console.error('Error serving photo binary:', err.message);
-    return res.status(500).json({ success: false, error: 'Failed to stream photo binary.' });
+    return res.status(500).json({ success: false, error: 'Failed to load photo.' });
   }
 });
 

@@ -54,7 +54,7 @@ router.get('/photos', requireAuth, async (req, res) => {
     return res.json({ success: true, count: photos.length, photos });
   } catch (err) {
     console.error('Error fetching admin photos:', err.message);
-    return res.status(500).json({ success: false, error: 'Failed to retrieve photo records.' });
+    return res.status(500).json({ success: false, error: 'Failed to retrieve photos.' });
   }
 });
 
