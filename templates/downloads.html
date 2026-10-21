@@ -245,7 +245,7 @@
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-hidden="true">
+        <nav id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-label="Mobile Navigation" aria-hidden="true">
           <div class="nav-menu-inner min-h-0 pt-2.5 pb-3 space-y-1">
             <a href="/" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Home</span>
@@ -331,7 +331,7 @@
               </a>
             </div>
           </div>
-        </div>
+        </nav>
       </div>
     </header>
           </div>
@@ -374,7 +374,7 @@
 
           <div id="downloads-circulars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <!-- Rulebook Card -->
-            <div class="card p-6 bg-white border-l-4 border-l-red-600 flex flex-col justify-between shadow-xs">
+            <article class="card p-6 bg-white border-l-4 border-l-red-600 flex flex-col justify-between shadow-xs">
               <div>
                 <div class="flex items-center justify-between mb-3">
                   <span class="text-xs font-bold text-red-700 uppercase tracking-wide">Official PDF</span>
@@ -403,10 +403,10 @@
                   <span>Download PDF (2.07 MB)</span>
                 </a>
               </div>
-            </div>
+            </article>
 
             <!-- Circular 1 -->
-            <div class="card p-6 bg-white border-l-4 border-l-emerald-600 flex flex-col justify-between shadow-xs">
+            <article class="card p-6 bg-white border-l-4 border-l-emerald-600 flex flex-col justify-between shadow-xs">
               <div>
                 <div class="flex items-center justify-between mb-3">
                   <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Circular</span>
@@ -429,13 +429,13 @@
                   <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
                 </a>
               </div>
-            </div>
+            </article>
 
             <!-- Circular 2 -->
-            <div class="card p-6 bg-white border-l-4 border-l-blue-600 flex flex-col justify-between shadow-xs">
+            <article class="card p-6 bg-white border-l-4 border-l-blue-600 flex flex-col justify-between shadow-xs">
               <div>
                 <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold text-[#0D5C3A] bg-[#f1f5f9] px-2 py-0.5 rounded border border-[#e2e8f0] uppercase">Technical Norms</span>
+                  <span class="text-xs font-bold text-[#0D5C3A] uppercase tracking-wide">Technical Norms</span>
                   <span class="text-[11px] text-slate-400 font-mono">TYA/VERIF/2025</span>
                 </div>
                 <h3 class="font-bold text-slate-900 text-base mb-2">
@@ -455,7 +455,7 @@
                   <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
                 </a>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -472,7 +472,7 @@
           </div>
 
           <div class="space-y-4">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <article class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div class="flex items-center gap-2 mb-1">
                   <span class="notice-tag tag-new">LATEST</span>
@@ -485,9 +485,9 @@
                 <span>Go to Nominations</span>
                 <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
               </a>
-            </div>
+            </article>
 
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <article class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div class="flex items-center gap-2 mb-1">
                   <span class="notice-tag tag-circular">SEMINAR</span>
@@ -500,7 +500,7 @@
                 <span>Inquire Schedule</span>
                 <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
               </a>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -521,7 +521,7 @@
           </div>
 
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">Quick Navigation</h4>
+            <h3 class="font-bold text-amber-300 text-sm mb-3">Quick Navigation</h3>
             <ul class="space-y-1.5">
               <li><a href="/" class="footer-link">Home</a></li>
               <li><a href="/about" class="footer-link">About Us</a></li>
@@ -532,7 +532,7 @@
           </div>
 
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">Championship &amp; Portal</h4>
+            <h3 class="font-bold text-amber-300 text-sm mb-3">Championship &amp; Portal</h3>
             <ul class="space-y-1.5">
               <li><a href="/events" class="footer-link">Inter-District Championship</a></li>
               <li><a href="/nominate" class="footer-link">Athlete Registration</a></li>
@@ -543,7 +543,7 @@
           </div>
 
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">Affiliation &amp; Contacts</h4>
+            <h3 class="font-bold text-amber-300 text-sm mb-3">Affiliation &amp; Contacts</h3>
             <p class="text-slate-400 text-xs leading-relaxed mb-2">
               Affiliated to the Yoga Federation of India. Operating in coordination with verified district yoga bodies.
             </p>
@@ -569,7 +569,7 @@
         <!-- GIGW 3.0 Compliance Metadata (5.1.5 Content Review Policy & 5.4.1 Web Information Manager) -->
         <div class="mt-6 pt-4 border-t border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between text-slate-400 text-[10px] sm:text-[11px] gap-2">
           <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>Page Last Reviewed: <strong class="text-slate-200">10 October 2026</strong></span>
+            <span>Page Last Reviewed: <strong class="text-slate-200"><time datetime="2026-10-10">10 October 2026</time></strong></span>
             <span class="text-slate-600 hidden sm:inline">&bull;</span>
             <span>Content Ownership: <strong class="text-slate-200">Telangana Yoga Association</strong></span>
           </div>
@@ -619,7 +619,7 @@
               const grid = document.getElementById("downloads-circulars-grid");
               if (grid) {
                 const dynamicHtml = circulars.map(c => `
-                  <div class="card p-6 bg-white border-l-4 border-l-emerald-600 flex flex-col justify-between shadow-xs">
+                  <article class="card p-6 bg-white border-l-4 border-l-emerald-600 flex flex-col justify-between shadow-xs">
                     <div>
                       <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Circular</span>
@@ -629,12 +629,12 @@
                       <p class="text-xs text-slate-600 leading-relaxed mb-4">${escapeHtml(c.summary || c.body || '')}</p>
                     </div>
                     <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                      <span class="text-[11px] text-slate-500 font-medium">${new Date(c.createdAt).toLocaleDateString('en-GB')}</span>
+                      <time datetime="${new Date(c.createdAt).toISOString()}" class="text-[11px] text-slate-500 font-medium">${new Date(c.createdAt).toLocaleDateString('en-GB')}</time>
                       ${c.attachmentPath
                         ? `<a href="/portal/notices/attachment/${encodeURIComponent(c._id)}" target="_blank" class="btn-primary text-xs"><i class="fa-solid fa-file-pdf mr-1" aria-hidden="true"></i> Download PDF</a>`
                         : (c.linkUrl ? `<a href="${encodeURI(c.linkUrl)}" class="btn-primary text-xs">${escapeHtml(c.linkLabel || 'View Details')}</a>` : `<span class="text-xs text-slate-400">Notice</span>`)}
                     </div>
-                  </div>
+                  </article>
                 `).join("");
                 grid.insertAdjacentHTML("afterbegin", dynamicHtml);
               }

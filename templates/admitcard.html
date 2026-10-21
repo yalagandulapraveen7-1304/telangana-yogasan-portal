@@ -81,7 +81,7 @@
       class="max-w-2xl w-full bg-white rounded-2xl shadow-xl border-2 border-[#C5A059] overflow-hidden print:shadow-none print:border-slate-900 print:w-full outline-none"
     >
       <!-- Card Header -->
-      <div
+      <header
         class="bg-[#0D5C3A] text-white p-5 text-center border-b-4 border-[#C5A059]"
       >
         <div class="flex items-center justify-center gap-2 mb-1">
@@ -97,7 +97,7 @@
         <p id="card-competition-venue" class="text-[11px] text-emerald-200 mt-0.5">
           Inter-District Yogasana Sports Championship (2025-26)
         </p>
-      </div>
+      </header>
 
       <!-- Card Body -->
       <div class="p-6 space-y-6">
@@ -125,84 +125,68 @@
           </div>
 
           <!-- Basic Info Grid -->
-          <div class="flex-grow w-full space-y-2 text-xs">
+          <dl class="flex-grow w-full space-y-2 text-xs">
             <div class="flex justify-between border-b border-slate-200 pb-1.5">
-              <span class="text-slate-500 font-medium">Participant Name:</span>
-              <strong id="card-name" class="text-slate-900 text-sm">-</strong>
+              <dt class="text-slate-500 font-medium">Participant Name:</dt>
+              <dd><strong id="card-name" class="text-slate-900 text-sm font-bold">-</strong></dd>
             </div>
             <div class="flex justify-between border-b border-slate-200 pb-1.5">
-              <span class="text-slate-500 font-medium">Chest Number:</span>
-              <strong
-                id="card-chest"
-                class="font-mono text-[#0D5C3A] text-sm font-bold"
-                >-</strong
-              >
+              <dt class="text-slate-500 font-medium">Chest Number:</dt>
+              <dd><strong id="card-chest" class="font-mono text-[#0D5C3A] text-sm font-bold">-</strong></dd>
             </div>
             <div class="flex justify-between border-b border-slate-200 pb-1.5">
-              <span class="text-slate-500 font-medium">Category:</span>
-              <strong id="card-category" class="text-slate-800">-</strong>
+              <dt class="text-slate-500 font-medium">Category:</dt>
+              <dd><strong id="card-category" class="text-slate-800 font-bold">-</strong></dd>
             </div>
             <div class="flex justify-between border-b border-slate-200 pb-1.5">
-              <span class="text-slate-500 font-medium"
-                >District Association:</span
-              >
-              <strong id="card-district" class="text-slate-800">-</strong>
+              <dt class="text-slate-500 font-medium">District Association:</dt>
+              <dd><strong id="card-district" class="text-slate-800 font-bold">-</strong></dd>
             </div>
             <div class="flex justify-between pb-0.5">
-              <span class="text-slate-500 font-medium">Status:</span>
-              <span
-                id="card-status"
-                class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800"
-                >-</span
-              >
+              <dt class="text-slate-500 font-medium">Status:</dt>
+              <dd><span id="card-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">-</span></dd>
             </div>
-          </div>
+          </dl>
         </div>
 
         <!-- Detailed Information Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div
+          <dl
             class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2"
           >
-            <p class="flex justify-between">
-              <span class="text-slate-500">Gender & Age:</span>
-              <strong id="card-gender-age">-</strong>
-            </p>
-            <p class="flex justify-between">
-              <span class="text-slate-500">Date of Birth:</span>
-              <strong id="card-dob">-</strong>
-            </p>
-            <p class="flex justify-between">
-              <span class="text-slate-500">Guardian Name:</span>
-              <strong id="card-guardian">-</strong>
-            </p>
-          </div>
-          <div
+            <div class="flex justify-between">
+              <dt class="text-slate-500">Gender &amp; Age:</dt>
+              <dd><strong id="card-gender-age">-</strong></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-slate-500">Date of Birth:</dt>
+              <dd><strong id="card-dob">-</strong></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-slate-500">Guardian Name:</dt>
+              <dd><strong id="card-guardian">-</strong></dd>
+            </div>
+          </dl>
+          <dl
             class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2"
           >
-            <p class="flex justify-between">
-              <span class="text-slate-500">Institution:</span>
-              <strong
-                id="card-institution"
-                class="text-right truncate max-w-[150px]"
-                >-</strong
-              >
-            </p>
-            <p class="flex justify-between">
-              <span class="text-slate-500">Registered Events:</span>
-              <strong id="card-events" class="text-right text-[#0D5C3A]"
-                >-</strong
-              >
-            </p>
-            <p class="flex justify-between">
-              <span class="text-slate-500">Aadhaar (Last 4):</span>
-              <strong id="card-aadhaar" class="font-mono">-</strong>
-            </p>
-          </div>
+            <div class="flex justify-between">
+              <dt class="text-slate-500">Institution:</dt>
+              <dd><strong id="card-institution" class="text-right truncate max-w-[150px] inline-block">-</strong></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-slate-500">Registered Events:</dt>
+              <dd><strong id="card-events" class="text-right text-[#0D5C3A] inline-block">-</strong></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-slate-500">Aadhaar (Last 4):</dt>
+              <dd><strong id="card-aadhaar" class="font-mono">-</strong></dd>
+            </div>
+          </dl>
         </div>
 
         <!-- Instructions & Signatures -->
-        <div
+        <footer
           class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-end gap-6 text-[11px] text-slate-600"
         >
           <div class="space-y-1">
@@ -219,7 +203,7 @@
               >Telangana Yoga Association</span
             >
           </div>
-        </div>
+        </footer>
       </div>
     </main>
 

@@ -276,7 +276,7 @@
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-hidden="true">
+        <nav id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-label="Mobile Navigation" aria-hidden="true">
           <div class="nav-menu-inner min-h-0 pt-2.5 pb-3 space-y-1">
             <a href="/" class="mobile-nav-link block px-3 py-2 rounded-lg text-white font-medium hover:bg-emerald-800/80 transition flex items-center justify-between">
               <span>Home</span>
@@ -358,7 +358,7 @@
               </a>
             </div>
           </div>
-        </div>
+        </nav>
       </div>
     </header>
 
@@ -472,7 +472,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Event 1: State Championship -->
-            <div class="card p-6 flex flex-col justify-between bg-white border-l-4 border-l-emerald-600">
+            <article class="card p-6 flex flex-col justify-between bg-white border-l-4 border-l-emerald-600">
               <div>
                 <div class="flex items-center justify-between mb-2">
                   <span class="notice-tag tag-new">ACTIVE REGISTRATION</span>
@@ -484,11 +484,11 @@
                 <p class="text-xs text-slate-600 leading-relaxed mb-4">
                   Official state selection trials and competition rounds across 5 disciplines with certified national referee panel.
                 </p>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs text-slate-700 mb-4">
-                  <div><strong>Status:</strong> Online Nominations Active</div>
-                  <div><strong>Categories:</strong> Sub-Junior, Junior, Senior</div>
-                  <div><strong>Eligibility:</strong> Telangana Bona Fide Residents / Students</div>
-                </div>
+                <dl class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs text-slate-700 mb-4">
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Status:</dt><dd>Online Nominations Active</dd></div>
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Categories:</dt><dd>Sub-Junior, Junior, Senior</dd></div>
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Eligibility:</dt><dd>Telangana Bona Fide Residents / Students</dd></div>
+                </dl>
               </div>
               <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
                 <a href="/nominate" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1">
@@ -500,10 +500,10 @@
                   <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
                 </a>
               </div>
-            </div>
+            </article>
 
             <!-- Event 2: District Selection Trials -->
-            <div class="card p-6 flex flex-col justify-between bg-white border-l-4 border-l-amber-500">
+            <article class="card p-6 flex flex-col justify-between bg-white border-l-4 border-l-amber-500">
               <div>
                 <div class="flex items-center justify-between mb-2">
                   <span class="notice-tag tag-schedule">DISTRICT ROUNDS</span>
@@ -515,11 +515,11 @@
                 <p class="text-xs text-slate-600 leading-relaxed mb-4">
                   Conducted by authorized District Secretaries to evaluate local athletes and submit verified entries for the State Championship.
                 </p>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs text-slate-700 mb-4">
-                  <div><strong>Venues:</strong> Respective District Headquarters</div>
-                  <div><strong>Document Check:</strong> Aadhaar &amp; Birth Certificate Scrutiny</div>
-                  <div><strong>Access:</strong> Official District Secretary Sign-In</div>
-                </div>
+                <dl class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs text-slate-700 mb-4">
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Venues:</dt><dd>Respective District Headquarters</dd></div>
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Document Check:</dt><dd>Aadhaar &amp; Birth Certificate Scrutiny</dd></div>
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Access:</dt><dd>Official District Secretary Sign-In</dd></div>
+                </dl>
               </div>
               <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
                 <a href="/districts" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1">
@@ -531,10 +531,10 @@
                   <i class="fa-solid fa-lock text-[10px]" aria-hidden="true"></i>
                 </a>
               </div>
-            </div>
+            </article>
 
             <!-- Event 3: Technical Refresher & Judge Clinic -->
-            <div class="card p-6 flex flex-col justify-between bg-white border-l-4 border-l-blue-600">
+            <article class="card p-6 flex flex-col justify-between bg-white border-l-4 border-l-blue-600">
               <div>
                 <div class="flex items-center justify-between mb-2">
                   <span class="notice-tag tag-circular">WORKSHOP</span>
@@ -546,11 +546,11 @@
                 <p class="text-xs text-slate-600 leading-relaxed mb-4">
                   Official orientation for state referees, timekeepers, and coaches covering syllabus updates, difficulty scoring, and jury protocol.
                 </p>
-                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs text-slate-700 mb-4">
-                  <div><strong>Focus:</strong> National YFI Scoring Standards</div>
-                  <div><strong>Target:</strong> Certified Yoga Instructors &amp; Referees</div>
-                  <div><strong>Certification:</strong> Official Accreditation Roster</div>
-                </div>
+                <dl class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1.5 text-xs text-slate-700 mb-4">
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Focus:</dt><dd>National YFI Scoring Standards</dd></div>
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Target:</dt><dd>Certified Yoga Instructors &amp; Referees</dd></div>
+                  <div class="flex gap-1.5"><dt class="font-bold text-slate-900">Certification:</dt><dd>Official Accreditation Roster</dd></div>
+                </dl>
               </div>
               <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
                 <a href="/downloads" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1">
@@ -561,7 +561,7 @@
                   <span>Inquire</span>
                 </a>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -606,7 +606,7 @@
           </div>
 
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">Quick Navigation</h4>
+            <h3 class="font-bold text-amber-300 text-sm mb-3">Quick Navigation</h3>
             <ul class="space-y-1.5">
               <li><a href="/" class="footer-link">Home</a></li>
               <li><a href="/about" class="footer-link">About Us</a></li>
@@ -617,7 +617,7 @@
           </div>
 
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">Championship &amp; Portal</h4>
+            <h3 class="font-bold text-amber-300 text-sm mb-3">Championship &amp; Portal</h3>
             <ul class="space-y-1.5">
               <li><a href="/events" class="footer-link">Inter-District Championship</a></li>
               <li><a href="/nominate" class="footer-link">Athlete Registration</a></li>
@@ -628,7 +628,7 @@
           </div>
 
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">Affiliation &amp; Contacts</h4>
+            <h3 class="font-bold text-amber-300 text-sm mb-3">Affiliation &amp; Contacts</h3>
             <p class="text-slate-400 text-xs leading-relaxed mb-2">
               Affiliated to the Yoga Federation of India. Operating in coordination with verified district yoga bodies.
             </p>
@@ -654,7 +654,7 @@
         <!-- GIGW 3.0 Compliance Metadata (5.1.5 Content Review Policy & 5.4.1 Web Information Manager) -->
         <div class="mt-6 pt-4 border-t border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between text-slate-400 text-[10px] sm:text-[11px] gap-2">
           <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>Page Last Reviewed: <strong class="text-slate-200">10 October 2026</strong></span>
+            <span>Page Last Reviewed: <strong class="text-slate-200"><time datetime="2026-10-10">10 October 2026</time></strong></span>
             <span class="text-slate-600 hidden sm:inline">&bull;</span>
             <span>Content Ownership: <strong class="text-slate-200">Telangana Yoga Association</strong></span>
           </div>

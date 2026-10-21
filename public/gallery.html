@@ -279,7 +279,7 @@
 
         <!-- Template for Verified Photo Cards (supports WebP and Responsive Formats) -->
         <template id="gallery-card-template">
-          <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="live" data-live="true">
+          <figure class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="live" data-live="true">
             <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
               <picture class="w-full h-full block">
                 <source type="image/webp" srcset="/static/images/gallery/DSC_8583.webp" />
@@ -294,7 +294,7 @@
                 />
               </picture>
             </div>
-          </div>
+          </figure>
         </template>
       </div>
     </main>
@@ -310,7 +310,7 @@
         </div>
       </div>
       <div class="max-w-6xl mx-auto mt-3 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-500 gap-1">
-        <div>Page Last Reviewed: <strong class="text-slate-400">10 October 2026</strong> &bull; Content Ownership: Telangana Yoga Association</div>
+        <div>Page Last Reviewed: <strong class="text-slate-400"><time datetime="2026-10-10">10 October 2026</time></strong> &bull; Content Ownership: Telangana Yoga Association</div>
         <div>Web Information Manager: <a href="mailto:wim@telanganayoga.org.in" class="text-amber-300 hover:underline">wim@telanganayoga.org.in</a></div>
       </div>
     </footer>
@@ -360,7 +360,7 @@
 
               if (grid) {
                 const dynamicHtml = photos.map(p => `
-                  <div class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="live" data-live="true">
+                  <figure class="gallery-card bg-white rounded-xl overflow-hidden border border-slate-200 shadow-xs flex flex-col h-full" data-cat="live" data-live="true">
                     <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
                       <img
                         src="${escapeHtml(p.thumbnailPath || p.filePath)}"
@@ -372,17 +372,17 @@
                       />
                       ${p.isCover ? '<span class="gallery-card-badge absolute top-2 left-2 bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow">COVER</span>' : '<span class="gallery-card-badge absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-xs">Championship Update</span>'}
                     </div>
-                    <div class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
+                    <figcaption class="gallery-card-body p-3.5 bg-white flex flex-col flex-1 justify-between">
                       <div>
-                        <h2 class="gallery-card-title font-bold text-slate-900 text-xs">${escapeHtml(p.title)}</h2>
+                        <h3 class="gallery-card-title font-bold text-slate-900 text-xs">${escapeHtml(p.title)}</h3>
                         <p class="gallery-card-desc text-[11px] text-slate-500 mt-1">${escapeHtml(p.caption || '')}</p>
                       </div>
                       <div class="gallery-card-footer mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
                         <span>${escapeHtml(p.district && p.district !== 'ALL' ? p.district : 'Statewide')}</span>
-                        <span>${new Date(p.createdAt).toLocaleDateString('en-GB')}</span>
+                        <time datetime="${new Date(p.createdAt).toISOString()}">${new Date(p.createdAt).toLocaleDateString('en-GB')}</time>
                       </div>
-                    </div>
-                  </div>
+                    </figcaption>
+                  </figure>
                 `).join("");
                 grid.innerHTML = dynamicHtml;
 

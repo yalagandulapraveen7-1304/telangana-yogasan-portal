@@ -285,11 +285,7 @@
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div
-          id="nav-menu"
-          class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60"
-          aria-hidden="true"
-        >
+        <nav id="nav-menu" class="mobile-nav-drawer lg:hidden border-t border-emerald-700/60" aria-label="Mobile Navigation" aria-hidden="true">
           <div class="nav-menu-inner min-h-0 pt-2.5 pb-3 space-y-1">
             <a
               href="/"
@@ -397,14 +393,13 @@
               </a>
             </div>
           </div>
-        </div>
+        </nav>
       </div>
     </header>
 
     <!-- Live Marquee Ticker -->
-    <div
+    <aside
       class="marquee-bar py-1 px-4 text-xs font-semibold text-slate-900 flex items-center border-b border-amber-300/50 relative z-20"
-      role="region"
       aria-label="Live updates ticker"
     >
       <div
@@ -418,7 +413,7 @@
           Registration is now open for Sub-Junior, Junior, and Senior age groups. &bull; Please keep your Aadhaar card or birth certificate ready as proof of age. &bull; Check the notice board below for competition dates and locations. &bull; For inquiries, contact the State Secretariat at contact@telanganayoga.org.in.
         </div>
       </div>
-    </div>
+    </aside>
 
     <main id="main-content" tabindex="-1" class="flex-grow outline-none">
       <!-- Hero Banner -->
@@ -615,7 +610,7 @@
 
           <div id="notices-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Notice 1 -->
-            <div
+            <article
               class="card p-5 flex flex-col justify-between border-l-4 border-l-emerald-600"
             >
               <div>
@@ -651,10 +646,10 @@
                   ></i>
                 </a>
               </div>
-            </div>
+            </article>
 
             <!-- Notice 2 -->
-            <div
+            <article
               class="card p-5 flex flex-col justify-between border-l-4 border-l-blue-600"
             >
               <div>
@@ -688,10 +683,10 @@
                   ></i>
                 </a>
               </div>
-            </div>
+            </article>
 
             <!-- Notice 3 -->
-            <div
+            <article
               class="card p-5 flex flex-col justify-between border-l-4 border-l-amber-600"
             >
               <div>
@@ -725,7 +720,7 @@
                   ></i>
                 </a>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -747,7 +742,7 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             <!-- Discipline 1 -->
-            <div
+            <article
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
               <h3 class="font-bold text-lg text-slate-900 mb-2">
@@ -761,10 +756,10 @@
               >
                 Holding &bull; Form &bull; Balance
               </div>
-            </div>
+            </article>
 
             <!-- Discipline 2 -->
-            <div
+            <article
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
               <h3 class="font-bold text-lg text-slate-900 mb-2">
@@ -778,10 +773,10 @@
               >
                 Music &bull; Grace &bull; Flexibility
               </div>
-            </div>
+            </article>
 
             <!-- Discipline 3 -->
-            <div
+            <article
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
               <h3 class="font-bold text-lg text-slate-900 mb-2">
@@ -795,10 +790,10 @@
               >
                 Teamwork &bull; Partner lifts
               </div>
-            </div>
+            </article>
 
             <!-- Discipline 4 -->
-            <div
+            <article
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
               <h3 class="font-bold text-lg text-slate-900 mb-2">
@@ -812,10 +807,10 @@
               >
                 Smooth flow &bull; Music tempo
               </div>
-            </div>
+            </article>
 
             <!-- Discipline 5 -->
-            <div
+            <article
               class="card p-6 text-center flex flex-col items-center bg-white hover:border-[#C5A059]"
             >
               <h3 class="font-bold text-lg text-slate-900 mb-2">Free Flow</h3>
@@ -827,7 +822,7 @@
               >
                 Flow &bull; Grace &bull; Breath control
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -848,7 +843,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <!-- Sub-Junior -->
-            <div class="age-card bg-amber-50/50 border border-amber-200">
+            <article class="age-card bg-amber-50/50 border border-amber-200">
               <span class="badge badge-subjunior mb-2">Category 1</span>
               <h3 class="text-xl font-bold text-slate-900 mb-1">
                 Sub-Junior Division
@@ -882,10 +877,10 @@
                 Events: Traditional, Artistic Solo &amp; Pair, Rhythmic, Free
                 Flow
               </div>
-            </div>
+            </article>
 
             <!-- Junior -->
-            <div class="age-card bg-[#f1f5f9] border border-[#e2e8f0]">
+            <article class="age-card bg-[#f1f5f9] border border-[#e2e8f0]">
               <span class="badge badge-junior mb-2">Category 2</span>
               <h3 class="text-xl font-bold text-slate-900 mb-1">
                 Junior Division
@@ -912,10 +907,10 @@
               >
                 Events: All Championship Disciplines
               </div>
-            </div>
+            </article>
 
             <!-- Senior -->
-            <div class="age-card bg-emerald-50/50 border border-emerald-200">
+            <article class="age-card bg-emerald-50/50 border border-emerald-200">
               <span class="badge badge-senior mb-2">Category 3</span>
               <h3 class="text-xl font-bold text-slate-900 mb-1">
                 Senior Division
@@ -948,7 +943,7 @@
               >
                 Events: All Championship Disciplines (Men &amp; Women)
               </div>
-            </div>
+            </article>
           </div>
 
           <!-- Scrutiny note -->
@@ -1353,9 +1348,9 @@
 
           <!-- Col 2 -->
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">
+            <h3 class="font-bold text-amber-300 text-sm mb-3">
               Quick Navigation
-            </h4>
+            </h3>
             <ul class="space-y-1.5">
               <li>
                 <a href="/about" class="footer-link">About Us</a>
@@ -1380,9 +1375,9 @@
 
           <!-- Col 3 -->
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">
+            <h3 class="font-bold text-amber-300 text-sm mb-3">
               Portals &amp; Downloads
-            </h4>
+            </h3>
             <ul class="space-y-1.5">
               <li>
                 <a href="/results" class="footer-link">Results &amp; Admit Cards</a>
@@ -1404,9 +1399,9 @@
 
           <!-- Col 4 -->
           <div>
-            <h4 class="font-bold text-amber-300 text-sm mb-3">
+            <h3 class="font-bold text-amber-300 text-sm mb-3">
               Affiliation &amp; Compliance
-            </h4>
+            </h3>
             <p class="text-slate-400 text-xs leading-relaxed mb-2">
               Affiliated with the Yoga Federation of India. Technical guidelines and championship operations conform to recognized national federations.
             </p>
@@ -1436,7 +1431,7 @@
         <!-- GIGW 3.0 Compliance Metadata (5.1.5 Content Review Policy & 5.4.1 Web Information Manager) -->
         <div class="mt-6 pt-4 border-t border-emerald-800/60 flex flex-col sm:flex-row items-center justify-between text-slate-400 text-[10px] sm:text-[11px] gap-2">
           <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>Page Last Reviewed: <strong class="text-slate-200">10 October 2026</strong></span>
+            <span>Page Last Reviewed: <strong class="text-slate-200"><time datetime="2026-10-10">10 October 2026</time></strong></span>
             <span class="text-slate-600 hidden sm:inline">&bull;</span>
             <span>Content Ownership: <strong class="text-slate-200">Telangana Yoga Association</strong></span>
           </div>
@@ -1518,11 +1513,11 @@
                 const bodyText = (n.summary || n.body || '').trim();
 
                 return `
-                  <div class="card p-5 flex flex-col justify-between border-l-4 ${catClass}">
+                  <article class="card p-5 flex flex-col justify-between border-l-4 ${catClass}">
                     <div>
                       <div class="flex items-center justify-between mb-2.5">
                         <span class="notice-tag tag-new"><span class="pulse-dot mr-1"></span> [${escapeHtml(n.category)}]</span>
-                        <span class="text-[11px] text-slate-500 font-medium">${new Date(n.createdAt).toLocaleDateString('en-GB')}</span>
+                        <time datetime="${new Date(n.createdAt).toISOString()}" class="text-[11px] text-slate-500 font-medium">${new Date(n.createdAt).toLocaleDateString('en-GB')}</time>
                       </div>
                       <h3 class="font-bold text-slate-900 text-base mb-2 hover:text-[#0D5C3A]">${escapeHtml(n.title)}</h3>
                       <p class="text-xs text-slate-600 leading-relaxed mb-4">${escapeHtml(bodyText) || 'Official circular issued by Telangana Yoga Association. Please review for details.'}</p>
@@ -1531,11 +1526,15 @@
                       <span class="text-[11px] font-semibold text-slate-500">${escapeHtml(n.district && n.district !== 'ALL' ? 'Dist: ' + n.district : 'Statewide')}</span>
                       ${downloadLink}
                     </div>
-                  </div>
+                  </article>
                 `;
               }).join("");
             }
           }
+        } catch (e) {
+          console.warn("Could not load dynamic notices:", e);
+        }
+
         // 3. Fetch latest published gallery photos
         try {
           const res = await fetch("/portal/photos?limit=6");
@@ -1552,7 +1551,7 @@
                 const captionText = escapeHtml(p.caption || p.competitionId || '');
 
                 return `
-                  <div class="gallery-card bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs flex flex-col h-full hover:shadow-md transition">
+                  <figure class="gallery-card bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs flex flex-col h-full hover:shadow-md transition">
                     <div class="gallery-img-wrap relative w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0" style="aspect-ratio: 3/2;">
                       <img
                         src="${imgSrc}"
@@ -1566,13 +1565,13 @@
                         ${badgeText}
                       </span>
                     </div>
-                    <div class="p-3 bg-white flex flex-col flex-grow justify-between">
+                    <figcaption class="p-3 bg-white flex flex-col flex-grow justify-between">
                       <div class="text-[11px] sm:text-xs font-semibold text-slate-800 line-clamp-1">
                         ${titleText}
                       </div>
                       ${captionText ? `<div class="text-[10px] text-slate-500 line-clamp-1 mt-0.5">${captionText}</div>` : ''}
-                    </div>
-                  </div>
+                    </figcaption>
+                  </figure>
                 `;
               }).join("");
               const emptyEl = document.getElementById("homepage-gallery-empty");
