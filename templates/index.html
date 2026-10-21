@@ -419,15 +419,6 @@
           Registration is now open for Sub-Junior, Junior, and Senior age groups. &bull; Please keep your Aadhaar card or birth certificate ready as proof of age. &bull; Check the notice board below for competition dates and locations. &bull; Need help? Call +91 98490 12345.
         </div>
       </div>
-      <button
-        id="btn-toggle-marquee"
-        type="button"
-        aria-label="Pause live updates ticker"
-        title="Pause or play live updates ticker"
-        class="ml-2 text-slate-700 hover:text-slate-900 text-xs px-2 py-0.5 rounded border border-slate-300 bg-white/80 transition flex items-center gap-1 flex-shrink-0"
-      >
-        <i class="fa-solid fa-pause" aria-hidden="true"></i>
-      </button>
     </div>
 
     <main id="main-content" tabindex="-1" class="flex-grow outline-none">
@@ -1606,18 +1597,7 @@
           try { localStorage.setItem("tya_font_scale", "100%"); } catch (e) {}
         });
 
-      // Accessible Marquee Play/Pause Toggle
-      const btnToggle = document.getElementById("btn-toggle-marquee");
       const tickerContent = document.getElementById("marquee-ticker-text");
-      if (btnToggle && tickerContent) {
-        let isPaused = false;
-        btnToggle.addEventListener("click", () => {
-          isPaused = !isPaused;
-          tickerContent.style.animationPlayState = isPaused ? "paused" : "running";
-          btnToggle.setAttribute("aria-label", isPaused ? "Play live updates ticker" : "Pause live updates ticker");
-          btnToggle.innerHTML = isPaused ? '<i class="fa-solid fa-play" aria-hidden="true"></i>' : '<i class="fa-solid fa-pause" aria-hidden="true"></i>';
-        });
-      }
 
       // Dynamic Marquee Ticker & Notice Board Loader
       document.addEventListener("DOMContentLoaded", async () => {
