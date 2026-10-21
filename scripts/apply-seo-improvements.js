@@ -96,7 +96,6 @@ const sportsOrgSchema = {
   'url': `${siteUrl}/`,
   'logo': `${siteUrl}/static/images/TSYSC.png`,
   'email': 'contact@telanganayoga.org.in',
-  'telephone': '+91-98490-12345',
   'address': {
     '@type': 'PostalAddress',
     'streetAddress': 'State Sports Secretariat',

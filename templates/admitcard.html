@@ -270,9 +270,9 @@
           }
           document.getElementById("card-name").textContent = fullName;
           document.getElementById("card-chest").textContent =
-            athlete.chestNumber || "HYD-JR-01";
+            athlete.chestNumber || "Pending Verification";
           document.getElementById("card-category").textContent =
-            athlete.category || "Junior";
+            athlete.category || "-";
           document.getElementById("card-district").textContent =
             athlete.district || "-";
           document.getElementById("card-status").textContent =
@@ -291,9 +291,9 @@
           document.getElementById("card-institution").textContent =
             athlete.institutionName || "-";
           document.getElementById("card-events").textContent =
-            (athlete.events || []).join(", ") || "Traditional Yogasana";
+            (athlete.events && athlete.events.length) ? athlete.events.join(", ") : "-";
           document.getElementById("card-aadhaar").textContent =
-            `**** **** ${athlete.aadhaarLast4 || "0000"}`;
+            athlete.aadhaarLast4 ? `**** **** ${athlete.aadhaarLast4}` : "-";
 
           // Handle Photo with descriptive accessible alt text (WCAG 1.1.1)
           if (athlete.photoPath) {

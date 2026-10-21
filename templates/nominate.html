@@ -697,16 +697,6 @@
     if (hiddenInput) {
       hiddenInput.value = activeDist || "Hyderabad";
     }
-
-    // Default sample date
-    window.addEventListener('DOMContentLoaded', () => {
-      const dobEl = document.getElementById('dob-input');
-      if (dobEl && !dobEl.value) {
-        dobEl.value = '2012-04-18';
-        dobEl.dispatchEvent(new Event('change'));
-      }
-    });
-
   </script>
 </body>
 </html>

@@ -151,9 +151,8 @@
             >
               Hyderabad District Yoga Association
             </div>
-            <div class="text-xs text-slate-600">
-              Secretary: K. Ramanjaneyulu | Contact: +91 98480 12345 |
-              sec_hyderabad@telanganayoga.org
+            <div class="text-xs text-slate-600" id="district-banner-subtitle">
+              Official District Chapter Session &bull; Authorized Secretary Portal
             </div>
           </div>
         </div>
@@ -1216,10 +1215,12 @@
         const badgeEl = document.querySelector("header .bg-amber-400");
         const compBtn = document.getElementById("btn-manage-competitions");
 
+        const subtitleEl = document.getElementById("district-banner-subtitle");
         if (userRole === "SUPER_ADMIN" || savedDistrict === "ALL_DISTRICTS") {
           if (headerEl) headerEl.textContent = "ALL_DISTRICTS Dashboard";
           if (pageEl) pageEl.textContent = "Statewide Super Admin Dashboard";
-          if (bannerEl) bannerEl.textContent = "ALL_DISTRICTS Yoga Association";
+          if (bannerEl) bannerEl.textContent = "Statewide Yoga Association";
+          if (subtitleEl) subtitleEl.textContent = "Statewide Administration • Official State Secretariat Portal";
           if (badgeEl) badgeEl.textContent = "ALL";
           if (compBtn) compBtn.classList.remove("hidden");
         } else {
@@ -1230,6 +1231,8 @@
               savedDistrict + " District Secretary Dashboard";
           if (bannerEl)
             bannerEl.textContent = savedDistrict + " District Yoga Association";
+          if (subtitleEl)
+            subtitleEl.textContent = `${savedDistrict} District Chapter • Authorized Secretary Portal`;
           if (badgeEl)
             badgeEl.textContent = savedDistrict.substring(0, 3).toUpperCase();
         }
