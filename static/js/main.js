@@ -259,7 +259,6 @@ function initDOBCalculator() {
     // Remove old classes, apply new
     badge.className = 'badge ' + cat.cssClass;
     badge.style.fontSize = '.85rem';
-    badge.style.padding  = '.35rem 1.1rem';
 
     // Update hidden category input for backend submission
     if (hiddenCat) hiddenCat.value = cat.name;

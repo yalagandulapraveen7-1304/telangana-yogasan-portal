@@ -594,33 +594,37 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Status Badges ──────────────────────────────────────────── */
 .badge {
   display: inline-block;
-  font-size: .7rem;
+  font-size: .75rem;
   font-weight: 700;
-  letter-spacing: .04em;
-  padding: .2rem .6rem;
-  border-radius: 9999px;
+  letter-spacing: .05em;
+  padding: 0;
+  border-radius: 0;
+  background: transparent !important;
   text-transform: uppercase;
   white-space: nowrap;
 }
-.badge-submitted  { background: #dbeafe; color: #1d4ed8; }
-.badge-verified   { background: #dcfce7; color: #15803d; }
-.badge-rejected   { background: #fce7f3; color: #be185d; }
-.badge-pending    { background: #fef9c3; color: #854d0e; }
-.badge-subjunior  { background: #ede9fe; color: #6d28d9; }
-.badge-junior     { background: #dbeafe; color: #1d4ed8; }
-.badge-senior     { background: #dcfce7; color: #15803d; }
-.badge-ineligible { background: #f1f5f9; color: #64748b; }
+.badge-submitted  { color: #1d4ed8; }
+.badge-verified   { color: #15803d; }
+.badge-rejected   { color: #be185d; }
+.badge-pending    { color: #854d0e; }
+.badge-subjunior  { color: #6d28d9; }
+.badge-junior     { color: #1d4ed8; }
+.badge-senior     { color: #15803d; }
+.badge-ineligible { color: #64748b; }
 
 /* ── Category Computed Badge ─────────────────────────────────── */
 #age-category-badge {
-  display: inline-flex; align-items: center; gap: .4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
   font-size: .85rem;
   font-weight: 700;
-  padding: .4rem 1.1rem;
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  transition: all .3s;
-  min-height: 2rem;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  background: transparent !important;
+  transition: color .3s;
+  min-height: 1.5rem;
 }
 
 /* ── Upload Preview ─────────────────────────────────────────── */
