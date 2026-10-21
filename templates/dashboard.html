@@ -598,7 +598,7 @@
                 Add tournament action shots. High-performance WebP thumbnails will be generated automatically.
               </p>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+            <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wide">
               Gallery Media
             </span>
           </div>
@@ -706,7 +706,7 @@
                 Publish official circulars, rule changes, schedule notices, and homepage marquee ticker items.
               </p>
             </div>
-            <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+            <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wide">
               Notice Board
             </span>
           </div>
@@ -834,7 +834,7 @@
                 Official activity record of administrative updates, approvals, uploads, and removals.
               </p>
             </div>
-            <span class="text-xs font-semibold text-purple-900 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full self-start sm:self-auto">
+            <span class="text-xs font-semibold text-purple-900 uppercase tracking-wide self-start sm:self-auto">
               Official Activity Log
             </span>
           </div>
@@ -1406,16 +1406,16 @@
           const eventTags = (athlete.events || [])
             .map(
               (ev) =>
-                `<span class="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">${escapeHtml(ev)}</span>`,
+                `<span class="text-[11px] text-slate-700 font-medium">${escapeHtml(ev)}</span>`,
             )
-            .join(" ");
+            .join(", ");
 
           const row = document.createElement("tr");
           row.className = "hover:bg-slate-50 transition-colors text-sm";
           row.innerHTML = `
           <td class="font-mono font-bold text-xs text-[#0D5C3A] py-3.5 px-4">${chest}</td>
           <td class="py-3.5 px-4">
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <span class="text-xs font-semibold text-emerald-800">
               ${escapeHtml(athlete.competitionId || "tysc-state-2026")}
             </span>
           </td>
@@ -1660,7 +1660,7 @@
               <tr class="hover:bg-slate-50">
                 <td class="p-3 font-mono text-[11px] font-bold text-emerald-800">${safeId}</td>
                 <td class="p-3 font-medium text-slate-900">${safeName}</td>
-                <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-semibold">${safeType}</span></td>
+                <td class="p-3"><span class="text-slate-700 text-xs font-semibold uppercase tracking-wider">${safeType}</span></td>
                 <td class="p-3 font-semibold text-slate-800">${fee}</td>
                 <td class="p-3 text-slate-600">${cutoff}</td>
                 <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${statusClass}">${escapeHtml(c.status)}</span></td>
@@ -2008,7 +2008,7 @@
           tbody.innerHTML = notices.map(n => {
             const safeId = encodeURIComponent(n._id);
             const statusClass = n.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700';
-            const catBadge = n.category === 'CIRCULAR' ? 'bg-blue-100 text-blue-800' : n.category === 'SCHEDULE_UPDATE' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-800';
+            const catBadge = n.category === 'CIRCULAR' ? 'text-blue-800' : n.category === 'SCHEDULE_UPDATE' ? 'text-purple-800' : 'text-slate-800';
             const marqueeBadge = n.isMarquee
               ? `<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-bold text-[10px]"><i class="fa-solid fa-bolt text-amber-600" aria-hidden="true"></i> Active #${n.marqueeOrder || 0}</span>`
               : `<span class="text-slate-400 text-[10px]">Off</span>`;
@@ -2022,7 +2022,7 @@
                 <td class="p-3">
                   <div class="font-bold text-slate-900">${escapeHtml(n.title)}</div>
                   <div class="flex items-center gap-2 mt-1">
-                    <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded ${catBadge}">${escapeHtml(n.category)}</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider ${catBadge}">${escapeHtml(n.category)}</span>
                     <span class="text-[11px] text-slate-500 line-clamp-1">${escapeHtml(n.summary || '')}</span>
                   </div>
                 </td>
@@ -2213,7 +2213,7 @@
                   <div class="text-[10px] text-slate-400">${escapeHtml(l.actorRole)} &bull; ${escapeHtml(l.actorDistrict)}</div>
                 </td>
                 <td class="p-3">
-                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-[#0D5C3A] border border-emerald-200">
+                  <span class="text-[10px] font-bold text-[#0D5C3A] uppercase tracking-wide">
                     ${escapeHtml(l.action)}
                   </span>
                 </td>
@@ -2279,7 +2279,7 @@
                   <td class="p-3 font-mono text-[11px] text-slate-500">${escapeHtml(new Date(log.loginAt).toLocaleString())}</td>
                   <td class="p-3 font-semibold text-slate-900">${escapeHtml(log.email)}</td>
                   <td class="p-3">
-                    <span class="bg-emerald-50 text-[#0D5C3A] px-2 py-0.5 rounded font-medium">${escapeHtml(log.district)}</span>
+                    <span class="text-[#0D5C3A] font-semibold">${escapeHtml(log.district)}</span>
                     <span class="text-[10px] text-slate-400 block">${escapeHtml(log.role)}</span>
                   </td>
                   <td class="p-3 font-mono text-[11px]">${escapeHtml(log.ipAddress)}</td>

@@ -308,17 +308,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 .notice-tag {
   display: inline-block;
-  font-size: .65rem;
+  font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .06em;
-  padding: .15rem .5rem;
-  border-radius: 9999px;
+  padding: 0;
+  background: transparent;
   text-transform: uppercase;
 }
-.tag-new      { background: #dcfce7; color: #15803d; }
-.tag-circular { background: #dbeafe; color: #1d4ed8; }
-.tag-schedule { background: #fef9c3; color: #854d0e; }
-.tag-result   { background: #fce7f3; color: #9d174d; }
+.tag-new      { color: #15803d; background: transparent; }
+.tag-circular { color: #1d4ed8; background: transparent; }
+.tag-schedule { color: #854d0e; background: transparent; }
+.tag-result   { color: #9d174d; background: transparent; }
 
 /* ── Status dot indicator ───────────────────────────────────── */
 .pulse-dot {
@@ -431,14 +431,13 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Section Headings ───────────────────────────────────────── */
 .section-badge {
   display: inline-block;
-  background: var(--green-light);
+  background: transparent;
   color: var(--green-primary);
   font-size: .75rem;
   font-weight: 700;
   letter-spacing: .08em;
   text-transform: uppercase;
-  padding: .3rem .9rem;
-  border-radius: 9999px;
+  padding: 0;
   margin-bottom: .75rem;
 }
 .section-divider {
