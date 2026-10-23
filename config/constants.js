@@ -10,11 +10,11 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/telangana_
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 // JWT Secret Validation & Fail-Fast Enforcement
-const rawJwtSecret = process.env.JWT_SECRET || (process.env.VERCEL ? 'telangana_yogasana_portal_vercel_default_secure_secret_key_32_chars' : null);
-if (!rawJwtSecret) {
+const rawJwtSecret = process.env.JWT_SECRET;
+if (!rawJwtSecret || typeof rawJwtSecret !== 'string' || !rawJwtSecret.trim()) {
   throw new Error('FATAL: JWT_SECRET environment variable is required and not set');
 }
-if (typeof rawJwtSecret !== 'string' || rawJwtSecret.trim().length < 32) {
+if (rawJwtSecret.trim().length < 32) {
   throw new Error('FATAL: JWT_SECRET must be at least 32 characters long to ensure adequate entropy');
 }
 const JWT_SECRET = rawJwtSecret.trim();
