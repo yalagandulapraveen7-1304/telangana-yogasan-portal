@@ -69,7 +69,7 @@ router.post('/login', loginLimiter, async (req, res) => {
 
     if (!user || !(await user.comparePassword(password))) {
       if (user) {
-        await LoginLog.create({
+        LoginLog.create({
           email: user.email,
           district: user.district,
           role: user.role,
@@ -77,13 +77,13 @@ router.post('/login', loginLimiter, async (req, res) => {
           ipAddress: clientIp,
           userAgent,
           status: 'FAILED'
-        });
+        }).catch((err) => console.error('Audit log error (failed login):', err.message));
       }
       return res.status(401).json({ success: false, error: 'Invalid email or password' });
     }
 
-    // Record successful login
-    await LoginLog.create({
+    // Record successful login asynchronously without blocking the client response
+    LoginLog.create({
       email: user.email,
       district: user.district,
       role: user.role,
@@ -91,7 +91,7 @@ router.post('/login', loginLimiter, async (req, res) => {
       ipAddress: clientIp,
       userAgent,
       status: 'SUCCESS'
-    });
+    }).catch((err) => console.error('Audit log error (successful login):', err.message));
 
     const token = jwt.sign(
       {

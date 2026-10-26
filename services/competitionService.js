@@ -39,19 +39,27 @@ const DEFAULT_COMPETITION = {
   isDefault: true
 };
 
+let cachedDefaultComp = null;
+
 /**
  * Ensures at least the default competition exists in the database.
+ * Caches in-memory to prevent repeated redundant DB lookups on high-frequency endpoints.
  */
 async function ensureDefaultCompetition() {
+  if (cachedDefaultComp) {
+    return cachedDefaultComp;
+  }
   try {
     let comp = await Competition.findOne({ competitionId: DEFAULT_COMPETITION_ID });
     if (!comp) {
       comp = await Competition.create(DEFAULT_COMPETITION);
     }
+    cachedDefaultComp = comp;
     return comp;
   } catch (err) {
     if (err.code === 11000) {
-      return Competition.findOne({ competitionId: DEFAULT_COMPETITION_ID });
+      cachedDefaultComp = await Competition.findOne({ competitionId: DEFAULT_COMPETITION_ID });
+      return cachedDefaultComp;
     }
     throw err;
   }

@@ -38,6 +38,7 @@ router.get('/', apiLimiter, async (_req, res) => {
  * Protected endpoint for District Secretaries and Admins to view all competitions (including DRAFT/CLOSED).
  */
 router.get('/all', requireAuth, async (_req, res) => {
+  res.set('Cache-Control', 'private, max-age=15, stale-while-revalidate=30');
   try {
     await ensureDefaultCompetition();
     const competitions = await Competition.find().sort({ createdAt: -1 }).lean();

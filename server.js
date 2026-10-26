@@ -243,18 +243,6 @@ app.get('/uploads/:filename', requireAuth, async (req, res) => {
   }
 });
 
-// Database connection assurance for serverless environments (Vercel)
-app.use(async (req, _res, next) => {
-  if (req.path.startsWith('/auth') || req.path.startsWith('/portal') || req.path.startsWith('/uploads')) {
-    try {
-      await connectDB();
-    } catch (err) {
-      console.error('Serverless database connection error:', err.message);
-    }
-  }
-  next();
-});
-
 // 4. API Routes
 app.use('/auth', apiLimiter, authRoutes);
 app.use(
