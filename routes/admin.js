@@ -134,33 +134,44 @@ router.post('/photos', requireAuth, upload.single('photo'), convertUploadedImage
     const order = typeof body.order === 'number' ? body.order : parseInt(body.order, 10) || 0;
     const status = ['DRAFT', 'PUBLISHED', 'ARCHIVED'].includes(body.status) ? body.status : 'PUBLISHED';
 
-    // Generate optimized thumbnail using sharp
+    // Generate optimized display image and thumbnail in parallel using sharp
     let thumbnailFilename = filename;
     let thumbDiskPath = tempPath;
+    let imgBuf = null;
+    let thumbBuf = null;
+
     try {
       const thumbName = `thumb-${path.parse(filename).name}.webp`;
       thumbDiskPath = path.join(storageDir, thumbName);
 
-      await sharp(tempPath)
-        .resize(480, 320, { fit: 'cover' })
-        .toFormat('webp', { quality: 80 })
-        .toFile(thumbDiskPath);
+      const rawInputBuffer = fs.readFileSync(tempPath);
 
+      // Concurrently optimize display image (max 1920px) and thumbnail (480x320) from in-memory buffer (avoids file locking)
+      const [displayBuffer, thumbnailBuffer] = await Promise.all([
+        sharp(rawInputBuffer)
+          .resize(1920, 1080, { fit: 'inside', withoutEnlargement: true })
+          .toFormat('webp', { quality: 80 })
+          .toBuffer(),
+        sharp(rawInputBuffer)
+          .resize(480, 320, { fit: 'cover' })
+          .toFormat('webp', { quality: 75 })
+          .toBuffer()
+      ]);
+
+      fs.writeFileSync(tempPath, displayBuffer);
+      fs.writeFileSync(thumbDiskPath, thumbnailBuffer);
+
+      imgBuf = displayBuffer;
+      thumbBuf = thumbnailBuffer;
       thumbnailFilename = thumbName;
     } catch (sharpErr) {
-      console.warn('Sharp thumbnail generation notice:', sharpErr.message);
-      thumbnailFilename = filename;
-      thumbDiskPath = tempPath;
-    }
-
-    // Read binary buffers for serverless persistence (e.g. Vercel ephemeral /tmp)
-    let imgBuf = null;
-    let thumbBuf = null;
-    try {
-      imgBuf = fs.readFileSync(tempPath);
-      thumbBuf = fs.existsSync(thumbDiskPath) ? fs.readFileSync(thumbDiskPath) : imgBuf;
-    } catch (readErr) {
-      console.warn('Could not read image buffers:', readErr.message);
+      console.warn('Sharp optimization notice:', sharpErr.message);
+      try {
+        imgBuf = fs.readFileSync(tempPath);
+        thumbBuf = imgBuf;
+      } catch (readErr) {
+        console.warn('Could not read image buffers:', readErr.message);
+      }
     }
 
     // If marked as cover, unmark existing covers for this competition
@@ -185,15 +196,20 @@ router.post('/photos', requireAuth, upload.single('photo'), convertUploadedImage
       mimeType: req.file.mimetype || 'image/jpeg'
     });
 
-    await logAdminAction({
+    logAdminAction({
       req,
       action: 'UPLOAD_PHOTO',
       targetType: 'PHOTO',
       targetId: String(newPhoto._id),
       details: { title, competitionId, district, isCover, status }
-    });
+    }).catch((err) => console.warn('Audit log photo notice:', err.message));
 
-    return res.status(201).json({ success: true, photo: newPhoto });
+    // Exclude heavy binary buffers from the JSON response to prevent blocking JSON serialization
+    const photoResponse = newPhoto.toObject();
+    delete photoResponse.imageData;
+    delete photoResponse.thumbnailData;
+
+    return res.status(201).json({ success: true, photo: photoResponse });
   } catch (err) {
     console.error('Error uploading photo:', err.message);
     return res.status(500).json({ success: false, error: 'Failed to upload photo.' });

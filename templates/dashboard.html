@@ -1974,10 +1974,10 @@
           const form = document.getElementById("upload-photo-form");
           const formData = new FormData(form);
 
-          // If image is larger than 4MB, downscale / compress in browser so it stays safely under Vercel's 4.5MB serverless gateway limit
-          if (file.size > 4 * 1024 * 1024) {
+          // If image is larger than 800KB, downscale / compress in browser so it uploads in milliseconds and stays well under gateway limits
+          if (file.size > 800 * 1024) {
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1" aria-hidden="true"></i> Optimizing Image (${(file.size / (1024 * 1024)).toFixed(1)}MB)...`;
-            const optimizedFile = await compressImageClientSide(file, 2560, 0.90);
+            const optimizedFile = await compressImageClientSide(file, 2048, 0.88);
             formData.set("photo", optimizedFile);
           }
 
