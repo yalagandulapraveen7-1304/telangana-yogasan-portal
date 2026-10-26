@@ -607,7 +607,7 @@
 
           <form id="upload-photo-form" onsubmit="handleUploadPhoto(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
             <div class="sm:col-span-2">
-              <label for="photo-file" class="block font-semibold text-slate-700 mb-1">Image File <span class="text-red-500">*</span> (JPG, PNG, WEBP, max 5MB)</label>
+              <label for="photo-file" class="block font-semibold text-slate-700 mb-1">Image File <span class="text-red-500">*</span> (JPG, PNG, WEBP, max 7MB)</label>
               <input type="file" id="photo-file" name="photo" required accept=".jpg,.jpeg,.png,.webp" class="form-input text-xs w-full bg-slate-50 border border-slate-300 rounded-lg p-2 focus:bg-white" />
             </div>
 
@@ -1905,14 +1905,82 @@
         }
       }
 
+      function compressImageClientSide(file, maxDimension = 2560, quality = 0.90) {
+        return new Promise((resolve) => {
+          if (!file || !file.type || !file.type.startsWith("image/") || file.type === "image/svg+xml") {
+            return resolve(file);
+          }
+          const img = new Image();
+          const url = URL.createObjectURL(file);
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              if (!blob) return resolve(file);
+              const outputType = file.type === "image/png" ? "image/png" : "image/jpeg";
+              const optimized = new File([blob], file.name, {
+                type: blob.type || outputType,
+                lastModified: Date.now()
+              });
+              resolve(optimized);
+            }, file.type === "image/png" ? "image/png" : "image/jpeg", quality);
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            resolve(file);
+          };
+          img.src = url;
+        });
+      }
+
       async function handleUploadPhoto(e) {
         e.preventDefault();
         const btn = document.getElementById("btn-upload-photo");
-        if (btn) btn.disabled = true;
+        const originalBtnHtml = btn ? btn.innerHTML : "";
+        const fileInput = document.getElementById("photo-file");
+        const file = fileInput?.files?.[0];
+
+        if (!file) {
+          alert("Please select an image file to upload.");
+          return;
+        }
+
+        const MAX_BYTES = 7 * 1024 * 1024; // 7MB
+        if (file.size > MAX_BYTES) {
+          alert(`The selected file is ${(file.size / (1024 * 1024)).toFixed(1)}MB. The maximum allowed image size is 7MB. Please select a smaller photo.`);
+          return;
+        }
+
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1" aria-hidden="true"></i> Uploading & Optimizing...`;
+        }
 
         try {
           const form = document.getElementById("upload-photo-form");
           const formData = new FormData(form);
+
+          // If image is larger than 4MB, downscale / compress in browser so it stays safely under Vercel's 4.5MB serverless gateway limit
+          if (file.size > 4 * 1024 * 1024) {
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1" aria-hidden="true"></i> Optimizing Image (${(file.size / (1024 * 1024)).toFixed(1)}MB)...`;
+            const optimizedFile = await compressImageClientSide(file, 2560, 0.90);
+            formData.set("photo", optimizedFile);
+          }
+
           const token = sessionStorage.getItem("token");
 
           const res = await fetch("/portal/admin/photos", {
@@ -1920,6 +1988,11 @@
             headers: { Authorization: `Bearer ${token}` },
             body: formData
           });
+
+          if (res.status === 413) {
+            alert("The uploaded image was too large for the network gateway. Please select an image under 7MB.");
+            return;
+          }
 
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
@@ -1933,7 +2006,10 @@
           console.error("Photo upload error:", err);
           alert("We could not upload the photo due to a network connection issue. Please check your internet connection and try again.");
         } finally {
-          if (btn) btn.disabled = false;
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHtml;
+          }
         }
       }
 
