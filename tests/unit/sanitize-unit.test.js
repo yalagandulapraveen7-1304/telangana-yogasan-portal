@@ -169,8 +169,8 @@ describe('Unit Tests: Sanitization & Storage Security', () => {
       const req = {
         method: 'POST',
         headers: {
-          host: 'telanganayoga.org',
-          origin: 'https://telanganayoga.org'
+          host: 'telanganayoga.org.in',
+          origin: 'https://telanganayoga.org.in'
         }
       };
       let nextCalled = false;

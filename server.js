@@ -35,6 +35,35 @@ const { telemetryMiddleware, getTelemetrySnapshot, resetTelemetry } = require('.
 // Disable technology disclosure headers
 app.disable('x-powered-by');
 
+// Enforce HTTPS redirection behind reverse proxies in production environments
+if (IS_PROD) {
+  const CANONICAL_HOST = 'telanganayoga.org.in';
+  const ALLOWED_REDIRECT_HOSTS = new Set([
+    'telanganayoga.org.in',
+    'www.telanganayoga.org.in',
+    'telangana-yogasan-portal.vercel.app'
+  ]);
+
+  app.use((req, res, next) => {
+    // Vercel edge terminates SSL and handles redirects at the edge; this guards node/proxy environments
+    if (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-proto'] !== 'https') {
+      const incomingHost = (req.headers.host || '').split(':')[0].toLowerCase();
+      const targetHost = ALLOWED_REDIRECT_HOSTS.has(incomingHost)
+        ? incomingHost
+        : CANONICAL_HOST;
+
+      // Sanitize path to prevent open redirect via scheme-relative or backslash paths (e.g. //evil.com or /\evil.com)
+      const rawPath = typeof req.url === 'string' ? req.url : '/';
+      const safePath = rawPath.startsWith('/') && !/^(\/\/|\/\\|\\\/|\\\\)/.test(rawPath)
+        ? rawPath
+        : '/';
+
+      return res.redirect(301, `https://${targetHost}${safePath}`);
+    }
+    next();
+  });
+}
+
 // Diagnostic & Performance Telemetry
 app.use(telemetryMiddleware);
 app.get('/_telemetry', (_req, res) => {
@@ -67,14 +96,14 @@ app.use(
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],
-        frameAncestors: ["'none'"],
+        frameAncestors: ["'self'"],
         upgradeInsecureRequests: IS_PROD ? [] : null
       }
     },
     crossOriginEmbedderPolicy: false,
     crossOriginResourcePolicy: { policy: 'same-origin' },
     hsts: IS_PROD
-      ? { maxAge: 31536000, includeSubDomains: true, preload: true }
+      ? { maxAge: 31536000, includeSubDomains: false, preload: false }
       : false
   })
 );

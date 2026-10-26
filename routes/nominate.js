@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const router = express.Router();
 
@@ -16,6 +17,7 @@ const {
 } = require('../services/competitionService');
 const { requireAuth, optionalAuth, nominationLimiter } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { convertUploadedImages } = require('../services/imageService');
 const { getFileUrl } = require('../services/storage');
 const { escapeRegex, stripHtml } = require('../middleware/sanitize');
 const { logAdminAction } = require('../utils/audit');
@@ -28,6 +30,7 @@ const {
 const {
   createOrder,
   verifyPaymentSignature,
+  verifyPaymentWithGateway,
   FEE_PER_EVENT
 } = require('../utils/payment');
 const {
@@ -76,7 +79,29 @@ const ADMIT_CARD_CACHE_MAX = 2000;
 const ADMIT_CARD_CACHE_TTL_MS = 60 * 1000; // 60 seconds
 const admitCardCache = new Map();
 
-function getCachedAdmitCard(key) {
+/**
+ * Generates a cryptographically random per-registration access token and expiration date.
+ */
+function generateAdmitCardToken() {
+  return {
+    token: crypto.randomBytes(32).toString('hex'), // 64-character unguessable hex string
+    expiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 days validity
+  };
+}
+
+/**
+ * Constant-time string comparison to prevent timing side-channel attacks on tokens.
+ */
+function safeCompareToken(providedToken, storedToken) {
+  if (!providedToken || !storedToken) return false;
+  if (typeof providedToken !== 'string' || typeof storedToken !== 'string') return false;
+  const bufA = Buffer.from(providedToken);
+  const bufB = Buffer.from(storedToken);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
+function getCachedAdmitCardEntry(key) {
   if (!key) return null;
   const entry = admitCardCache.get(key);
   if (!entry) return null;
@@ -84,16 +109,27 @@ function getCachedAdmitCard(key) {
     admitCardCache.delete(key);
     return null;
   }
-  return entry.data;
+  return entry;
 }
 
-function setCachedAdmitCard(key, data, extraKey = null) {
+function getCachedAdmitCard(key) {
+  const entry = getCachedAdmitCardEntry(key);
+  return entry ? entry.data : null;
+}
+
+function setCachedAdmitCard(key, data, authMeta = {}, extraKey = null) {
   if (!key) return;
   if (admitCardCache.size >= ADMIT_CARD_CACHE_MAX) {
     const oldestKey = admitCardCache.keys().next().value;
     if (oldestKey) admitCardCache.delete(oldestKey);
   }
-  const entry = { data, expiresAt: Date.now() + ADMIT_CARD_CACHE_TTL_MS };
+  const entry = {
+    data,
+    district: authMeta.district || '',
+    admitCardToken: authMeta.admitCardToken || null,
+    admitCardTokenExpiresAt: authMeta.admitCardTokenExpiresAt || null,
+    expiresAt: Date.now() + ADMIT_CARD_CACHE_TTL_MS
+  };
   admitCardCache.set(key, entry);
   if (extraKey && extraKey !== key) {
     admitCardCache.set(extraKey, entry);
@@ -103,6 +139,78 @@ function setCachedAdmitCard(key, data, extraKey = null) {
 function evictCachedAdmitCard(key, extraKey = null) {
   if (key) admitCardCache.delete(key);
   if (extraKey) admitCardCache.delete(extraKey);
+}
+
+/**
+ * Authorization guard for admit card access.
+ * - Super Admin: Unrestricted access across all districts without token.
+ * - Scoped District Secretary: Access to their own district athletes without token. Different district rejected with 404.
+ * - Unauthenticated callers: Requires cryptographically random admitCardToken matching the registration.
+ *   Rejects without token with 401; rejects invalid or expired token with 403.
+ */
+function verifyAdmitCardAccess(req, athlete) {
+  // 1. Super Admin access
+  if (req.user && req.user.role === 'SUPER_ADMIN') {
+    return { authorized: true };
+  }
+
+  // 2. Scoped District Secretary access
+  const isScopedSecretary = req.user && req.user.role !== 'SUPER_ADMIN' &&
+    req.user.district !== 'ALL_DISTRICTS' && req.user.district !== 'ALL';
+  if (isScopedSecretary) {
+    const userDistrictNorm = (normalizeDistrict(req.user.district) || req.user.district || '').toUpperCase().trim();
+    const athleteDistNorm = (normalizeDistrict(athlete.district) || athlete.district || '').toUpperCase().trim();
+    if (athleteDistNorm !== userDistrictNorm) {
+      return { authorized: false, status: 404, error: 'Athlete record not found or unauthorized for your district.' };
+    }
+    return { authorized: true };
+  }
+
+  // 3. Global Admin
+  if (req.user && (req.user.role === 'ADMIN' || req.user.district === 'ALL_DISTRICTS' || req.user.district === 'ALL')) {
+    return { authorized: true };
+  }
+
+  // Reject tokens in URL query parameters to eliminate token leakage in access logs, browser history, and Referer headers
+  if (req.query.token || req.query.access_token) {
+    return {
+      authorized: false,
+      status: 400,
+      error: 'Tokens in query parameters are disallowed to prevent credential leakage. Please send the token via the X-Admit-Card-Token header.'
+    };
+  }
+
+  // 4. Unauthenticated caller token verification (Header only)
+  const rawToken = req.headers['x-admit-card-token'] ||
+    req.headers['x-access-token'] ||
+    null;
+
+  if (!rawToken || typeof rawToken !== 'string' || !rawToken.trim()) {
+    return {
+      authorized: false,
+      status: 401,
+      error: 'Unauthorized. An admit card access token is required via X-Admit-Card-Token header to view this record.'
+    };
+  }
+
+  const token = rawToken.trim();
+  if (!athlete.admitCardToken || !safeCompareToken(token, athlete.admitCardToken)) {
+    return {
+      authorized: false,
+      status: 403,
+      error: 'Forbidden. Invalid admit card access token.'
+    };
+  }
+
+  if (athlete.admitCardTokenExpiresAt && new Date() > new Date(athlete.admitCardTokenExpiresAt)) {
+    return {
+      authorized: false,
+      status: 403,
+      error: 'Forbidden. Admit card access token has expired.'
+    };
+  }
+
+  return { authorized: true };
 }
 
 // ==========================================
@@ -241,7 +349,7 @@ router.get('/list', requireAuth, async (req, res) => {
 // ==========================================
 // 1b. GET /portal/athletes/:id/public-card (Admit Card View)
 // ==========================================
-router.get('/:id/public-card', async (req, res) => {
+router.get('/:id/public-card', optionalAuth, async (req, res) => {
   try {
     const rawId = req.params.id;
     if (!rawId || typeof rawId !== 'string') {
@@ -255,20 +363,25 @@ router.get('/:id/public-card', async (req, res) => {
 
     // Check bounded in-memory cache first
     const cacheKey = id.toUpperCase();
-    const cachedAthlete = getCachedAdmitCard(cacheKey);
-    if (cachedAthlete) {
+    const cachedEntry = getCachedAdmitCardEntry(cacheKey);
+    if (cachedEntry) {
+      const authCheck = verifyAdmitCardAccess(req, cachedEntry);
+      if (!authCheck.authorized) {
+        return res.status(authCheck.status).json({ success: false, error: authCheck.error });
+      }
       res.setHeader('X-Cache', 'HIT');
       res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
-      return res.json(cachedAthlete);
+      return res.json(cachedEntry.data);
     }
 
     let athlete;
-    const publicFields = 'firstName lastName dob gender category district chestNumber events status guardianName institutionName aadhaarLast4 photoPath competitionId';
+    // Query includes admitCardToken and admitCardTokenExpiresAt for authorization verification
+    const queryFields = 'firstName lastName gender category district chestNumber events status institutionName photoPath competitionId admitCardToken admitCardTokenExpiresAt';
 
     if (isValidObjectId(id)) {
-      athlete = await Athlete.findById(id).select(publicFields).lean();
+      athlete = await Athlete.findById(id).select(queryFields).lean();
     } else if (/^[A-Za-z0-9-]{3,30}$/.test(id)) {
-      athlete = await Athlete.findOne({ chestNumber: id.toUpperCase() }).select(publicFields).lean();
+      athlete = await Athlete.findOne({ chestNumber: id.toUpperCase() }).select(queryFields).lean();
     } else {
       return res.status(400).json({ success: false, error: 'Invalid athlete identifier format.' });
     }
@@ -277,10 +390,19 @@ router.get('/:id/public-card', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Athlete record not found' });
     }
 
+    // Enforce authorization and access token verification
+    const authCheck = verifyAdmitCardAccess(req, athlete);
+    if (!authCheck.authorized) {
+      return res.status(authCheck.status).json({ success: false, error: authCheck.error });
+    }
+
     // Attach resolved competition details
     const comp = await resolveCompetition(athlete.competitionId);
+
+    // Strict public projection: Excludes sensitive PII and token credentials
+    const { admitCardToken, admitCardTokenExpiresAt, ...safeAthlete } = athlete;
     const cardData = {
-      ...athlete,
+      ...safeAthlete,
       competitionName: comp ? comp.name : 'Telangana State Yogasana Championship',
       competitionVenue: comp ? comp.venue : 'Telangana State Sports Complex, Hyderabad',
       competitionType: comp ? comp.type : 'STATE',
@@ -291,7 +413,16 @@ router.get('/:id/public-card', async (req, res) => {
     // Populate cache under requested key and secondary alias (Chest Number or ObjectId)
     const docId = athlete._id ? athlete._id.toString().toUpperCase() : null;
     const chestNum = athlete.chestNumber ? athlete.chestNumber.toUpperCase() : null;
-    setCachedAdmitCard(cacheKey, cardData, cacheKey === chestNum ? docId : chestNum);
+    setCachedAdmitCard(
+      cacheKey,
+      cardData,
+      {
+        district: athlete.district,
+        admitCardToken: athlete.admitCardToken,
+        admitCardTokenExpiresAt: athlete.admitCardTokenExpiresAt
+      },
+      cacheKey === chestNum ? docId : chestNum
+    );
 
     res.setHeader('X-Cache', 'MISS');
     res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
@@ -395,6 +526,10 @@ router.post(
     { name: 'passport_photo', maxCount: 1 },
     { name: 'dob_certificate', maxCount: 1 }
   ]),
+  convertUploadedImages({
+    imageOnlyFields: ['passport_photo'],
+    allowPdfFields: ['dob_certificate']
+  }),
   async (req, res) => {
     try {
       const body = req.body || {};
@@ -536,14 +671,33 @@ router.post(
 
       const category = calculateAgeCategory(dobValue, competition.ageCutoffDate);
 
-      // 11. Payment Signature Verification (if provided)
-      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
-      let paymentRecord = null;
+      // 11. Payment Enforcement & Verification
       const effectiveFeePerEvent = typeof competition.feePerEvent === 'number' && competition.feePerEvent >= 0
         ? competition.feePerEvent
         : FEE_PER_EVENT;
+      const expectedTotalAmount = selectedEvents.length * effectiveFeePerEvent;
 
-      if (razorpay_order_id || razorpay_payment_id || razorpay_signature) {
+      // Establish registration flow type:
+      // A. Admin-Approved Flow: Authenticated District Secretary or Super Admin
+      const isAdminApproved = Boolean(req.user && (req.user.role === 'SECRETARY' || req.user.role === 'SUPER_ADMIN'));
+      // B. Documented Free Flow: Competition with zero fee
+      const isFreeCompetition = effectiveFeePerEvent === 0;
+      // C. Paid Flow: Public unauthenticated nomination for a paid competition
+      const isPaymentRequired = !isAdminApproved && !isFreeCompetition;
+
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
+      const hasPaymentParams = Boolean(razorpay_order_id || razorpay_payment_id || razorpay_signature);
+
+      if (isPaymentRequired && !hasPaymentParams) {
+        return res.status(400).json({
+          success: false,
+          error: `Payment of ₹${expectedTotalAmount} is required to complete championship nomination.`
+        });
+      }
+
+      let paymentRecord = null;
+
+      if (hasPaymentParams) {
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
           return res.status(400).json({ success: false, error: 'Incomplete payment parameters provided.' });
         }
@@ -552,22 +706,73 @@ router.post(
         const signatureStr = String(razorpay_signature).trim();
 
         if (
-          !/^order_[a-zA-Z0-9]+$/.test(orderIdStr) ||
-          !/^pay_[a-zA-Z0-9]+$/.test(paymentIdStr) ||
+          !/^order_[a-zA-Z0-9_]+$/.test(orderIdStr) ||
+          !/^pay_[a-zA-Z0-9_]+$/.test(paymentIdStr) ||
           !/^[0-9a-fA-F]{64}$/.test(signatureStr)
         ) {
           return res.status(400).json({ success: false, error: 'Malformed payment gateway parameters.' });
         }
 
-        const isValid = verifyPaymentSignature(orderIdStr, paymentIdStr, signatureStr);
-        if (!isValid) {
+        // 11a. Check for Payment Replay / Order Reuse across athletes
+        const existingAthletePayment = await Athlete.findOne({
+          $or: [
+            { 'paymentDetails.orderId': orderIdStr },
+            { 'paymentDetails.paymentId': paymentIdStr }
+          ]
+        }).select('_id chestNumber').lean();
+
+        if (existingAthletePayment) {
+          return res.status(409).json({
+            success: false,
+            error: 'This payment order has already been utilized for another athlete nomination.'
+          });
+        }
+
+        // 11b. Cryptographic Signature Verification (HMAC-SHA256)
+        const isSigValid = verifyPaymentSignature(orderIdStr, paymentIdStr, signatureStr);
+        if (!isSigValid) {
           return res.status(400).json({ success: false, error: 'Payment verification failed. Invalid signature.' });
         }
 
+        // 11c. Direct Gateway Verification with Razorpay (Amount, Currency, Status, Order Binding)
+        const gatewayVerification = await verifyPaymentWithGateway(
+          orderIdStr,
+          paymentIdStr,
+          expectedTotalAmount,
+          competition.currency || 'INR'
+        );
+
+        if (!gatewayVerification.isValid) {
+          return res.status(400).json({
+            success: false,
+            error: gatewayVerification.error || 'Payment gateway verification failed.'
+          });
+        }
+
+        // 11d. Bind verified payment details to registration (never trust browser-supplied status or amount)
         paymentRecord = {
           orderId: orderIdStr,
           paymentId: paymentIdStr,
-          amount: selectedEvents.length * effectiveFeePerEvent,
+          amount: expectedTotalAmount,
+          currency: competition.currency || 'INR',
+          status: 'PAID',
+          paidAt: new Date()
+        };
+      } else if (isAdminApproved) {
+        paymentRecord = {
+          orderId: 'ADMIN_APPROVED',
+          paymentId: 'ADMIN_APPROVED',
+          amount: 0,
+          currency: competition.currency || 'INR',
+          status: 'PAID',
+          paidAt: new Date()
+        };
+      } else if (isFreeCompetition) {
+        paymentRecord = {
+          orderId: 'FREE_EVENT',
+          paymentId: 'FREE_EVENT',
+          amount: 0,
+          currency: competition.currency || 'INR',
           status: 'PAID',
           paidAt: new Date()
         };
@@ -616,6 +821,11 @@ router.post(
         competition.competitionId
       );
 
+      // Generate cryptographically random per-registration admit card access token
+      const { token: admitCardToken, expiresAt: admitCardTokenExpiresAt } = generateAdmitCardToken();
+      athletePayload.admitCardToken = admitCardToken;
+      athletePayload.admitCardTokenExpiresAt = admitCardTokenExpiresAt;
+
       const newAthlete = new Athlete(athletePayload);
       await newAthlete.save();
 
@@ -635,6 +845,10 @@ router.post(
   nominationLimiter,
   optionalAuth,
   upload.any(),
+  convertUploadedImages({
+    imageOnlyFields: [/^photo_/i],
+    allowPdfFields: [/^dob_/i]
+  }),
   async (req, res) => {
     try {
       const body = req.body || {};
@@ -786,6 +1000,8 @@ router.post(
         const evCheck = validateEvents(student.events);
         const events = evCheck.isValid ? evCheck.events : ['Traditional Yogasana'];
 
+        const { token: admitCardToken, expiresAt: admitCardTokenExpiresAt } = generateAdmitCardToken();
+
         athleteDocs.push({
           firstName: sanitizeBoundedText(student.firstName || student.first_name, 80),
           lastName: sanitizeBoundedText(student.lastName || student.last_name, 80),
@@ -807,6 +1023,8 @@ router.post(
           photoPath: fileMap[`photo_${i}`] || fileMap[`passport_photo_${i}`] || '',
           dobProofPath: fileMap[`dob_${i}`] || fileMap[`dob_certificate_${i}`] || '',
           chestNumber,
+          admitCardToken,
+          admitCardTokenExpiresAt,
           status: 'Submitted'
         });
       }

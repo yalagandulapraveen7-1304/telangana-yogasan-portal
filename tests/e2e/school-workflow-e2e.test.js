@@ -89,11 +89,24 @@ describe('E2E Tests: School Delegation Registration Workflow', () => {
       createdAthleteIds.push(ath.id || ath._id);
       assert.ok(ath.chestNumber);
       assert.ok(ath.chestNumber.startsWith('NAL-'));
+      assert.ok(ath.admitCardToken, 'Student athlete must receive cryptographically random admitCardToken');
     });
 
-    // Step 3: Public can immediately retrieve each student's admit card by chest number
-    const rahulChest = data.athletes[0].chestNumber;
-    const cardRes = await fetch(`${baseUrl}/portal/athletes/${rahulChest}/public-card`);
+    const rahulAth = data.athletes[0];
+    const rahulChest = rahulAth.chestNumber;
+
+    // Step 3a: Chest number alone cannot retrieve the admit card (unauthorized)
+    const unauthRes = await fetch(`${baseUrl}/portal/athletes/${rahulChest}/public-card`);
+    assert.equal(unauthRes.status, 401);
+
+    // Step 3b: Valid per-registration access token retrieves student's admit card via header
+    const apiUrl = `${baseUrl}/portal/athletes/${rahulChest}/public-card`;
+    assert.equal(apiUrl.includes('?'), false);
+    assert.equal(apiUrl.includes(rahulAth.admitCardToken), false);
+
+    const cardRes = await fetch(apiUrl, {
+      headers: { 'X-Admit-Card-Token': rahulAth.admitCardToken }
+    });
     assert.equal(cardRes.status, 200);
 
     const cardData = await cardRes.json();
@@ -101,5 +114,6 @@ describe('E2E Tests: School Delegation Registration Workflow', () => {
     assert.equal(cardData.institutionName, 'St. Marys High School');
     assert.equal(cardData.district, 'Nalgonda');
     assert.equal(cardData.status, 'Submitted');
+    assert.equal(cardData.admitCardToken, undefined);
   });
 });

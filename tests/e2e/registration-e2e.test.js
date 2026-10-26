@@ -12,6 +12,7 @@ const mongoose = require('mongoose');
 const app = require('../../server');
 const Athlete = require('../../models/Athlete');
 const { connectDB } = require('../../config/db');
+const { generateTestSignature } = require('../../utils/payment');
 
 let server;
 let baseUrl;
@@ -63,6 +64,13 @@ describe('E2E Tests: Registration to Admit Card User Journey', () => {
     formData.append('residentialAddress', 'Station Road, Nizamabad');
     formData.append('events', 'Traditional Yogasana');
 
+    const orderId = `order_e2e_${Date.now()}`;
+    const paymentId = `pay_e2e_${Date.now()}`;
+    const signature = generateTestSignature(orderId, paymentId);
+    formData.append('razorpay_order_id', orderId);
+    formData.append('razorpay_payment_id', paymentId);
+    formData.append('razorpay_signature', signature);
+
     const submitRes = await fetch(`${baseUrl}/portal/athletes/nominate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -74,20 +82,34 @@ describe('E2E Tests: Registration to Admit Card User Journey', () => {
     assert.equal(submitData.success, true);
     const athleteId = submitData.athlete?._id || submitData.athleteId;
     const chestNumber = submitData.athlete?.chestNumber || submitData.chestNumber;
+    const admitCardToken = submitData.athlete?.admitCardToken;
     assert.ok(athleteId);
     assert.ok(chestNumber);
+    assert.ok(admitCardToken);
     assert.ok(chestNumber.startsWith('NIZ-'));
 
     createdAthleteIds.push(athleteId);
 
-    // Step 3: Visitor views their generated Admit Card page
-    const cardPageRes = await fetch(`${baseUrl}/admitcard?chest=${chestNumber}`);
+    // Step 3: Verify unauthenticated request with chest number alone is rejected with 401
+    const unauthCardRes = await fetch(`${baseUrl}/portal/athletes/${chestNumber}/public-card`);
+    assert.equal(unauthCardRes.status, 401);
+
+    // Step 4: Visitor views their generated Admit Card page with their security token passed in URL fragment
+    const cardPageUrl = `${baseUrl}/admitcard?id=${athleteId}#token=${admitCardToken}`;
+    const cardPageRes = await fetch(cardPageUrl);
     assert.equal(cardPageRes.status, 200);
     const cardHtml = await cardPageRes.text();
     assert.ok(cardHtml.includes('STATE SELECTION TRIALS - ADMIT CARD'));
 
-    // Step 4: The admit card page fetches athlete details via the public API
-    const apiCardRes = await fetch(`${baseUrl}/portal/athletes/${chestNumber}/public-card`);
+    // Step 5: The admit card page fetches athlete details via the public API sending token strictly in header
+    // Confirm token is NOT included in the API request URL
+    const apiUrl = `${baseUrl}/portal/athletes/${chestNumber}/public-card`;
+    assert.equal(apiUrl.includes('?'), false);
+    assert.equal(apiUrl.includes(admitCardToken), false);
+
+    const apiCardRes = await fetch(apiUrl, {
+      headers: { 'X-Admit-Card-Token': admitCardToken }
+    });
     assert.equal(apiCardRes.status, 200);
 
     const athleteData = await apiCardRes.json();
@@ -96,6 +118,13 @@ describe('E2E Tests: Registration to Admit Card User Journey', () => {
     assert.equal(athleteData.district, 'Nizamabad');
     assert.equal(athleteData.chestNumber, chestNumber);
     assert.equal(athleteData.status, 'Submitted');
-    assert.equal(athleteData.aadhaarLast4, '7788');
+    // Ensure sensitive personal data and token credentials are strictly omitted from public response
+    assert.equal(athleteData.aadhaarLast4, undefined);
+    assert.equal(athleteData.guardianName, undefined);
+    assert.equal(athleteData.dob, undefined);
+    assert.equal(athleteData.residentialAddress, undefined);
+    assert.equal(athleteData.mobileNumber, undefined);
+    assert.equal(athleteData.admitCardToken, undefined);
+    assert.equal(athleteData.admitCardTokenExpiresAt, undefined);
   });
 });

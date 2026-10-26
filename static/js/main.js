@@ -462,9 +462,10 @@ function initNominationForm() {
           submitBtn.innerHTML = `<span>Nomination Successful</span>`;
         }
         if (data.athlete && data.athlete._id) {
-          window.location.href = `admitcard.html?id=${data.athlete._id}`;
+          const tokenFragment = data.athlete.admitCardToken ? `#token=${encodeURIComponent(data.athlete.admitCardToken)}` : '';
+          window.location.href = `admitcard.html?id=${encodeURIComponent(data.athlete._id)}${tokenFragment}`;
         } else {
-          showSubmitSuccess();
+          showSubmitSuccess(data.athlete?._id, data.athlete?.admitCardToken);
         }
       } else {
         showAlert(data.error || data.details || "We could not submit your registration. Please check the information you entered and try again.", "error");
@@ -506,7 +507,7 @@ function makeError(msg, id = '') {
 }
 
 /* ── Nomination Form Success Popup with Admit Card Link ──── */
-function showSubmitSuccess(athleteId = '') {
+function showSubmitSuccess(athleteId = '', cardToken = '') {
   const previousActive = document.activeElement;
   const overlay = document.createElement('div');
   overlay.setAttribute('role', 'dialog');
@@ -521,8 +522,9 @@ function showSubmitSuccess(athleteId = '') {
   // If an athleteId is passed, show the Admit Card button
   let admitCardButtonHTML = '';
   if (athleteId) {
+    const tokenFragment = cardToken ? `#token=${encodeURIComponent(cardToken)}` : '';
     admitCardButtonHTML = `
-      <a href="admitcard.html?id=${athleteId}" target="_blank" style="
+      <a href="admitcard.html?id=${encodeURIComponent(athleteId)}${tokenFragment}" target="_blank" rel="noopener noreferrer" style="
         display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;
         background:#0D5C3A;color:#fff;padding:.875rem 1rem;border-radius:.75rem;
         font-size:.875rem;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(13,92,58,.25);

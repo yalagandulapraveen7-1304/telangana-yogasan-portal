@@ -121,7 +121,10 @@ describe('Security Tests: Injection Attack Defense', () => {
 
       const res = await fetch(`${baseUrl}/portal/athletes/nominate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          Authorization: `Bearer ${secretaryToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
         body: formData.toString()
       });
 

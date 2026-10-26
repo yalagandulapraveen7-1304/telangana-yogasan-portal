@@ -19,13 +19,45 @@ const AdminAuditLog = require('../models/AdminAuditLog');
 
 const { requireAuth, requireRole, apiLimiter } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { convertUploadedImages } = require('../services/imageService');
 const { getStorageDir, resolveFilePath, fileExists, deleteFile } = require('../services/storage');
 const { sanitizeBoundedText, stripHtml } = require('../middleware/sanitize');
-const { isValidObjectId, isValidFilename, normalizeDistrict } = require('../utils/validators');
+const { isValidObjectId, isValidFilename, normalizeDistrict, isValidNoticeUrl } = require('../utils/validators');
 const { logAdminAction } = require('../utils/audit');
 const { resolveCompetition } = require('../services/competitionService');
 
 const storageDir = getStorageDir();
+
+/**
+ * Helper to check whether a user is a scoped District Secretary (non-super-admin with specific district)
+ */
+function isScopedSecretary(user) {
+  if (!user || user.role === 'SUPER_ADMIN') return false;
+  const dist = (user.district || '').toUpperCase().trim();
+  return dist !== 'ALL_DISTRICTS' && dist !== 'ALL' && dist !== '';
+}
+
+/**
+ * Checks if a user has authority to modify or delete a specific record based on its district.
+ * Super Admins can manage all records.
+ * District Secretaries CANNOT modify or delete state-wide 'ALL' records or records from another district.
+ * They may ONLY modify or delete records strictly matching their own assigned district.
+ */
+function canModifyDistrictRecord(user, recordDistrict) {
+  if (!user) return false;
+  if (user.role === 'SUPER_ADMIN' || user.district === 'ALL_DISTRICTS' || user.district === 'ALL') {
+    return true;
+  }
+  const userDistNorm = (normalizeDistrict(user.district) || user.district || '').toUpperCase().trim();
+  const recordDistNorm = (normalizeDistrict(recordDistrict) || recordDistrict || '').toUpperCase().trim();
+
+  // A secretary must NOT be able to modify or delete records scoped to "ALL" or another district
+  if (!recordDistNorm || recordDistNorm === 'ALL' || recordDistNorm === 'ALL_DISTRICTS') {
+    return false;
+  }
+
+  return userDistNorm === recordDistNorm;
+}
 
 // ==========================================
 // 1. Photo Management Routes (Admin Protected)
@@ -62,7 +94,7 @@ router.get('/photos', requireAuth, async (req, res) => {
  * POST /portal/admin/photos
  * Uploads a competition photo, creates a thumbnail with sharp, and creates a Photo record.
  */
-router.post('/photos', requireAuth, upload.single('photo'), async (req, res) => {
+router.post('/photos', requireAuth, upload.single('photo'), convertUploadedImages({ allowPdf: false }), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'Please select an image file to upload.' });
@@ -76,12 +108,26 @@ router.post('/photos', requireAuth, upload.single('photo'), async (req, res) => 
     const altText = sanitizeBoundedText(body.altText || title, 150);
     const competitionId = (body.competitionId || 'state-championship-2026').toLowerCase().trim();
     
-    // Scoped district assignment
+    // Scoped district assignment & boundary validation
     let district = 'ALL';
-    if (req.user.role === 'SUPER_ADMIN') {
+    if (req.user.role === 'SUPER_ADMIN' || req.user.district === 'ALL_DISTRICTS') {
       district = body.district ? normalizeDistrict(body.district) || body.district : 'ALL';
     } else {
-      district = normalizeDistrict(req.user.district) || req.user.district || 'ALL';
+      const userDist = normalizeDistrict(req.user.district) || req.user.district;
+      if (!userDist || userDist === 'ALL' || userDist === 'ALL_DISTRICTS') {
+        return res.status(403).json({ success: false, error: 'Unauthorized: Secretary account lacks a valid assigned district.' });
+      }
+      if (body.district !== undefined && body.district !== null && String(body.district).trim()) {
+        const reqDistNorm = (normalizeDistrict(body.district) || body.district || '').toUpperCase().trim();
+        const userDistNorm = userDist.toUpperCase().trim();
+        if (reqDistNorm !== userDistNorm) {
+          return res.status(403).json({
+            success: false,
+            error: 'Unauthorized: District Secretaries cannot create records scoped to state-wide ALL or another district.'
+          });
+        }
+      }
+      district = userDist;
     }
 
     const isCover = body.isCover === 'true' || body.isCover === true;
@@ -170,15 +216,27 @@ router.patch('/photos/:id', requireAuth, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Photo not found.' });
     }
 
-    // Scope check: Secretaries can only edit photos of their district
-    if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
-      const userDist = normalizeDistrict(req.user.district) || req.user.district;
-      if (photo.district !== 'ALL' && photo.district !== userDist) {
-        return res.status(403).json({ success: false, error: 'Unauthorized to modify photos of another district.' });
-      }
+    // Strict Scope check: Secretaries can only edit photos of their own district (never 'ALL' or another district)
+    if (!canModifyDistrictRecord(req.user, photo.district)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Unauthorized: District Secretaries cannot modify photos scoped to state-wide ALL or another district.'
+      });
     }
 
     const body = req.body || {};
+
+    // Boundary check: Secretaries cannot reassign photo district to 'ALL' or another district
+    if (isScopedSecretary(req.user) && body.district !== undefined) {
+      const userDist = normalizeDistrict(req.user.district) || req.user.district;
+      const targetDistNorm = (normalizeDistrict(body.district) || body.district || '').toUpperCase().trim();
+      if (targetDistNorm !== userDist.toUpperCase().trim()) {
+        return res.status(403).json({
+          success: false,
+          error: 'Unauthorized: District Secretaries cannot reassign photos to state-wide ALL or another district.'
+        });
+      }
+    }
     const updates = {};
 
     if (body.title !== undefined) updates.title = sanitizeBoundedText(body.title, 100);
@@ -242,12 +300,12 @@ router.delete('/photos/:id', requireAuth, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Photo not found.' });
     }
 
-    // Scope check
-    if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
-      const userDist = normalizeDistrict(req.user.district) || req.user.district;
-      if (photo.district !== 'ALL' && photo.district !== userDist) {
-        return res.status(403).json({ success: false, error: 'Unauthorized to delete photos of another district.' });
-      }
+    // Strict Scope check: Secretaries cannot delete photos scoped to 'ALL' or another district
+    if (!canModifyDistrictRecord(req.user, photo.district)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Unauthorized: District Secretaries cannot delete photos scoped to state-wide ALL or another district.'
+      });
     }
 
     const originalFilename = path.basename(photo.filePath || '');
@@ -324,7 +382,7 @@ router.get('/notices', requireAuth, async (req, res) => {
  * POST /portal/admin/notices
  * Creates an announcement, circular, or marquee notice with optional PDF upload.
  */
-router.post('/notices', requireAuth, upload.single('attachment'), async (req, res) => {
+router.post('/notices', requireAuth, upload.single('attachment'), convertUploadedImages({ allowPdf: true }), async (req, res) => {
   try {
     const body = req.body || {};
 
@@ -339,15 +397,45 @@ router.post('/notices', requireAuth, upload.single('attachment'), async (req, re
       ? body.category
       : 'NOTICE';
 
-    const linkUrl = sanitizeBoundedText(body.linkUrl || '', 255);
+    let linkUrl = '';
+    if (body.linkUrl !== undefined && body.linkUrl !== null && body.linkUrl !== '') {
+      if (typeof body.linkUrl !== 'string') {
+        return res.status(400).json({ success: false, error: 'Invalid linkUrl format.' });
+      }
+      const trimmedUrl = body.linkUrl.trim();
+      if (trimmedUrl) {
+        if (!isValidNoticeUrl(trimmedUrl)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid linkUrl. Only secure HTTPS URLs or safe same-site relative paths (e.g., /activities) are permitted.'
+          });
+        }
+        linkUrl = trimmedUrl;
+      }
+    }
     const linkLabel = sanitizeBoundedText(body.linkLabel || 'View Details', 60);
     const competitionId = (body.competitionId || '').toLowerCase().trim();
 
+    // Scoped district assignment & boundary validation
     let district = 'ALL';
-    if (req.user.role === 'SUPER_ADMIN') {
+    if (req.user.role === 'SUPER_ADMIN' || req.user.district === 'ALL_DISTRICTS') {
       district = body.district ? normalizeDistrict(body.district) || body.district : 'ALL';
     } else {
-      district = normalizeDistrict(req.user.district) || req.user.district || 'ALL';
+      const userDist = normalizeDistrict(req.user.district) || req.user.district;
+      if (!userDist || userDist === 'ALL' || userDist === 'ALL_DISTRICTS') {
+        return res.status(403).json({ success: false, error: 'Unauthorized: Secretary account lacks a valid assigned district.' });
+      }
+      if (body.district !== undefined && body.district !== null && String(body.district).trim()) {
+        const reqDistNorm = (normalizeDistrict(body.district) || body.district || '').toUpperCase().trim();
+        const userDistNorm = userDist.toUpperCase().trim();
+        if (reqDistNorm !== userDistNorm) {
+          return res.status(403).json({
+            success: false,
+            error: 'Unauthorized: District Secretaries cannot create records scoped to state-wide ALL or another district.'
+          });
+        }
+      }
+      district = userDist;
     }
 
     const status = ['DRAFT', 'SCHEDULED', 'PUBLISHED', 'EXPIRED', 'ARCHIVED'].includes(body.status)
@@ -364,7 +452,7 @@ router.post('/notices', requireAuth, upload.single('attachment'), async (req, re
       attachmentPath = `/portal/notices/raw/${req.file.filename}`;
       try {
         fileData = fs.readFileSync(req.file.path);
-        fileMime = req.file.mimetype || 'application/pdf';
+        fileMime = req.file.mimetype || (req.file.filename.endsWith('.webp') ? 'image/webp' : 'application/pdf');
       } catch (e) {
         console.warn('Could not read notice file buffer:', e.message);
       }
@@ -410,7 +498,7 @@ router.post('/notices', requireAuth, upload.single('attachment'), async (req, re
  * PATCH /portal/admin/notices/:id
  * Updates an announcement or circular, updates marquee toggle, or replaces attachment.
  */
-router.patch('/notices/:id', requireAuth, upload.single('attachment'), async (req, res) => {
+router.patch('/notices/:id', requireAuth, upload.single('attachment'), convertUploadedImages({ allowPdf: true }), async (req, res) => {
   try {
     const { id } = req.params;
     if (!id || !isValidObjectId(id)) {
@@ -422,15 +510,27 @@ router.patch('/notices/:id', requireAuth, upload.single('attachment'), async (re
       return res.status(404).json({ success: false, error: 'Notice not found.' });
     }
 
-    // Scope check
-    if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
-      const userDist = normalizeDistrict(req.user.district) || req.user.district;
-      if (notice.district !== 'ALL' && notice.district !== userDist) {
-        return res.status(403).json({ success: false, error: 'Unauthorized to modify notices of another district.' });
-      }
+    // Strict Scope check: Secretaries can only edit notices of their own district (never 'ALL' or another district)
+    if (!canModifyDistrictRecord(req.user, notice.district)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Unauthorized: District Secretaries cannot modify notices scoped to state-wide ALL or another district.'
+      });
     }
 
     const body = req.body || {};
+
+    // Boundary check: Secretaries cannot reassign notice district to 'ALL' or another district
+    if (isScopedSecretary(req.user) && body.district !== undefined) {
+      const userDist = normalizeDistrict(req.user.district) || req.user.district;
+      const targetDistNorm = (normalizeDistrict(body.district) || body.district || '').toUpperCase().trim();
+      if (targetDistNorm !== userDist.toUpperCase().trim()) {
+        return res.status(403).json({
+          success: false,
+          error: 'Unauthorized: District Secretaries cannot reassign notices to state-wide ALL or another district.'
+        });
+      }
+    }
     const updates = {};
 
     if (body.title !== undefined) updates.title = sanitizeBoundedText(body.title, 150);
@@ -439,7 +539,28 @@ router.patch('/notices/:id', requireAuth, upload.single('attachment'), async (re
     if (body.category && ['NOTICE', 'CIRCULAR', 'SCHEDULE_UPDATE', 'EVENT_NOTICE'].includes(body.category)) {
       updates.category = body.category;
     }
-    if (body.linkUrl !== undefined) updates.linkUrl = sanitizeBoundedText(body.linkUrl, 255);
+    if (body.linkUrl !== undefined) {
+      if (body.linkUrl === null || body.linkUrl === '') {
+        updates.linkUrl = '';
+      } else if (typeof body.linkUrl === 'string') {
+        const trimmedUrl = body.linkUrl.trim();
+        if (!trimmedUrl) {
+          updates.linkUrl = '';
+        } else if (!isValidNoticeUrl(trimmedUrl)) {
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid linkUrl. Only secure HTTPS URLs or safe same-site relative paths (e.g., /activities) are permitted.'
+          });
+        } else {
+          updates.linkUrl = trimmedUrl;
+        }
+      } else {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid linkUrl format.'
+        });
+      }
+    }
     if (body.linkLabel !== undefined) updates.linkLabel = sanitizeBoundedText(body.linkLabel, 60);
     if (body.competitionId !== undefined) updates.competitionId = (body.competitionId || '').toLowerCase().trim();
     if (body.status && ['DRAFT', 'SCHEDULED', 'PUBLISHED', 'EXPIRED', 'ARCHIVED'].includes(body.status)) {
@@ -459,6 +580,12 @@ router.patch('/notices/:id', requireAuth, upload.single('attachment'), async (re
 
     if (req.file) {
       updates.attachmentPath = `/portal/notices/raw/${req.file.filename}`;
+      updates.mimeType = req.file.mimetype || (req.file.filename.endsWith('.webp') ? 'image/webp' : 'application/pdf');
+      try {
+        updates.fileData = fs.readFileSync(req.file.path);
+      } catch (e) {
+        console.warn('Could not read updated notice file buffer:', e.message);
+      }
     }
 
     const updated = await Notice.findByIdAndUpdate(notice._id, updates, {
@@ -497,12 +624,12 @@ router.delete('/notices/:id', requireAuth, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Notice not found.' });
     }
 
-    // Scope check
-    if (req.user.role !== 'SUPER_ADMIN' && req.user.district !== 'ALL_DISTRICTS') {
-      const userDist = normalizeDistrict(req.user.district) || req.user.district;
-      if (notice.district !== 'ALL' && notice.district !== userDist) {
-        return res.status(403).json({ success: false, error: 'Unauthorized to delete notices of another district.' });
-      }
+    // Strict Scope check: Secretaries cannot delete notices scoped to 'ALL' or another district
+    if (!canModifyDistrictRecord(req.user, notice.district)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Unauthorized: District Secretaries cannot delete notices scoped to state-wide ALL or another district.'
+      });
     }
 
     const attachmentFilename = path.basename(notice.attachmentPath || '');

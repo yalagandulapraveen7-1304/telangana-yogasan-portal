@@ -6,3 +6,4 @@ uploads/
 .seeded_credentials.json
 .vercel
 .env*
+logs/

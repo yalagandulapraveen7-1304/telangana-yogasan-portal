@@ -31,12 +31,15 @@ const AthleteSchema = new mongoose.Schema(
     photoPath: { type: String, default: '' },
     dobProofPath: { type: String, default: '' },
     chestNumber: { type: String },
+    admitCardToken: { type: String, trim: true, index: true },
+    admitCardTokenExpiresAt: { type: Date, index: true },
     competitionId: { type: String, default: 'tysc-state-2026', trim: true, index: true },
     competition: { type: mongoose.Schema.Types.ObjectId, ref: 'Competition' },
     paymentDetails: {
-      orderId: { type: String },
-      paymentId: { type: String },
+      orderId: { type: String, index: true },
+      paymentId: { type: String, index: true },
       amount: { type: Number },
+      currency: { type: String, default: 'INR' },
       status: { type: String, enum: ['PENDING', 'PAID', 'FAILED'] },
       paidAt: { type: Date }
     }

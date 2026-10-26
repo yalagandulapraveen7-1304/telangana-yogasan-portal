@@ -112,13 +112,16 @@ router.get('/attachment/:id', async (req, res) => {
     }
 
     const cleanTitle = (notice.title || 'document').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const contentType = notice.mimeType || 'application/pdf';
+    const ext = path.extname(filename).toLowerCase();
+    const isWebp = ext === '.webp' || notice.mimeType === 'image/webp';
+    const contentType = notice.mimeType || (isWebp ? 'image/webp' : 'application/pdf');
+    const downloadExt = isWebp ? '.webp' : '.pdf';
 
     // 1. Check local filesystem
     const { isValid, filePath } = resolveFilePath(filename);
     if (isValid && filePath && fileExists(filename)) {
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}.pdf"`);
+      res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}${downloadExt}"`);
       res.setHeader('Cache-Control', 'public, max-age=86400');
       return res.sendFile(filename, { root: storageDir });
     }
@@ -131,7 +134,7 @@ router.get('/attachment/:id', async (req, res) => {
       } catch (_) {}
 
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}.pdf"`);
+      res.setHeader('Content-Disposition', `inline; filename="${cleanTitle}${downloadExt}"`);
       res.setHeader('Cache-Control', 'public, max-age=86400');
       return res.end(notice.fileData);
     }
@@ -157,7 +160,9 @@ router.get('/raw/:filename', async (req, res) => {
     // 1. Check local filesystem
     const { isValid, filePath } = resolveFilePath(filename);
     if (isValid && filePath && fileExists(filename)) {
-      res.setHeader('Content-Type', 'application/pdf');
+      const ext = path.extname(filename).toLowerCase();
+      const contentType = ext === '.webp' ? 'image/webp' : (ext === '.pdf' ? 'application/pdf' : 'application/octet-stream');
+      res.setHeader('Content-Type', contentType);
       res.setHeader('Cache-Control', 'public, max-age=86400');
       return res.sendFile(path.basename(filename), { root: storageDir });
     }

@@ -213,6 +213,28 @@
         const urlParams = new URLSearchParams(window.location.search);
         const athleteId = urlParams.get("id") || urlParams.get("chest");
 
+        // 1. Read token from URL fragment (e.g. #token=...) to avoid query string leakage
+        let cardToken = "";
+        if (window.location.hash) {
+          const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+          cardToken = hashParams.get("token") || hashParams.get("access_token") || "";
+        }
+        // Fallback for query param if URL fragment was omitted
+        if (!cardToken) {
+          cardToken = urlParams.get("token") || urlParams.get("access_token") || "";
+        }
+
+        // 2. Immediately remove fragment and query token from URL using history.replaceState to prevent leakage
+        if (window.history && window.history.replaceState) {
+          const cleanUrl = new URL(window.location.href);
+          cleanUrl.hash = "";
+          cleanUrl.searchParams.delete("token");
+          cleanUrl.searchParams.delete("access_token");
+          window.history.replaceState(null, document.title, cleanUrl.pathname + cleanUrl.search);
+        }
+
+        // 3. Do NOT persist in localStorage or sessionStorage (keep in-memory cardToken only)
+
         if (!athleteId) {
           alert("Please provide an athlete ID or chest number to find this admit card.");
           return;
@@ -221,13 +243,34 @@
         try {
           let athlete = null;
 
-          // 1. Fetch via Public Card Endpoint
-          const publicRes = await fetch(`/portal/athletes/${encodeURIComponent(athleteId)}/public-card`);
+          // 4. Fetch via Public Card Endpoint: send token ONLY in X-Admit-Card-Token header (never in request URL)
+          const token = sessionStorage.getItem("token");
+          const headers = {};
+          if (token) headers["Authorization"] = `Bearer ${token}`;
+          if (cardToken) headers["X-Admit-Card-Token"] = cardToken;
+
+          const endpoint = `/portal/athletes/${encodeURIComponent(athleteId)}/public-card`;
+
+          const publicRes = await fetch(endpoint, { headers });
           if (publicRes.ok) {
             athlete = await publicRes.json();
+          } else if (publicRes.status === 401 || publicRes.status === 403 || publicRes.status === 400) {
+            // Fallback to list endpoint if a secretary token exists
+            if (token) {
+              const res = await fetch(`/portal/athletes/list`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (res.ok) {
+                const athletes = await res.json();
+                athlete = athletes.find((a) => a._id === athleteId || a.chestNumber === athleteId);
+              }
+            }
+            if (!athlete) {
+              alert("Admit card access requires a valid access token. Please use the official link provided upon nomination registration, or log in as an authorized District Secretary / Super Admin.");
+              return;
+            }
           } else {
             // 2. Fallback to list endpoint if a secretary token exists
-            const token = sessionStorage.getItem("token");
             if (token) {
               const res = await fetch(`/portal/athletes/list`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -262,11 +305,11 @@
           document.getElementById("card-status").textContent =
             athlete.status || "Submitted";
 
-          const age = athlete.dob
-            ? new Date().getFullYear() - new Date(athlete.dob).getFullYear()
-            : "-";
+          const ageDisplay = athlete.dob
+            ? `${new Date().getFullYear() - new Date(athlete.dob).getFullYear()} Yrs`
+            : (athlete.category || "-");
           document.getElementById("card-gender-age").textContent =
-            `${athlete.gender || "-"} • ${age} Yrs`;
+            athlete.gender ? `${athlete.gender} • ${ageDisplay}` : ageDisplay;
           document.getElementById("card-dob").textContent = athlete.dob
             ? new Date(athlete.dob).toLocaleDateString("en-GB")
             : "-";

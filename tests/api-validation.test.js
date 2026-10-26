@@ -14,6 +14,7 @@ const jwt = require('jsonwebtoken');
 const app = require('../server');
 const { connectDB } = require('../config/db');
 const { JWT_SECRET } = require('../config/constants');
+const { generateTestSignature } = require('../utils/payment');
 const Athlete = require('../models/Athlete');
 const Secretary = require('../models/Secretary');
 
@@ -80,6 +81,8 @@ test.before(async () => {
     district: 'Hyderabad',
     category: 'Junior',
     chestNumber: 'HYD-JUN-999',
+    admitCardToken: 'valid-test-token-validation-api-12345678901234567890123456789012',
+    admitCardTokenExpiresAt: new Date(Date.now() + 86400000),
     status: 'Submitted'
   });
   testAthleteId = athlete._id.toString();
@@ -329,20 +332,31 @@ test.describe('Endpoint Input Validation & Rejection Tests', () => {
 
   // --- Endpoint: GET /portal/athletes/:id/public-card ---
   test('GET /portal/athletes/:id/public-card rejects malformed identifiers', async () => {
+    const validToken = 'valid-test-token-validation-api-12345678901234567890123456789012';
+    const authHeaders = { 'X-Admit-Card-Token': validToken };
+
     // Special characters / injection attempt
-    const res1 = await fetch(`${baseUrl}/portal/athletes/%3Cscript%3E/public-card`);
+    const res1 = await fetch(`${baseUrl}/portal/athletes/%3Cscript%3E/public-card`, { headers: authHeaders });
     assert.equal(res1.status, 400);
 
     // Oversized identifier
-    const res2 = await fetch(`${baseUrl}/portal/athletes/${'A'.repeat(80)}/public-card`);
+    const res2 = await fetch(`${baseUrl}/portal/athletes/${'A'.repeat(80)}/public-card`, { headers: authHeaders });
     assert.equal(res2.status, 400);
 
+    // Request without access token returns 401 Unauthorized
+    const resUnauth = await fetch(`${baseUrl}/portal/athletes/HYD-JUN-999/public-card`);
+    assert.equal(resUnauth.status, 401);
+
+    // Token passed in query string is rejected with 400 to prevent leakage
+    const resQueryToken = await fetch(`${baseUrl}/portal/athletes/HYD-JUN-999/public-card?token=${validToken}`);
+    assert.equal(resQueryToken.status, 400);
+
     // Valid format but nonexistent ID returns 404
-    const res3 = await fetch(`${baseUrl}/portal/athletes/507f1f77bcf86cd799439011/public-card`);
+    const res3 = await fetch(`${baseUrl}/portal/athletes/507f1f77bcf86cd799439011/public-card`, { headers: authHeaders });
     assert.equal(res3.status, 404);
 
-    // Valid seeded athlete chest number
-    const res4 = await fetch(`${baseUrl}/portal/athletes/HYD-JUN-999/public-card`);
+    // Valid seeded athlete chest number with valid token in header returns 200
+    const res4 = await fetch(`${baseUrl}/portal/athletes/HYD-JUN-999/public-card`, { headers: authHeaders });
     assert.equal(res4.status, 200);
     const data = await res4.json();
     assert.equal(data.chestNumber, 'HYD-JUN-999');
@@ -486,6 +500,13 @@ test.describe('Endpoint Input Validation & Rejection Tests', () => {
     validForm.append('institutionName', 'Hyderabad Yoga Academy');
     validForm.append('district', 'Hyderabad');
     validForm.append('residentialAddress', '12-34, Banjara Hills, Hyderabad');
+
+    const orderId = `order_test_val_${Date.now()}`;
+    const paymentId = `pay_test_val_${Date.now()}`;
+    const signature = generateTestSignature(orderId, paymentId);
+    validForm.append('razorpay_order_id', orderId);
+    validForm.append('razorpay_payment_id', paymentId);
+    validForm.append('razorpay_signature', signature);
 
     const resValid = await fetch(`${baseUrl}/portal/athletes/nominate`, {
       method: 'POST',

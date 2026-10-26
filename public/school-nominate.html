@@ -985,6 +985,7 @@
         const safeCat = escapeHtml(ath.category || '');
         const safeEvents = (ath.events || []).map(escapeHtml).join(', ');
         const safeId = encodeURIComponent(ath._id || '');
+        const tokenFragment = ath.admitCardToken ? `#token=${encodeURIComponent(ath.admitCardToken)}` : '';
 
         tr.innerHTML = `
           <td class="p-3 font-mono font-bold text-[#0D5C3A]">${chest}</td>
@@ -992,7 +993,7 @@
           <td class="p-3"><span class="text-[11px] font-semibold text-emerald-800 uppercase tracking-wide">${safeCat}</span></td>
           <td class="p-3 text-[11px] text-slate-600">${safeEvents}</td>
           <td class="p-3 text-center">
-            <a href="/admitcard?id=${safeId}" target="_blank" class="inline-flex items-center gap-1 text-[#0D5C3A] hover:underline font-bold text-xs">
+            <a href="/admitcard?id=${safeId}${tokenFragment}" target="_blank" class="inline-flex items-center gap-1 text-[#0D5C3A] hover:underline font-bold text-xs">
               <i class="fa-solid fa-id-card" aria-hidden="true"></i> View Card
             </a>
           </td>

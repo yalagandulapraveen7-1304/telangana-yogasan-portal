@@ -71,9 +71,11 @@ fs.writeFileSync(path.join(publicDir, '_redirects'), redirectsContent);
 
 // 4. Create Cloudflare Pages _headers file for caching & security
 const headersContent = `/*
+  Strict-Transport-Security: max-age=31536000
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(self "https://api.razorpay.com")
 /static/*
   Cache-Control: public, max-age=2592000, immutable
 /sitemap.xml

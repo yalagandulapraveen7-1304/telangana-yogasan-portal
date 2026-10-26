@@ -33,7 +33,13 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
   before(async () => {
     await connectDB();
 
+    // Clean up any stale test records from prior runs
+    await Athlete.deleteMany({ chestNumber: { $in: ['HYD-JR-71', 'HYD-JR-72'] } });
+
     // Create 2 test athletes in Hyderabad
+    const token1 = 'token-manage-1-hex-string-32-chars-long-00000000000000000000000000000001';
+    const token2 = 'token-manage-2-hex-string-32-chars-long-00000000000000000000000000000002';
+
     testAthlete1 = await Athlete.create({
       firstName: 'ManageOne',
       lastName: 'Sharma',
@@ -43,6 +49,8 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
       category: 'Junior',
       chestNumber: 'HYD-JR-71',
       status: 'Submitted',
+      admitCardToken: token1,
+      admitCardTokenExpiresAt: new Date(Date.now() + 86400000),
       institutionName: 'Hyderabad Yoga Club',
       residentialAddress: 'Secret Address 1'
     });
@@ -56,6 +64,8 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
       category: 'Junior',
       chestNumber: 'HYD-JR-72',
       status: 'Verified',
+      admitCardToken: token2,
+      admitCardTokenExpiresAt: new Date(Date.now() + 86400000),
       institutionName: 'Telangana Sports Academy',
       residentialAddress: 'Secret Address 2'
     });
@@ -70,8 +80,7 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
   });
 
   after(async () => {
-    if (testAthlete1?._id) await Athlete.deleteOne({ _id: testAthlete1._id });
-    if (testAthlete2?._id) await Athlete.deleteOne({ _id: testAthlete2._id });
+    await Athlete.deleteMany({ chestNumber: { $in: ['HYD-JR-71', 'HYD-JR-72'] } });
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
@@ -135,25 +144,54 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
       assert.equal(ath.residentialAddress, 'Secret Address 1');
     });
 
-    it('public card endpoint retrieves admit card data by chest number without auth', async () => {
+    it('chest number alone cannot retrieve admit card without access token (401)', async () => {
       const res = await fetch(`${baseUrl}/portal/athletes/HYD-JR-71/public-card`);
+      assert.equal(res.status, 401);
+    });
+
+    it('rejects tokens passed in query string to prevent leakage (400)', async () => {
+      const token1 = 'token-manage-1-hex-string-32-chars-long-00000000000000000000000000000001';
+      const res = await fetch(`${baseUrl}/portal/athletes/HYD-JR-71/public-card?token=${token1}`);
+      assert.equal(res.status, 400);
+      const data = await res.json();
+      assert.equal(data.success, false);
+    });
+
+    it('public card endpoint retrieves admit card data with valid registration access token in header (never in URL)', async () => {
+      const token1 = 'token-manage-1-hex-string-32-chars-long-00000000000000000000000000000001';
+      const apiUrl = `${baseUrl}/portal/athletes/HYD-JR-71/public-card`;
+      assert.equal(apiUrl.includes('?'), false);
+
+      const res = await fetch(apiUrl, {
+        headers: { 'X-Admit-Card-Token': token1 }
+      });
 
       assert.equal(res.status, 200);
       assert.ok(res.headers.get('cache-control')?.includes('public'));
       const card = await res.json();
       assert.equal(card.firstName, 'ManageOne');
       assert.equal(card.chestNumber, 'HYD-JR-71');
-      // Public projection must omit residentialAddress
+      // Public projection must omit residentialAddress, tokens, and unnecessary personal data
       assert.equal(card.residentialAddress, undefined);
+      assert.equal(card.aadhaarLast4, undefined);
+      assert.equal(card.guardianName, undefined);
+      assert.equal(card.dob, undefined);
+      assert.equal(card.mobileNumber, undefined);
+      assert.equal(card.admitCardToken, undefined);
     });
 
     it('serves subsequent public card requests from in-memory cache with X-Cache: HIT', async () => {
+      const token2 = 'token-manage-2-hex-string-32-chars-long-00000000000000000000000000000002';
       // First request primes the cache (MISS)
-      const res1 = await fetch(`${baseUrl}/portal/athletes/HYD-JR-72/public-card`);
+      const res1 = await fetch(`${baseUrl}/portal/athletes/HYD-JR-72/public-card`, {
+        headers: { 'X-Admit-Card-Token': token2 }
+      });
       assert.equal(res1.status, 200);
 
       // Second request must be served from cache (HIT)
-      const res2 = await fetch(`${baseUrl}/portal/athletes/HYD-JR-72/public-card`);
+      const res2 = await fetch(`${baseUrl}/portal/athletes/HYD-JR-72/public-card`, {
+        headers: { 'X-Admit-Card-Token': token2 }
+      });
       assert.equal(res2.status, 200);
       assert.equal(res2.headers.get('x-cache'), 'HIT');
       const card = await res2.json();
@@ -161,7 +199,9 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
     });
 
     it('returns 404 for non-existent athlete ID or chest number', async () => {
-      const res = await fetch(`${baseUrl}/portal/athletes/NON-EXISTENT-01/public-card`);
+      const res = await fetch(`${baseUrl}/portal/athletes/NON-EXISTENT-01/public-card`, {
+        headers: { 'X-Admit-Card-Token': 'some-token-value' }
+      });
       assert.equal(res.status, 404);
     });
   });
@@ -191,7 +231,10 @@ describe('Integration Tests: Athlete Management & Retrieval API', () => {
       assert.equal(updated.remarks, 'Original DOB certificate needs clearer scan');
 
       // Verify cache invalidation: fetch public card again; must return updated status and X-Cache: MISS
-      const resCard = await fetch(`${baseUrl}/portal/athletes/${testAthlete1.chestNumber}/public-card`);
+      const token1 = 'token-manage-1-hex-string-32-chars-long-00000000000000000000000000000001';
+      const resCard = await fetch(`${baseUrl}/portal/athletes/${testAthlete1.chestNumber}/public-card`, {
+        headers: { 'X-Admit-Card-Token': token1 }
+      });
       assert.equal(resCard.status, 200);
       assert.equal(resCard.headers.get('x-cache'), 'MISS');
       const cardData = await resCard.json();

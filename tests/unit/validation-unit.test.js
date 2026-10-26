@@ -23,6 +23,7 @@ const {
   validateEvents,
   isValidFilename,
   sanitizeBoundedText,
+  isValidNoticeUrl,
   ALLOWED_STATUSES,
   ALLOWED_GENDERS,
   ALLOWED_EVENTS
@@ -296,6 +297,81 @@ describe('Unit Tests: Validation Utilities', () => {
       assert.equal(sanitizeBoundedText(null, 50, 'Default'), 'Default');
       assert.equal(sanitizeBoundedText(undefined, 50, 'Fallback'), 'Fallback');
       assert.equal(sanitizeBoundedText(12345, 50, 'Number'), 'Number');
+    });
+  });
+
+  describe('13. Notice URL Validation (isValidNoticeUrl)', () => {
+    it('accepts safe HTTPS URLs', () => {
+      assert.equal(isValidNoticeUrl('https://telanganayoga.org.in'), true);
+      assert.equal(isValidNoticeUrl('https://telanganayoga.org.in/circulars/2026.pdf'), true);
+      assert.equal(isValidNoticeUrl('https://subdomain.example.gov.in/path?query=val&flag=1#section'), true);
+      assert.equal(isValidNoticeUrl('https://example.com:8443/notice'), true);
+    });
+
+    it('accepts safe same-site relative paths', () => {
+      assert.equal(isValidNoticeUrl('/'), true);
+      assert.equal(isValidNoticeUrl('/activities'), true);
+      assert.equal(isValidNoticeUrl('/downloads/schedule-2026.pdf'), true);
+      assert.equal(isValidNoticeUrl('/results?year=2026&comp=state'), true);
+      assert.equal(isValidNoticeUrl('/events#state-championship'), true);
+    });
+
+    it('rejects javascript: and pseudo-protocols', () => {
+      assert.equal(isValidNoticeUrl('javascript:alert(1)'), false);
+      assert.equal(isValidNoticeUrl('JAVASCRIPT:alert(document.cookie)'), false);
+      assert.equal(isValidNoticeUrl('javascript :alert(1)'), false);
+      assert.equal(isValidNoticeUrl('data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=='), false);
+      assert.equal(isValidNoticeUrl('DATA:text/html,test'), false);
+      assert.equal(isValidNoticeUrl('vbscript:msgbox(1)'), false);
+      assert.equal(isValidNoticeUrl('blob:https://example.com/uuid'), false);
+      assert.equal(isValidNoticeUrl('file:///etc/passwd'), false);
+    });
+
+    it('rejects protocol-relative external URLs and backslash evasions', () => {
+      assert.equal(isValidNoticeUrl('//evil.com'), false);
+      assert.equal(isValidNoticeUrl('//evil.com/path'), false);
+      assert.equal(isValidNoticeUrl('/\\evil.com'), false);
+      assert.equal(isValidNoticeUrl('\\\\evil.com'), false);
+      assert.equal(isValidNoticeUrl('\\/evil.com'), false);
+    });
+
+    it('rejects HTML quote-based attribute breakouts and script injection', () => {
+      assert.equal(isValidNoticeUrl('https://evil.com" onmouseover="alert(1)'), false);
+      assert.equal(isValidNoticeUrl("https://evil.com' onfocus='alert(1)'"), false);
+      assert.equal(isValidNoticeUrl('https://evil.com<script>'), false);
+      assert.equal(isValidNoticeUrl('https://evil.com>alert(1)'), false);
+      assert.equal(isValidNoticeUrl('https://evil.com`test`'), false);
+      assert.equal(isValidNoticeUrl('/path" onmouseover="alert(1)'), false);
+      assert.equal(isValidNoticeUrl("/path' onfocus='alert(1)'"), false);
+      assert.equal(isValidNoticeUrl('/path<script>'), false);
+    });
+
+    it('rejects path traversal, backslashes, and malformed URLs', () => {
+      assert.equal(isValidNoticeUrl('/..'), false);
+      assert.equal(isValidNoticeUrl('/path/../secret'), false);
+      assert.equal(isValidNoticeUrl('/path\\evil'), false);
+      assert.equal(isValidNoticeUrl('http://insecure.com'), false);
+      assert.equal(isValidNoticeUrl('ftp://files.example.com'), false);
+      assert.equal(isValidNoticeUrl('mailto:admin@example.com'), false);
+      assert.equal(isValidNoticeUrl('tel:+919876543210'), false);
+      assert.equal(isValidNoticeUrl('https://'), false);
+      assert.equal(isValidNoticeUrl('https:///path'), false);
+      assert.equal(isValidNoticeUrl('https:example.com'), false);
+      assert.equal(isValidNoticeUrl('https://user:pass@evil.com'), false);
+      assert.equal(isValidNoticeUrl(''), false);
+      assert.equal(isValidNoticeUrl('   '), false);
+      assert.equal(isValidNoticeUrl(null), false);
+      assert.equal(isValidNoticeUrl(undefined), false);
+      assert.equal(isValidNoticeUrl(12345), false);
+      assert.equal(isValidNoticeUrl({}), false);
+    });
+
+    it('rejects percent-encoded quote, tag, or null byte injections', () => {
+      assert.equal(isValidNoticeUrl('https://example.com/%22onload=%22alert(1)'), false);
+      assert.equal(isValidNoticeUrl('https://example.com/%3Cscript%3E'), false);
+      assert.equal(isValidNoticeUrl('https://example.com/%00'), false);
+      assert.equal(isValidNoticeUrl('https://example.com/%zz'), false);
+      assert.equal(isValidNoticeUrl('/activities/%22'), false);
     });
   });
 });

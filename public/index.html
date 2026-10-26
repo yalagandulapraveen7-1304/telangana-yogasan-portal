@@ -1470,6 +1470,52 @@
           .replace(/'/g, '&#39;');
       }
 
+      function sanitizeNoticeUrl(url) {
+        if (!url || typeof url !== 'string') return '';
+        const trimmed = url.trim();
+        if (!trimmed || trimmed.length > 255) return '';
+        if (/["'`<>\s\x00-\x1F\x7F]/.test(trimmed)) return '';
+        try {
+          const decoded = decodeURIComponent(trimmed);
+          if (/["'`<>\x00-\x1F\x7F]/.test(decoded)) return '';
+        } catch {
+          return '';
+        }
+        if (/^(\/\/|\/\\|\\\/|\\\\)/.test(trimmed)) return '';
+        const lower = trimmed.toLowerCase();
+        if (
+          lower.includes('javascript:') ||
+          lower.includes('data:') ||
+          lower.includes('vbscript:') ||
+          lower.includes('blob:') ||
+          lower.includes('file:')
+        ) {
+          return '';
+        }
+        if (trimmed.startsWith('/')) {
+          if (trimmed.length === 1) return '/';
+          const secondChar = trimmed[1];
+          if (secondChar === '/' || secondChar === '\\') return '';
+          if (trimmed.includes('..') || trimmed.includes('\\')) return '';
+          if (!/^\/[a-zA-Z0-9\-._~%!$&()*+,;=:@/?#]+$/.test(trimmed)) return '';
+          return trimmed;
+        }
+        if (!trimmed.startsWith('https://')) return '';
+        if (trimmed.startsWith('https:///') || trimmed.startsWith('https://\\')) return '';
+        try {
+          const parsed = new URL(trimmed);
+          if (parsed.protocol !== 'https:') return '';
+          if (parsed.username || parsed.password) return '';
+          if (!parsed.hostname || parsed.hostname.length < 3 || !parsed.hostname.includes('.')) return '';
+          if (!/^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)+$/.test(parsed.hostname)) {
+            return '';
+          }
+          return parsed.href;
+        } catch {
+          return '';
+        }
+      }
+
       // Dynamic Marquee Ticker & Notice Board Loader
       document.addEventListener("DOMContentLoaded", async () => {
         // 1. Fetch dynamic marquee ticker
@@ -1499,9 +1545,19 @@
             if (notices.length > 0 && grid) {
               grid.innerHTML = notices.map(n => {
                 const catClass = n.category === 'CIRCULAR' ? 'border-l-blue-600' : n.category === 'SCHEDULE_UPDATE' ? 'border-l-amber-500' : 'border-l-emerald-600';
-                const downloadLink = n.attachmentPath
-                  ? `<a href="/portal/notices/attachment/${n._id}" target="_blank" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>Download PDF</span> <i class="fa-solid fa-file-pdf text-[10px]" aria-hidden="true"></i></a>`
-                  : (n.linkUrl ? `<a href="${n.linkUrl}" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>${escapeHtml(n.linkLabel) || 'Details'}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i></a>` : `<span class="text-[11px] text-slate-400">Official Notice</span>`);
+                let downloadLink = '<span class="text-[11px] text-slate-400">Official Notice</span>';
+                if (n.attachmentPath) {
+                  const safeAttachmentId = encodeURIComponent(n._id || '');
+                  downloadLink = `<a href="/portal/notices/attachment/${safeAttachmentId}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>Download PDF</span> <i class="fa-solid fa-file-pdf text-[10px]" aria-hidden="true"></i></a>`;
+                } else if (n.linkUrl) {
+                  const safeUrl = sanitizeNoticeUrl(n.linkUrl);
+                  if (safeUrl) {
+                    const label = escapeHtml(n.linkLabel) || 'Details';
+                    const isExternal = safeUrl.startsWith('https://');
+                    const externalAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+                    downloadLink = `<a href="${escapeHtml(safeUrl)}"${externalAttrs} class="text-xs font-bold text-[#0D5C3A] hover:underline flex items-center gap-1"><span>${label}</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]" aria-hidden="true"></i></a>`;
+                  }
+                }
                 const bodyText = (n.summary || n.body || '').trim();
 
                 return `

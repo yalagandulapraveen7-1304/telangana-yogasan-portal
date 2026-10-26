@@ -15,24 +15,42 @@ const {
  * Verify reCAPTCHA Enterprise Assessment
  * @param {string} token - Client token received from grecaptcha.enterprise
  * @param {string} expectedAction - Action name (e.g. 'LOGIN')
- * @returns {Promise<{success: boolean, score?: number, error?: string, bypassed?: boolean}>}
+ * @returns {Promise<{success: boolean, score?: number, action?: string, reasons?: string[], error?: string, bypassed?: boolean}>}
  */
 async function verifyEnterpriseRecaptcha(token, expectedAction = 'LOGIN') {
-  const projectId = process.env.RECAPTCHA_PROJECT_ID || RECAPTCHA_PROJECT_ID || 'telangana-yogasa-1791657494164';
-  const siteKey = process.env.RECAPTCHA_SITE_KEY || RECAPTCHA_SITE_KEY || '6Ld84ugtAAAAAOo_agUOzrCfeCrZq6W2RbSeLP28';
-  const apiKey = process.env.RECAPTCHA_API_KEY || RECAPTCHA_API_KEY || '';
+  const isProd = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
 
-  // In test environments or when API key is not yet configured, allow safe bypass
-  const isTestEnv = process.env.NODE_ENV === 'test' || !process.env.NODE_ENV;
-  if (!apiKey || isTestEnv) {
-    if (!token && !isTestEnv) {
-      return { success: false, error: 'reCAPTCHA token missing.' };
-    }
-    return { success: true, bypassed: true };
+  // 1. Explicit development-only bypass check.
+  // In production (NODE_ENV === 'production' or VERCEL_ENV === 'production'), bypass is strictly FORBIDDEN.
+  const isExplicitDevBypass = !isProd && (
+    process.env.RECAPTCHA_BYPASS === 'true' ||
+    process.env.ALLOW_RECAPTCHA_BYPASS === 'true' ||
+    process.env.RECAPTCHA_DEV_BYPASS === 'true' ||
+    token === 'DEV_BYPASS_TOKEN' ||
+    token === 'dev-bypass-token' ||
+    (process.env.NODE_ENV === 'test' && process.env.RECAPTCHA_BYPASS !== 'false')
+  );
+
+  if (isExplicitDevBypass) {
+    return { success: true, score: 1.0, bypassed: true };
   }
 
-  if (!token || typeof token !== 'string') {
+  // 2. Validate token presence and type (fail closed on missing/invalid token)
+  if (!token || typeof token !== 'string' || !token.trim()) {
     return { success: false, error: 'reCAPTCHA token is required.' };
+  }
+
+  // 3. Resolve configuration
+  const projectId = (process.env.RECAPTCHA_PROJECT_ID !== undefined ? process.env.RECAPTCHA_PROJECT_ID : (RECAPTCHA_PROJECT_ID || '')).trim();
+  const siteKey = (process.env.RECAPTCHA_SITE_KEY !== undefined ? process.env.RECAPTCHA_SITE_KEY : (RECAPTCHA_SITE_KEY || '')).trim();
+  const apiKey = (process.env.RECAPTCHA_API_KEY !== undefined ? process.env.RECAPTCHA_API_KEY : (RECAPTCHA_API_KEY || '')).trim();
+
+  // 4. Fail closed when required configuration is missing or incomplete
+  if (!apiKey || !projectId || !siteKey) {
+    return {
+      success: false,
+      error: 'reCAPTCHA verification is unavailable due to missing or incomplete configuration.'
+    };
   }
 
   try {
@@ -40,7 +58,7 @@ async function verifyEnterpriseRecaptcha(token, expectedAction = 'LOGIN') {
 
     const payload = {
       event: {
-        token,
+        token: token.trim(),
         expectedAction,
         siteKey
       }
@@ -49,20 +67,23 @@ async function verifyEnterpriseRecaptcha(token, expectedAction = 'LOGIN') {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 7000); // 7s timeout
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
+    let res;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.error('reCAPTCHA Enterprise assessment request failed:', res.status, errText);
+      // Strictly avoid logging secrets or token values
+      console.error(`reCAPTCHA Enterprise assessment request failed (HTTP ${res.status}).`);
       return { success: false, error: 'reCAPTCHA Enterprise assessment verification failed.' };
     }
 
@@ -104,7 +125,8 @@ async function verifyEnterpriseRecaptcha(token, expectedAction = 'LOGIN') {
       reasons: riskAnalysis.reasons
     };
   } catch (err) {
-    console.error('reCAPTCHA Enterprise error:', err.message);
+    // Strictly avoid logging secrets, query parameters, or token values
+    console.error('reCAPTCHA Enterprise communication error: network or service failure.');
     return { success: false, error: 'Failed to communicate with reCAPTCHA Enterprise service.' };
   }
 }

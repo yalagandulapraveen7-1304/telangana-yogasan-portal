@@ -14,6 +14,7 @@ const app = require('../../server');
 const Athlete = require('../../models/Athlete');
 const { JWT_SECRET, FEE_PER_EVENT } = require('../../config/constants');
 const { connectDB } = require('../../config/db');
+const { generateTestSignature } = require('../../utils/payment');
 
 let server;
 let baseUrl;
@@ -112,6 +113,13 @@ describe('API Integration: Athlete Nomination & Order Creation', () => {
       formData.append('residentialAddress', 'Plot 45, Banjara Hills, Hyderabad');
       formData.append('events', 'Traditional Yogasana');
 
+      const orderId = `order_int_${Date.now()}`;
+      const paymentId = `pay_int_${Date.now()}`;
+      const signature = generateTestSignature(orderId, paymentId);
+      formData.append('razorpay_order_id', orderId);
+      formData.append('razorpay_payment_id', paymentId);
+      formData.append('razorpay_signature', signature);
+
       const res = await fetch(`${baseUrl}/portal/athletes/nominate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -145,6 +153,13 @@ describe('API Integration: Athlete Nomination & Order Creation', () => {
       formData.append('dob', '2012-05-10');
       formData.append('district', 'Warangal'); // Tampered district parameter
       formData.append('events', 'Traditional Yogasana');
+
+      const orderId = `order_int_${Date.now()}`;
+      const paymentId = `pay_int_${Date.now()}`;
+      const signature = generateTestSignature(orderId, paymentId);
+      formData.append('razorpay_order_id', orderId);
+      formData.append('razorpay_payment_id', paymentId);
+      formData.append('razorpay_signature', signature);
 
       const res = await fetch(`${baseUrl}/portal/athletes/nominate`, {
         method: 'POST',

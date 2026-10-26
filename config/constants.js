@@ -53,6 +53,7 @@ const TELANGANA_DISTRICTS = [
 const RECAPTCHA_PROJECT_ID = process.env.RECAPTCHA_PROJECT_ID || 'telangana-yogasa-1791657494164';
 const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || '6Ld84ugtAAAAAOo_agUOzrCfeCrZq6W2RbSeLP28';
 const RECAPTCHA_API_KEY = process.env.RECAPTCHA_API_KEY || '';
+const RECAPTCHA_BYPASS = process.env.RECAPTCHA_BYPASS === 'true';
 
 module.exports = {
   PORT,
@@ -65,5 +66,6 @@ module.exports = {
   RECAPTCHA_PROJECT_ID,
   RECAPTCHA_SITE_KEY,
   RECAPTCHA_API_KEY,
+  RECAPTCHA_BYPASS,
   TELANGANA_DISTRICTS
 };

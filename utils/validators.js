@@ -227,6 +227,84 @@ function sanitizeBoundedText(str, maxLength = 100, defaultValue = '') {
   return cleaned.substring(0, maxLength);
 }
 
+/**
+ * Validates notice link URL to prevent stored XSS, script injection, and open redirects.
+ * Allows only safe HTTPS URLs or safe same-site relative paths (e.g. /activities).
+ * Rejects javascript:, data:, vbscript:, protocol-relative external URLs (//, /\),
+ * attribute breakout quotes (" or '), angle brackets, backticks, whitespace, control chars,
+ * path traversal tokens (..), and malformed or opaque schemes.
+ *
+ * @param {string} url - Link URL to validate
+ * @returns {boolean} True if the URL is safe, false otherwise
+ */
+function isValidNoticeUrl(url) {
+  if (typeof url !== 'string') return false;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.length > 255) return false;
+
+  // Reject quotes, angle brackets, backticks, whitespace, and control chars
+  // (Prevents HTML attribute injection, breakout, and header/URL splitting)
+  if (/["'`<>\s\x00-\x1F\x7F]/.test(trimmed)) return false;
+
+  // Check URL-decoded form to prevent percent-encoded quote/bracket/null injection
+  try {
+    const decoded = decodeURIComponent(trimmed);
+    if (/["'`<>\x00-\x1F\x7F]/.test(decoded)) return false;
+  } catch {
+    return false;
+  }
+
+  // Reject protocol-relative external URLs and slash/backslash variations
+  if (/^(\/\/|\/\\|\\\/|\\\\)/.test(trimmed)) return false;
+
+  const lower = trimmed.toLowerCase();
+  // Reject dangerous pseudo-protocols
+  if (
+    lower.includes('javascript:') ||
+    lower.includes('data:') ||
+    lower.includes('vbscript:') ||
+    lower.includes('blob:') ||
+    lower.includes('file:')
+  ) {
+    return false;
+  }
+
+  // Same-site relative URLs: must start with a single /
+  if (trimmed.startsWith('/')) {
+    if (trimmed.length === 1) return true;
+    const secondChar = trimmed[1];
+    if (secondChar === '/' || secondChar === '\\') return false;
+    // Reject path traversal tokens
+    if (trimmed.includes('..')) return false;
+    // Disallow backslashes anywhere in path
+    if (trimmed.includes('\\')) return false;
+    // Ensure relative path only contains safe RFC 3986 path/query/fragment chars
+    if (!/^\/[a-zA-Z0-9\-._~%!$&()*+,;=:@/?#]+$/.test(trimmed)) return false;
+    return true;
+  }
+
+  // External URLs: strictly require https://
+  if (!trimmed.startsWith('https://')) return false;
+  // Reject malformed triple-slash or backslash variations
+  if (trimmed.startsWith('https:///') || trimmed.startsWith('https://\\')) return false;
+
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol !== 'https:') return false;
+    // Disallow embedded credentials
+    if (parsed.username || parsed.password) return false;
+    // Ensure valid hostname with at least one dot or valid domain
+    if (!parsed.hostname || parsed.hostname.length < 3 || !parsed.hostname.includes('.')) return false;
+    // Verify hostname contains only safe domain characters
+    if (!/^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)+$/.test(parsed.hostname)) {
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 module.exports = {
   isValidEmail,
   isValidPassword,
@@ -242,6 +320,7 @@ module.exports = {
   validateEvents,
   isValidFilename,
   sanitizeBoundedText,
+  isValidNoticeUrl,
   ALLOWED_STATUSES,
   ALLOWED_GENDERS,
   ALLOWED_EVENTS
