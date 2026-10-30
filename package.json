@@ -15,7 +15,8 @@
     "server:stop": "pm2 stop ecosystem.config.js",
     "server:logs": "pm2 logs yogasana-portal",
     "build:css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify",
-    "watch:css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch"
+    "watch:css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch",
+    "verify:pqc": "node scripts/verify-pqc-tls.js"
   },
   "engines": {
     "node": ">=20.0.0"

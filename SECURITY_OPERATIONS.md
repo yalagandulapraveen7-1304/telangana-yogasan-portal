@@ -119,6 +119,86 @@ Cross-Origin-Embedder-Policy: false
 
 ---
 
+### 2.6. Post-Quantum Cryptography (PQC) & Hybrid TLS Key Exchange Review (FIPS 203 / ML-KEM)
+
+#### 2.6.1. Architectural Scope & Cryptographic Boundaries
+
+1. **Protocol-Layer Role (TLS 1.3 Key Establishment Only):**  
+   ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism, formally standardized by NIST in August 2024 as **FIPS 203**) is a quantum-resistant key-encapsulation mechanism used exclusively during the **TLS 1.3 handshake** to establish ephemeral shared session secrets. It defends in-flight data against **"Harvest Now, Decrypt Later" (HNDL)** attacks, where encrypted communications are intercepted and stored today for future decryption by cryptanalytically relevant quantum computers.
+2. **Strict Boundary Defense (What ML-KEM Is Not):**  
+   ML-KEM is **not** a general data encryption cipher, password hashing function, digital signature algorithm, or identity token mechanism. In compliance with cryptographic security standards:
+   - Password security remains strictly governed by **`bcryptjs`** with work-factor salt rounds. ML-KEM is never used for password storage or hashing.
+   - Session authentication remains strictly governed by **JSON Web Tokens (JWT)** signed via HMAC-SHA256 (`HS256`) using high-entropy `JWT_SECRET` (>= 32 chars) transmitted in `httpOnly`, `secure`, `sameSite: 'strict'` cookies.
+   - Payment integrity remains governed by **HMAC-SHA256** cryptographic signature verification (`crypto.createHmac('sha256', ...)`) with constant-time comparison (`crypto.timingSafeEqual`).
+   - Document and identity protection remain governed by server-side authorization guards (`requireAuth`, `requireRole`, tenant isolation) and file integrity checks.
+   - Application data at rest in MongoDB Atlas is protected by MongoDB Encrypted Storage Engine (AES-256), not a KEM.
+
+#### 2.6.2. TLS Termination Architecture & Hosting Platform Reality
+
+- **Production Deployment (Vercel Edge):**  
+  The portal runs as a Node.js serverless application behind Vercel’s Anycast Edge network (`bom1` Mumbai region). **TLS terminates at Vercel’s edge proxy**, not within the Node.js process. The Express application behind `trust proxy: 1` receives decrypted HTTP traffic over Vercel's internal private proxy mesh.
+- **Hosting Control Boundary:**  
+  Because TLS terminates at Vercel's edge, the Node.js application **cannot configure edge TLS cipher suites, protocols, or key-exchange groups in code or via `vercel.json`**. These are managed directly by Vercel's edge infrastructure. Adding application-level TLS wrappers in Express would not protect visitor connections and would break serverless request handling.
+- **Alternative Self-Hosted Deployment (Nginx / PM2):**  
+  When running on Linux hosts via [`scripts/setup-nginx-server.sh`](scripts/setup-nginx-server.sh), TLS terminates at **Nginx** (`listen 443 ssl http2`), and Nginx proxies plain HTTP over loopback (`127.0.0.1:5000`) to the PM2 cluster. Node.js does not terminate TLS in production.
+
+#### 2.6.3. Platform Support Assessment & Live Verification Evidence
+
+1. **Vercel Edge Network Support (`X25519MLKEM768`):**  
+   Vercel has rolled out native support for standardized post-quantum hybrid key exchange using **`X25519MLKEM768`** (combining classical X25519 elliptic-curve Diffie-Hellman with NIST FIPS 203 ML-KEM-768).
+2. **Live Endpoint Verification:**  
+   The deployed production endpoint `https://telangana-yogasan-portal.vercel.app` was directly probed using OpenSSL 3.5.6 and Node.js v24 TLS client:
+   ```text
+   Connecting to 216.198.79.131:443
+   CONNECTION ESTABLISHED
+   Protocol version:       TLSv1.3
+   Ciphersuite:            TLS_AES_128_GCM_SHA256
+   Peer certificate:       CN=*.vercel.app
+   Certificate Issuer:     Google Trust Services
+   Negotiated TLS Group:   X25519MLKEM768  [PASS: Standardized Hybrid ML-KEM Active]
+   ```
+3. **Classical Fallback & Backward Compatibility:**  
+   Vercel's edge stack maintains dual-mode interoperability. When tested with a classical-only client (offering only `X25519` and `prime256v1`), the edge gracefully negotiated classical `X25519` (253 bits) without handshake failures, latency spikes, or client rejection.
+
+#### 2.6.4. Operational Prerequisites & Provider Dashboard Actions
+
+- `[STATUS: VERIFIED ACTIVE ON VERCEL DOMAIN]` **`telangana-yogasan-portal.vercel.app`:**  
+  Hybrid `X25519MLKEM768` is active and verified by default on the Vercel-managed project alias.
+- `[OWNER ACTION: CLOUDFLARE / CUSTOM DOMAIN - PENDING OWNER DASHBOARD VERIFICATION]` **`telanganayoga.org.in`:**  
+  When routing the primary apex domain through Cloudflare DNS / CDN in front of Vercel:
+  1. Log in to the **Cloudflare Dashboard**.
+  2. Navigate to **SSL/TLS** -> **Edge Certificates**.
+  3. Locate **Post-Quantum Cryptography** and toggle to **Enabled**.
+  4. Verify that the minimum TLS version is set to **TLS 1.2** or **TLS 1.3**.
+- `[OWNER ACTION: NGINX SELF-HOSTED PREREQUISITE]` **Self-Hosted Linux Deployments ([`config/nginx/telanganayoga.org.in.conf`](config/nginx/telanganayoga.org.in.conf)):**  
+  - Ubuntu 20.04/22.04 default repositories distribute OpenSSL 3.0.x, which does not support FIPS 203 ML-KEM. Configuring `X25519MLKEM768` on OpenSSL < 3.5 will cause `nginx -t` syntax validation failures.
+  - To enable hybrid ML-KEM on Nginx: Upgrade system OpenSSL to **3.5+** or compile Nginx with the Open Quantum Safe provider (`oqsprovider`). The configuration template defaults to `ssl_ecdh_curve auto;`, which automatically enables hybrid ML-KEM when the underlying OpenSSL stack supports it.
+
+#### 2.6.5. Public Endpoint PQC Verification Procedure
+
+Administrators can verify whether post-quantum key exchange is actively negotiated on any public endpoint using the repository's built-in verification tool:
+
+```bash
+# Verify the default production Vercel deployment:
+npm run verify:pqc
+
+# Verify a specific custom domain or staging URL:
+node scripts/verify-pqc-tls.js telanganayoga.org.in 443
+```
+
+Alternatively, test using OpenSSL 3.5+ from any terminal:
+```bash
+# Force probe requesting X25519MLKEM768 hybrid group:
+echo "Q" | openssl s_client -connect telangana-yogasan-portal.vercel.app:443 -servername telangana-yogasan-portal.vercel.app -curves X25519MLKEM768:X25519 -brief
+```
+
+Expected output confirms:
+```text
+Negotiated TLS1.3 group: X25519MLKEM768
+```
+
+---
+
 ## 3. Identity & Access Management (IAM)
 
 ### 3.1. Individual Account Policy (Strict Zero-Shared-Logins)
