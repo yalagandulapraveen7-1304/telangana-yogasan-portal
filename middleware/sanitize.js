@@ -102,18 +102,19 @@ function isAllowedOriginHost(rawHost) {
     } catch {}
   }
 
+  // 2b. Exact deployment URL provisioned by Vercel for this container
+  if (process.env.VERCEL && process.env.VERCEL_URL) {
+    const expectedVercelHost = process.env.VERCEL_URL.trim().toLowerCase().split(':')[0];
+    if (hostname === expectedVercelHost || host === expectedVercelHost) {
+      return true;
+    }
+  }
+
   // 3. Vercel Preview Deployments:
   // ONLY permitted when running in the preview environment (VERCEL_ENV === 'preview').
   // Wildcard preview patterns are NEVER permitted in production!
   const isVercelPreviewEnv = process.env.VERCEL_ENV === 'preview';
   if (isVercelPreviewEnv) {
-    // Exact deployment URL provisioned by Vercel for this specific PR/branch
-    if (process.env.VERCEL_URL) {
-      const expectedVercelHost = process.env.VERCEL_URL.trim().toLowerCase().split(':')[0];
-      if (hostname === expectedVercelHost || host === expectedVercelHost) {
-        return true;
-      }
-    }
     if (process.env.VERCEL_BRANCH_URL) {
       const expectedBranchHost = process.env.VERCEL_BRANCH_URL.trim().toLowerCase().split(':')[0];
       if (hostname === expectedBranchHost || host === expectedBranchHost) {
