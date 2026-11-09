@@ -500,6 +500,23 @@
           
         </div>
 
+        <!-- Dynamic Fee Summary Card -->
+        <div id="nomination-fee-card" class="mt-4 p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-[#0D5C3A] flex-shrink-0">
+              <i class="fa-solid fa-receipt text-sm" aria-hidden="true"></i>
+            </div>
+            <div>
+              <span class="font-bold text-slate-900">Registration Fee Calculation:</span>
+              <span id="selected-events-count" class="text-slate-600 block sm:inline">1 event selected (&times; &#8377;<span id="fee-rate-display">260</span>)</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 bg-white px-3.5 py-2 rounded-lg border border-emerald-200 shadow-xs self-start sm:self-auto">
+            <span class="text-slate-600 font-semibold text-xs">Total Payable:</span>
+            <span id="total-fee-display" class="text-base font-extrabold text-[#0D5C3A]">&#8377;260</span>
+          </div>
+        </div>
+
       </fieldset>
 
       <!-- STEP 4: DOCUMENT UPLOADS WITH IMAGE PREVIEW -->
@@ -590,9 +607,9 @@
           Cancel
         </a>
         
-        <button type="submit" class="w-full sm:w-auto bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-paper-plane text-amber-300" aria-hidden="true"></i>
-          <span>Submit registration</span>
+        <button type="submit" id="submit-btn" class="w-full sm:w-auto bg-[#0D5C3A] hover:bg-[#0a4229] text-white font-bold text-sm px-8 py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+          <i id="submit-btn-icon" class="fa-solid fa-credit-card text-amber-300" aria-hidden="true"></i>
+          <span id="submit-btn-text">Pay &#8377;260 &amp; Submit Registration</span>
         </button>
       </div>
 
@@ -616,6 +633,7 @@
     </div>
   </footer>
 
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="/static/js/main.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {

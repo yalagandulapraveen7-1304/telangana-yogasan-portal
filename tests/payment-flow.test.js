@@ -23,10 +23,12 @@ const app = require('../server');
 const Athlete = require('../models/Athlete');
 const Competition = require('../models/Competition');
 const { connectDB } = require('../config/db');
-const { JWT_SECRET, FEE_PER_EVENT, RAZORPAY_KEY_SECRET } = require('../config/constants');
+const crypto = require('crypto');
+const { JWT_SECRET, FEE_PER_EVENT, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET } = require('../config/constants');
 const {
   verifyPaymentSignature,
   verifyPaymentWithGateway,
+  verifyWebhookSignature,
   generateTestSignature,
   registerMockPayment,
   clearMockPayments
@@ -627,6 +629,69 @@ describe('Audit: Nomination Payment Enforcement & Razorpay Integrity', () => {
       assert.strictEqual(data.count, 1);
       assert.ok(Array.isArray(data.athletes));
       createdAthleteIds.push(data.athletes[0]._id);
+    });
+  });
+
+  describe('6. Razorpay Webhook Event Processing', () => {
+    it('rejects webhook requests without signature header (HTTP 400)', async () => {
+      const res = await fetch(`${baseUrl}/portal/athletes/payment-webhook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event: 'payment.captured' })
+      });
+      assert.strictEqual(res.status, 400);
+      const data = await res.json();
+      assert.strictEqual(data.success, false);
+      assert.ok(data.error.includes('Missing webhook signature'));
+    });
+
+    it('rejects webhook requests with forged or invalid signature (HTTP 400)', async () => {
+      const res = await fetch(`${baseUrl}/portal/athletes/payment-webhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-razorpay-signature': '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
+        },
+        body: JSON.stringify({ event: 'payment.captured' })
+      });
+      assert.strictEqual(res.status, 400);
+      const data = await res.json();
+      assert.strictEqual(data.success, false);
+      assert.ok(data.error.includes('Invalid webhook signature'));
+    });
+
+    it('accepts valid webhook event with HMAC-SHA256 signature (HTTP 200)', async () => {
+      const payload = {
+        event: 'payment.captured',
+        payload: {
+          payment: {
+            entity: {
+              id: `pay_hook_${Date.now()}`,
+              order_id: `order_hook_${Date.now()}`,
+              status: 'captured',
+              amount: 26000
+            }
+          }
+        }
+      };
+      const secret = RAZORPAY_WEBHOOK_SECRET || RAZORPAY_KEY_SECRET || 'YOUR_SECRET';
+      const signature = crypto
+        .createHmac('sha256', secret)
+        .update(JSON.stringify(payload))
+        .digest('hex');
+
+      const res = await fetch(`${baseUrl}/portal/athletes/payment-webhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-razorpay-signature': signature
+        },
+        body: JSON.stringify(payload)
+      });
+      assert.strictEqual(res.status, 200);
+      const data = await res.json();
+      assert.strictEqual(data.status, 'ok');
+      assert.strictEqual(data.received, true);
     });
   });
 });

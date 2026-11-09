@@ -27,16 +27,17 @@ const rawRazorpayKeyId = process.env.RAZORPAY_KEY_ID;
 const rawRazorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 
 if (IS_PROD && !process.env.VERCEL) {
-  if (!rawRazorpayKeyId || rawRazorpayKeyId === 'rzp_test_YOUR_KEY' || rawRazorpayKeyId.includes('YOUR_KEY')) {
+  if (!rawRazorpayKeyId || rawRazorpayKeyId === 'rzp_test_YOUR_KEY' || rawRazorpayKeyId.includes('YOUR_KEY') || rawRazorpayKeyId.includes('REPLACE_WITH_YOUR')) {
     throw new Error('FATAL: RAZORPAY_KEY_ID environment variable is required in production and cannot use placeholder values');
   }
-  if (!rawRazorpayKeySecret || rawRazorpayKeySecret === 'YOUR_SECRET' || rawRazorpayKeySecret.includes('YOUR_SECRET')) {
+  if (!rawRazorpayKeySecret || rawRazorpayKeySecret === 'YOUR_SECRET' || rawRazorpayKeySecret.includes('YOUR_SECRET') || rawRazorpayKeySecret.includes('REPLACE_WITH_YOUR')) {
     throw new Error('FATAL: RAZORPAY_KEY_SECRET environment variable is required in production and cannot use placeholder values');
   }
 }
 
 const RAZORPAY_KEY_ID = rawRazorpayKeyId || 'rzp_test_YOUR_KEY';
 const RAZORPAY_KEY_SECRET = rawRazorpayKeySecret || 'YOUR_SECRET';
+const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET || 'YOUR_WEBHOOK_SECRET';
 
 // 33 Administrative Districts of Telangana
 const TELANGANA_DISTRICTS = [
@@ -63,6 +64,7 @@ module.exports = {
   FEE_PER_EVENT,
   RAZORPAY_KEY_ID,
   RAZORPAY_KEY_SECRET,
+  RAZORPAY_WEBHOOK_SECRET,
   RECAPTCHA_PROJECT_ID,
   RECAPTCHA_SITE_KEY,
   RECAPTCHA_API_KEY,

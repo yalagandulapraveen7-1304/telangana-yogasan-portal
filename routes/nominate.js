@@ -31,6 +31,7 @@ const {
   createOrder,
   verifyPaymentSignature,
   verifyPaymentWithGateway,
+  verifyWebhookSignature,
   FEE_PER_EVENT
 } = require('../utils/payment');
 const {
@@ -512,6 +513,48 @@ router.post('/create-order', nominationLimiter, async (req, res) => {
   } catch (err) {
     console.error('Order creation error:', err.message);
     return res.status(500).json({ success: false, message: 'Payment gateway initialization failed.' });
+  }
+});
+
+// ==========================================
+// 2b. POST /portal/athletes/payment-webhook (Razorpay Server Notifications)
+// ==========================================
+router.post('/payment-webhook', async (req, res) => {
+  try {
+    const signature = req.headers['x-razorpay-signature'];
+    const payload = req.body;
+
+    if (!signature) {
+      return res.status(400).json({ success: false, error: 'Missing webhook signature header.' });
+    }
+
+    const isValid = verifyWebhookSignature(payload, signature);
+    if (!isValid) {
+      return res.status(400).json({ success: false, error: 'Invalid webhook signature.' });
+    }
+
+    const event = payload.event;
+    const paymentEntity = payload.payload?.payment?.entity;
+    const orderId = paymentEntity?.order_id || payload.payload?.order?.entity?.id;
+    const paymentId = paymentEntity?.id;
+
+    if (event === 'payment.captured' && orderId) {
+      // Find athlete associated with this order ID and ensure status is marked PAID
+      const athlete = await Athlete.findOne({ 'paymentDetails.orderId': orderId });
+      if (athlete) {
+        if (athlete.paymentDetails.status !== 'PAID') {
+          athlete.paymentDetails.status = 'PAID';
+          athlete.paymentDetails.paymentId = paymentId || athlete.paymentDetails.paymentId;
+          athlete.paymentDetails.paidAt = new Date();
+          await athlete.save();
+        }
+      }
+    }
+
+    return res.status(200).json({ status: 'ok', received: true });
+  } catch (err) {
+    console.error('Razorpay Webhook Handler Error:', err.message || err);
+    return res.status(500).json({ success: false, error: 'Webhook processing error.' });
   }
 });
 

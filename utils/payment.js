@@ -7,7 +7,7 @@
 
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
-const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, FEE_PER_EVENT } = require('../config/constants');
+const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET, FEE_PER_EVENT } = require('../config/constants');
 
 const razorpay = new Razorpay({
   key_id: RAZORPAY_KEY_ID,
@@ -47,7 +47,16 @@ async function createOrder(eventCount = 1, feePerEvent = FEE_PER_EVENT, metadata
   };
 
   // If using placeholder/test keys in development or test runs, provide simulated mock order
-  if (!RAZORPAY_KEY_SECRET || RAZORPAY_KEY_SECRET === 'YOUR_SECRET' || RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
+  const isPlaceholderKey = !RAZORPAY_KEY_SECRET ||
+    RAZORPAY_KEY_SECRET === 'YOUR_SECRET' ||
+    RAZORPAY_KEY_SECRET.includes('YOUR_SECRET') ||
+    RAZORPAY_KEY_SECRET.includes('REPLACE_WITH_YOUR') ||
+    RAZORPAY_KEY_SECRET.includes('placeholder') ||
+    RAZORPAY_KEY_ID.includes('YOUR_KEY') ||
+    RAZORPAY_KEY_ID.includes('REPLACE_WITH_YOUR') ||
+    RAZORPAY_KEY_ID.includes('placeholder');
+
+  if (isPlaceholderKey) {
     const mockId = `order_mock_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     mockOrderStore.set(mockId, {
       id: mockId,
@@ -146,7 +155,12 @@ async function verifyPaymentWithGateway(orderId, paymentId, expectedAmountInRupe
 
   const isMockEnvironment = !RAZORPAY_KEY_SECRET ||
     RAZORPAY_KEY_SECRET === 'YOUR_SECRET' ||
+    RAZORPAY_KEY_SECRET.includes('YOUR_SECRET') ||
+    RAZORPAY_KEY_SECRET.includes('REPLACE_WITH_YOUR') ||
+    RAZORPAY_KEY_SECRET.includes('placeholder') ||
     RAZORPAY_KEY_ID.includes('YOUR_KEY') ||
+    RAZORPAY_KEY_ID.includes('REPLACE_WITH_YOUR') ||
+    RAZORPAY_KEY_ID.includes('placeholder') ||
     orderId.startsWith('order_mock_') ||
     orderId.startsWith('order_test_') ||
     paymentId.startsWith('pay_mock_') ||
@@ -234,10 +248,33 @@ async function verifyPaymentWithGateway(orderId, paymentId, expectedAmountInRupe
   }
 }
 
+/**
+ * Verifies Razorpay Webhook signature (HMAC-SHA256 with webhook secret)
+ */
+function verifyWebhookSignature(payloadBody, signature, webhookSecret = null) {
+  if (!payloadBody || !signature) return false;
+  const secret = webhookSecret || RAZORPAY_WEBHOOK_SECRET || RAZORPAY_KEY_SECRET || 'YOUR_SECRET';
+  try {
+    const rawBody = typeof payloadBody === 'string' ? payloadBody : JSON.stringify(payloadBody);
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(rawBody)
+      .digest('hex');
+
+    const sigBuf = Buffer.from(signature, 'utf-8');
+    const expBuf = Buffer.from(expectedSignature, 'utf-8');
+    if (sigBuf.length !== expBuf.length) return false;
+    return crypto.timingSafeEqual(sigBuf, expBuf);
+  } catch {
+    return false;
+  }
+}
+
 module.exports = {
   createOrder,
   verifyPaymentSignature,
   verifyPaymentWithGateway,
+  verifyWebhookSignature,
   generateTestSignature,
   registerMockPayment,
   clearMockPayments,

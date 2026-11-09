@@ -369,11 +369,118 @@ function trapFocus(modalEl) {
   };
 }
 
-/* ── Nomination Form Validation & Submission ──────────────────────────── */
+/* ── Nomination Form Validation & Submission (With Razorpay Payment Integration) ── */
 function initNominationForm() {
   const form = $('#nomination-form');
   if (!form) return;
 
+  const submitBtn = $('#submit-btn') || form.querySelector('button[type="submit"]');
+  const submitBtnText = $('#submit-btn-text');
+  const selectedCountEl = $('#selected-events-count');
+  const feeRateEl = $('#fee-rate-display');
+  const totalFeeEl = $('#total-fee-display');
+
+  // Helper: compute current total fee
+  function calculateCurrentFee() {
+    const checkedEvents = $$('[name="events[]"]:checked', form);
+    const count = checkedEvents.length;
+    const compSelect = $('#competition-select');
+    let feeRate = 260;
+    if (compSelect && compSelect.selectedOptions && compSelect.selectedOptions[0]) {
+      const dataFee = compSelect.selectedOptions[0].getAttribute('data-fee');
+      if (dataFee != null && !isNaN(Number(dataFee))) {
+        feeRate = Number(dataFee);
+      }
+    }
+    const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('token') : null;
+    const isAdmin = Boolean(token && token !== 'null' && token !== 'undefined');
+    return { count, feeRate, total: isAdmin ? 0 : count * feeRate, isAdmin };
+  }
+
+  // Update dynamic fee and button text
+  function updateFeeDisplay() {
+    const { count, feeRate, total, isAdmin } = calculateCurrentFee();
+
+    if (feeRateEl) feeRateEl.textContent = feeRate;
+    if (selectedCountEl) {
+      selectedCountEl.textContent = `${count} event${count === 1 ? '' : 's'} selected (× ₹${feeRate})`;
+    }
+    if (totalFeeEl) {
+      totalFeeEl.textContent = `₹${total.toLocaleString('en-IN')}`;
+    }
+
+    if (submitBtnText) {
+      if (isAdmin) {
+        submitBtnText.textContent = 'Submit Registration (Official Secretary Approval)';
+      } else if (total === 0) {
+        submitBtnText.textContent = 'Submit Free Registration';
+      } else {
+        submitBtnText.textContent = `Pay ₹${total.toLocaleString('en-IN')} & Submit Registration`;
+      }
+    }
+  }
+
+  // Listen for changes in event checkboxes and competition select
+  form.addEventListener('change', (e) => {
+    if (e.target && (e.target.name === 'events[]' || e.target.id === 'competition-select')) {
+      updateFeeDisplay();
+    }
+  });
+
+  // Initial calculation
+  updateFeeDisplay();
+
+  // Helper: final multipart nomination post to /portal/athletes/nominate
+  async function executeNominationPost(formData, activeBtn) {
+    if (activeBtn) {
+      activeBtn.disabled = true;
+      activeBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Submitting registration...`;
+    }
+
+    try {
+      const headers = {};
+      const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('token') : null;
+      if (token && token !== "null" && token !== "undefined") {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch("/portal/athletes/nominate", {
+        method: "POST",
+        headers: headers,
+        body: formData
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.success) {
+        if (activeBtn) {
+          activeBtn.disabled = false;
+          activeBtn.innerHTML = `<span><i class="fa-solid fa-circle-check mr-2"></i>Nomination Successful</span>`;
+        }
+        if (data.athlete && data.athlete._id) {
+          const tokenFragment = data.athlete.admitCardToken ? `#token=${encodeURIComponent(data.athlete.admitCardToken)}` : '';
+          window.location.href = `admitcard.html?id=${encodeURIComponent(data.athlete._id)}${tokenFragment}`;
+        } else {
+          showSubmitSuccess(data.athlete?._id, data.athlete?.admitCardToken);
+        }
+      } else {
+        showAlert(data.error || data.details || "We could not submit your registration. Please check the information you entered and try again.", "error");
+        if (activeBtn) {
+          activeBtn.disabled = false;
+          updateFeeDisplay();
+        }
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      showAlert("We could not submit your registration because of a network connection error. Your details were not lost. Please check your internet connection and try again.", "error");
+      if (activeBtn) {
+        activeBtn.disabled = false;
+        updateFeeDisplay();
+      }
+    }
+  }
+
+  // Main Form Submission Handler
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     let valid = true;
@@ -415,8 +522,8 @@ function initNominationForm() {
     }
 
     // At least one event checked
-    const events = $$('[name="events[]"]:checked', form);
-    if (events.length === 0) {
+    const checkedEvents = $$('[name="events[]"]:checked', form);
+    if (checkedEvents.length === 0) {
       const evtSection = $('#events-section');
       if (evtSection) {
         const err = makeError('Please select at least one event/discipline', 'events-error');
@@ -433,56 +540,110 @@ function initNominationForm() {
       return;
     }
 
-    // Submit via Fetch API
-    const submitBtn = $('#submit-btn') || form.querySelector('button[type="submit"]');
+    // Disable button while initializing
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Submitting...`;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2" aria-hidden="true"></i>Initializing payment...`;
     }
 
-    try {
-      const formData = new FormData(form);
-      const headers = {};
-      const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('token') : null;
-      if (token && token !== "null" && token !== "undefined") {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
+    const formData = new FormData(form);
+    const { total, isAdmin } = calculateCurrentFee();
 
-      const res = await fetch("/portal/athletes/nominate", {
+    // Flow A: Admin approval or Free tournament (No payment required)
+    if (isAdmin || total === 0) {
+      await executeNominationPost(formData, submitBtn);
+      return;
+    }
+
+    // Flow B: Paid public individual nomination via Razorpay Gateway
+    try {
+      const selectedEvents = Array.from(checkedEvents).map(el => el.value);
+      const compSelect = $('#competition-select');
+      const competitionId = compSelect ? compSelect.value : undefined;
+
+      // 1. Create order on the backend
+      const orderRes = await fetch("/portal/athletes/create-order", {
         method: "POST",
-        headers: headers,
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ events: selectedEvents, competitionId })
       });
 
-      const data = await res.json().catch(() => ({}));
-
-      if (res.ok && data.success) {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Nomination Successful</span>`;
-        }
-        if (data.athlete && data.athlete._id) {
-          const tokenFragment = data.athlete.admitCardToken ? `#token=${encodeURIComponent(data.athlete.admitCardToken)}` : '';
-          window.location.href = `admitcard.html?id=${encodeURIComponent(data.athlete._id)}${tokenFragment}`;
-        } else {
-          showSubmitSuccess(data.athlete?._id, data.athlete?.admitCardToken);
-        }
-      } else {
-        showAlert(data.error || data.details || "We could not submit your registration. Please check the information you entered and try again.", "error");
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Submit Nomination</span>`;
-        }
+      const orderData = await orderRes.json().catch(() => ({}));
+      if (!orderRes.ok || !orderData.success) {
+        throw new Error(orderData.message || orderData.error || 'Failed to initialize payment gateway.');
       }
+
+      // If server returned 0 fee, submit directly
+      if (!orderData.amount || orderData.amount <= 0) {
+        await executeNominationPost(formData, submitBtn);
+        return;
+      }
+
+      // Check if Razorpay script is loaded
+      if (typeof window.Razorpay === 'undefined') {
+        throw new Error('Payment gateway failed to load. Please check your internet connection or disable ad-blockers and try again.');
+      }
+
+      const athleteName = `${$('#first-name-input', form)?.value || ''} ${$('#last-name-input', form)?.value || ''}`.trim() || 'Yogasana Athlete';
+      const athleteMobile = $('#mobile-input', form)?.value || '';
+
+      // 2. Open Razorpay Checkout modal
+      const options = {
+        key: orderData.keyId,
+        amount: Math.round(orderData.amount * 100), // paise
+        currency: orderData.currency || 'INR',
+        name: 'Telangana Yoga Association',
+        description: 'Championship Nomination Fee',
+        image: '/static/images/hero-yogasan.png',
+        order_id: orderData.orderId,
+        prefill: {
+          name: athleteName,
+          contact: athleteMobile
+        },
+        theme: {
+          color: '#0D5C3A'
+        },
+        handler: async function (response) {
+          // 3. User paid successfully -> Attach payment verification parameters to FormData
+          formData.append('razorpay_order_id', response.razorpay_order_id);
+          formData.append('razorpay_payment_id', response.razorpay_payment_id);
+          formData.append('razorpay_signature', response.razorpay_signature);
+
+          // 4. Submit nomination and verify payment with server
+          await executeNominationPost(formData, submitBtn);
+        },
+        modal: {
+          ondismiss: function () {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              updateFeeDisplay();
+            }
+            showAlert('Payment was cancelled. Your registration has not been submitted yet.', 'info');
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (resp) {
+        console.error('Razorpay payment failure:', resp.error);
+        showAlert(resp.error?.description || 'Payment was unsuccessful. Please try again.', 'error');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          updateFeeDisplay();
+        }
+      });
+      rzp.open();
+
     } catch (err) {
-      console.error("Submission error:", err);
-      showAlert("We could not submit your registration because of a network connection error. Your details were not lost. Please check your internet connection and try again.", "error");
+      console.error('Order creation error:', err);
+      showAlert(err.message || 'Payment initiation failed. Please try again.', 'error');
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Submit Nomination</span>`;
+        updateFeeDisplay();
       }
     }
   });
+}
 }
 
 function markInvalid(field, msg) {
