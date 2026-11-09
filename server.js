@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+// Initialize Vercel Web Analytics
+const { inject } = require('@vercel/analytics');
+inject();
+
 const express = require('express');
 const path = require('path');
 const fs = require('fs');

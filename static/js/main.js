@@ -1071,18 +1071,8 @@ async function initCompetitionSelector() {
 /* ── Vercel Web Analytics ─────────────────────────────────── */
 function initVercelAnalytics() {
   if (typeof window === 'undefined') return;
-  // Initialize queue for custom events and pageviews
+  // Initialize queue for custom events (script is injected server-side)
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  
-  // Inject script once
-  if (!document.querySelector('script[src*="/_vercel/insights/script.js"]') && !document.querySelector('script[src*="va.vercel-scripts.com"]')) {
-    const script = document.createElement('script');
-    script.src = '/_vercel/insights/script.js';
-    script.defer = true;
-    script.setAttribute('data-sdkn', '@vercel/analytics');
-    script.setAttribute('data-sdkv', '2.0.1');
-    document.head.appendChild(script);
-  }
 }
 
 /* ── Init all on DOM ready ───────────────────────────────── */
