@@ -85,13 +85,20 @@ app.use(
           "'unsafe-inline'",
           'https://checkout.razorpay.com',
           'https://www.google.com/recaptcha/',
-          'https://www.gstatic.com/recaptcha/'
+          'https://www.gstatic.com/recaptcha/',
+          'https://va.vercel-scripts.com'
         ],
         scriptSrcAttr: ["'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
-        connectSrc: ["'self'", 'https://api.razorpay.com', 'https://www.google.com/recaptcha/', 'https://recaptchaenterprise.googleapis.com'],
+        connectSrc: [
+          "'self'",
+          'https://api.razorpay.com',
+          'https://www.google.com/recaptcha/',
+          'https://recaptchaenterprise.googleapis.com',
+          'https://vitals.vercel-insights.com'
+        ],
         frameSrc: ["'self'", 'https://api.razorpay.com', 'https://www.google.com/recaptcha/'],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],

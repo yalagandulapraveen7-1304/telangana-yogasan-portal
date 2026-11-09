@@ -453,6 +453,9 @@ function initNominationForm() {
       const data = await res.json().catch(() => ({}));
 
       if (res.ok && data.success) {
+        if (typeof window.va === 'function') {
+          window.va('event', { name: 'athlete_nomination_success' });
+        }
         if (activeBtn) {
           activeBtn.disabled = false;
           activeBtn.innerHTML = `<span><i class="fa-solid fa-circle-check mr-2"></i>Nomination Successful</span>`;
@@ -608,6 +611,10 @@ function initNominationForm() {
           formData.append('razorpay_order_id', response.razorpay_order_id);
           formData.append('razorpay_payment_id', response.razorpay_payment_id);
           formData.append('razorpay_signature', response.razorpay_signature);
+
+          if (typeof window.va === 'function') {
+            window.va('event', { name: 'razorpay_payment_success' });
+          }
 
           // 4. Submit nomination and verify payment with server
           await executeNominationPost(formData, submitBtn);
@@ -1061,8 +1068,26 @@ async function initCompetitionSelector() {
   }
 }
 
+/* ── Vercel Web Analytics ─────────────────────────────────── */
+function initVercelAnalytics() {
+  if (typeof window === 'undefined') return;
+  // Initialize queue for custom events and pageviews
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  
+  // Inject script once
+  if (!document.querySelector('script[src*="/_vercel/insights/script.js"]') && !document.querySelector('script[src*="va.vercel-scripts.com"]')) {
+    const script = document.createElement('script');
+    script.src = '/_vercel/insights/script.js';
+    script.defer = true;
+    script.setAttribute('data-sdkn', '@vercel/analytics');
+    script.setAttribute('data-sdkv', '2.0.1');
+    document.head.appendChild(script);
+  }
+}
+
 /* ── Init all on DOM ready ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  initVercelAnalytics();
   initMobileNav();
   initCompetitionSelector();
   initDOBCalculator();
