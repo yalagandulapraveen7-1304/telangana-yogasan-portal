@@ -159,7 +159,10 @@ function originGuard(req, res, next) {
     });
   }
 
-  const rawOrigin = req.headers.origin || req.headers.referer;
+  let rawOrigin = req.headers.origin;
+  if (!rawOrigin || rawOrigin === 'null') {
+    rawOrigin = req.headers.referer;
+  }
 
   // 2. Missing Origin/Referer defense:
   // In production, browser requests with cookie authentication MUST provide Origin or Referer.

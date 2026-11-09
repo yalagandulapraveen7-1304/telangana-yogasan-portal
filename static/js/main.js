@@ -644,7 +644,6 @@ function initNominationForm() {
     }
   });
 }
-}
 
 function markInvalid(field, msg) {
   field.style.borderColor = '#ef4444';
