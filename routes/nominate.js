@@ -434,6 +434,11 @@ router.get('/:id/public-card', optionalAuth, async (req, res) => {
   }
 });
 
+// Redirect accidental browser GET visits to the public nomination page
+router.get('/nominate', (_req, res) => {
+  return res.redirect('/nominate');
+});
+
 // ==========================================
 // 1c. GET /portal/athletes/:id (Protected Athlete Record - Scoped to District)
 // ==========================================
